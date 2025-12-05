@@ -825,92 +825,107 @@ export default function NewProjectForm({ onClose, onSave }) {
               </Select>
             </div>
 
-            {/* Fatura Kalemleri Tablosu */}
-            <div className="border rounded-lg overflow-hidden">
+            {/* Fatura Kalemleri Tablosu - AYNEN INVOICE FORMUNDAK İ GİBİ */}
+            <div className="overflow-visible">
               <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Açıklama
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-24">
-                      Miktar
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-32">
-                      Birim Fiyat
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-32">
-                      Toplam
-                    </th>
-                    <th className="px-4 py-3 w-12"></th>
+                <thead>
+                  <tr className="border-b-2 border-gray-200">
+                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-16">Sıra No</th>
+                    <th className="text-left py-3 px-2 font-medium text-gray-700">Ürün ve Hizmet Adı</th>
+                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Miktar</th>
+                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Birim</th>
+                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Birim Fiyat</th>
+                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Tutar</th>
+                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-16">İşlem</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody>
                   {formData.financialItems.map((item, index) => (
-                    <tr key={item.id}>
-                      <td className="px-4 py-3">
+                    <tr key={item.id} className="border-b border-gray-100">
+                      <td className="py-3 px-2">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                      </td>
+                      <td className="py-3 px-2">
                         <Input
                           value={item.description}
                           onChange={(e) => updateFinancialItem(item.id, 'description', e.target.value)}
-                          placeholder="Kalem açıklaması"
-                          className="w-full"
+                          placeholder="Ürün/Hizmet seçin veya yazın..."
+                          className="min-w-[300px]"
                         />
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="py-3 px-2">
                         <Input
-                          type="number"
-                          value={item.quantity}
+                          type="text"
+                          value={item.quantity || ''}
                           onChange={(e) => updateFinancialItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
-                          min="0"
-                          step="0.01"
+                          placeholder="0"
                           className="w-full"
                         />
                       </td>
-                      <td className="px-4 py-3">
-                        <Input
-                          type="number"
-                          value={item.unitPrice}
-                          onChange={(e) => updateFinancialItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
-                          min="0"
-                          step="0.01"
-                          placeholder="0.00"
-                          className="w-full"
-                        />
+                      <td className="py-3 px-2">
+                        <select
+                          value={item.unit || 'adet'}
+                          onChange={(e) => updateFinancialItem(item.id, 'unit', e.target.value)}
+                          className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="adet">Adet</option>
+                          <option value="kg">Kg</option>
+                          <option value="m2">M²</option>
+                          <option value="m3">M³</option>
+                          <option value="lt">Litre</option>
+                          <option value="saat">Saat</option>
+                          <option value="gün">Gün</option>
+                        </select>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-gray-900">
+                      <td className="py-3 px-2">
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
+                            {formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : '₺'}
+                          </span>
+                          <Input
+                            type="text"
+                            value={item.unitPrice || ''}
+                            onChange={(e) => updateFinancialItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                            placeholder="0,00"
+                            className="w-full pl-8"
+                          />
+                        </div>
+                      </td>
+                      <td className="py-3 px-2">
+                        <div className="bg-gray-50 px-3 py-2 rounded font-medium">
+                          {(formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : '₺')}
                           {item.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        {formData.financialItems.length > 1 && (
-                          <Button
+                      <td className="py-3 px-2">
+                        <div className="flex space-x-1">
+                          <button
                             type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeFinancialItem(item.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={addFinancialItem}
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            title="Yeni satır ekle"
                           >
-                            ×
-                          </Button>
-                        )}
+                            <Plus className="h-4 w-4" />
+                          </button>
+                          {formData.financialItems.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeFinancialItem(item.id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Satırı sil"
+                            >
+                              <span className="text-lg">×</span>
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-
-            {/* Add Item Button */}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addFinancialItem}
-              className="w-full flex items-center justify-center space-x-2 border-dashed border-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Yeni Kalem Ekle</span>
-            </Button>
 
             {/* Total Display */}
             <div className="flex justify-end">
