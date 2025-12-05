@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
   
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
