@@ -46,7 +46,7 @@ const AccountRowMenu = ({ account, onClose }) => {
         window.open(`https://wa.me/${account.phone || ''}`, '_blank');
         break;
       case 'detail':
-        // Navigate to detail page
+        navigate(`/${tenantSlug}/cari-hesaplar/${account.id}`);
         break;
       // ... diğer action'lar
       default:
