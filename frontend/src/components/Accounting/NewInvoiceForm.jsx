@@ -892,6 +892,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const handleProjectSelect = (projectId) => {
     if (!projectId) {
       setSelectedProject(null);
+      setPaymentTerms([{ id: 1, percentage: 100, days: 30, description: 'Vade', dueDate: '' }]);
       return;
     }
     
@@ -899,18 +900,8 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     if (project && project.paymentTerms && project.paymentTerms.length > 0) {
       setSelectedProject(project);
       setSelectedProfile(null); // Clear profile selection
-      
-      // Map project payment terms to our format
-      setPaymentTerms(project.paymentTerms.map((term, index) => ({
-        id: index + 1,
-        percentage: term.percentage || 0,
-        days: term.dueDays || 0,
-        description: term.notes || term.dueType || '',
-        dueDate: calculateDueDate(term.dueDays || 0)
-      })));
-      
-      console.log('✅ Applied payment terms from project:', project.name);
-      console.log('💰 Project contract amount:', project.contractAmount);
+      console.log('✅ Selected project:', project.name, 'Amount:', project.contractAmount);
+      // paymentTerms will be set by useEffect
     }
   };
 
