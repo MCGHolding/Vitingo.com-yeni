@@ -83,6 +83,29 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
         console.log('  installationEndDate:', data.installationEndDate);
         
         // Mevcut state'i koru, sadece gelen field'ları güncelle
+        
+        // financialItems'ı hazırla
+        let financialItems;
+        if (data.financialItems && data.financialItems.length > 0) {
+          // Eğer financialItems varsa kullan
+          financialItems = data.financialItems;
+        } else if (data.contractAmount && data.contractAmount > 0) {
+          // Eğer contractAmount varsa ama financialItems yoksa, tek bir item oluştur
+          financialItems = [{
+            id: 1,
+            description: 'Proje Sözleşme Tutarı',
+            quantity: 1,
+            unit: 'adet',
+            unitPrice: data.contractAmount,
+            total: data.contractAmount,
+            productId: ''
+          }];
+          console.log('✅ Created financial item from contractAmount:', data.contractAmount);
+        } else {
+          // Hiçbiri yoksa boş bir item
+          financialItems = [{ id: 1, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }];
+        }
+        
         setFormData(prev => ({
           ...prev,
           ...data,
@@ -92,10 +115,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
           fairStartDate: data.fairStartDate || '',
           fairEndDate: data.fairEndDate || '',
           contractDate: data.contractDate || '',
-          // Initialize financialItems if empty
-          financialItems: (data.financialItems && data.financialItems.length > 0) 
-            ? data.financialItems 
-            : [{ id: 1, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
+          financialItems: financialItems
         }));
         
         // State set edildikten sonra kontrol et
