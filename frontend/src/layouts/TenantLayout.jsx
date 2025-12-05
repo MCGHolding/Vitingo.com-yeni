@@ -18,10 +18,16 @@ const TenantLayoutInner = () => {
   // Tenant yüklenirken loading göster
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Yüklen iyor...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="h-8 w-8 bg-blue-600 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+          <p className="mt-6 text-lg font-medium text-gray-700">Yükleniyor...</p>
+          <p className="mt-2 text-sm text-gray-500">Sistem başlatılıyor, lütfen bekleyin</p>
         </div>
       </div>
     );
