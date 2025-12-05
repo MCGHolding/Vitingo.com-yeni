@@ -206,6 +206,8 @@ const getNavigation = (userDepartment) => {
       { name: 'Ödenmiş', href: '/accounting/paid', icon: CheckCircle },
       { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
       { name: 'Cari Hesaplar', href: '/cari-hesaplar', icon: DollarSign },
+      { name: 'Tahsilatlar', href: '/tahsilatlar', icon: CreditCard },
+      { name: 'Ödemeler', href: '/odemeler', icon: FileCheck },
       { 
         name: 'Yeni Tahsilatlar', 
         href: '/accounting/new-collections', 
