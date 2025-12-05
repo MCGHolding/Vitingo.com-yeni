@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timedelta
 
 # Backend URL from environment
-BACKEND_URL = "https://payday-manager-7.preview.emergentagent.com"
+BACKEND_URL = "https://invoiceflow-55.preview.emergentagent.com"
 WEBSOCKET_URL = "wss://offer-calendar.preview.emergentagent.com"
 
 def test_sales_opportunities_critical_investigation():

@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://payday-manager-7.preview.emergentagent.com"
+BACKEND_URL = "https://invoiceflow-55.preview.emergentagent.com"
 
 def test_convention_centers_focused():
     """Focused test of convention centers with better error handling"""
