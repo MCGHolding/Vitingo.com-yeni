@@ -402,6 +402,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Kurulum Başlangıç</label>
                   <input
+                    key={`install-start-${formData.installationStartDate}`}
                     type="date"
                     value={formData.installationStartDate || ''}
                     onChange={(e) => handleInputChange('installationStartDate', e.target.value)}
@@ -412,6 +413,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Kurulum Bitiş</label>
                   <input
+                    key={`install-end-${formData.installationEndDate}`}
                     type="date"
                     value={formData.installationEndDate || ''}
                     onChange={(e) => handleInputChange('installationEndDate', e.target.value)}
