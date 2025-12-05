@@ -74,7 +74,8 @@ export default function NewProjectForm({ onClose, onSave }) {
   
   // Calculate total from financial items
   const calculateTotalFromItems = () => {
-    return formData.financialItems.reduce((sum, item) => sum + (item.total || 0), 0);
+    const items = formData.financialItems || [];
+    return items.reduce((sum, item) => sum + (item.total || 0), 0);
   };
 
   useEffect(() => {
