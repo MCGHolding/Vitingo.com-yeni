@@ -994,6 +994,40 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     date.setDate(date.getDate() + days);
     return date.toISOString().split('T')[0];
   };
+  
+  // Reset form to initial state
+  const resetForm = () => {
+    setFormData({
+      invoiceNumber: '',
+      invoiceType: '',
+      currency: 'USD',
+      date: new Date().toISOString().split('T')[0],
+      customerId: '',
+      customerName: '',
+      items: [
+        { id: 1, name: '', quantity: '', unit: 'adet', unitPrice: '', total: 0 }
+      ],
+      vatRate: 20,
+      discount: '',
+      discountType: 'percentage',
+      conditions: 'Fatura tarihi itibariyle vadesi gelmiş alacaklarımız için %2 aylık gecikme faizi uygulanacaktır. Bu fatura elektronik ortamda oluşturulmuş olup imzaya ihtiyaç duymamaktadır.',
+      paymentTerm: '30',
+      isDraft: false
+    });
+    setSelectedCustomer(null);
+    setSelectedProject(null);
+    setSelectedProfile(null);
+    setPaymentTerms([
+      { id: 1, percentage: 100, amount: 0, days: 30, dueType: 'pesin', description: 'Vade', dueDate: '' }
+    ]);
+    setTotals({
+      subtotal: 0,
+      vatAmount: 0,
+      discountAmount: 0,
+      total: 0
+    });
+    generateInvoiceNumber('USD');
+  };
 
   const updatePaymentTerm = (id, field, value) => {
     setPaymentTerms(prev => prev.map(term => {
