@@ -932,13 +932,44 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       setSelectedProfile(null); // Clear profile selection
       console.log('✅ Selected project:', project.name, 'Amount:', project.contractAmount);
       
+      // Projeden finansal kalemleri al ve fatura kalemlerine dönüştür
+      let invoiceItems = [];
+      if (project.financialItems && project.financialItems.length > 0) {
+        // Proje finansal kalemlerini fatura formatına dönüştür
+        invoiceItems = project.financialItems.map((item, index) => ({
+          id: index + 1,
+          name: item.description || '',
+          quantity: item.quantity || 0,
+          unit: item.unit || 'adet',
+          unitPrice: item.unitPrice || 0,
+          total: item.total || 0,
+          productId: item.productId || ''
+        }));
+        console.log('✅ Loaded financial items from project:', invoiceItems.length, 'items');
+      } else if (project.contractAmount) {
+        // Eğer financialItems yoksa ama contractAmount varsa, tek bir kalem oluştur
+        invoiceItems = [{
+          id: 1,
+          name: 'Proje Tutarı',
+          quantity: 1,
+          unit: 'adet',
+          unitPrice: project.contractAmount,
+          total: project.contractAmount,
+          productId: ''
+        }];
+        console.log('✅ Created single item from contractAmount:', project.contractAmount);
+      } else {
+        // Hiç veri yoksa boş bir satır ekle
+        invoiceItems = [{ id: 1, name: '', quantity: '', unit: 'adet', unitPrice: '', total: 0 }];
+      }
+      
       // TÜM ALANLARI PROJEDEN DOLDUR
       setFormData(prev => ({
         ...prev,
         customerId: project.customerId || '',
         customerName: project.customerName || '',
         currency: project.currency || 'USD',
-        // contractAmount'ı total olarak kullan (items yoksa)
+        items: invoiceItems
       }));
       
       // Müşteriyi customer listesinden bul ve set et
