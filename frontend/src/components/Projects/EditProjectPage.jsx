@@ -60,14 +60,21 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       if (response.ok) {
         const data = await response.json();
         console.log('📥 Loaded project from DB:', data);
-        console.log('📅 Date fields from DB:', {
-          contractDate: data.contractDate,
-          fairStartDate: data.fairStartDate,
-          fairEndDate: data.fairEndDate,
-          installationStartDate: data.installationStartDate,
-          installationEndDate: data.installationEndDate
-        });
+        console.log('📅 Date fields from DB:');
+        console.log('  contractDate:', data.contractDate);
+        console.log('  fairStartDate:', data.fairStartDate);
+        console.log('  fairEndDate:', data.fairEndDate);
+        console.log('  installationStartDate:', data.installationStartDate);
+        console.log('  installationEndDate:', data.installationEndDate);
+        
         setFormData(data);
+        
+        // State set edildikten sonra kontrol et
+        setTimeout(() => {
+          console.log('🔄 After setFormData, current formData state:');
+          console.log('  formData.installationStartDate:', formData.installationStartDate);
+          console.log('  formData.installationEndDate:', formData.installationEndDate);
+        }, 100);
       }
     } catch (error) {
       console.error('Error loading project:', error);
