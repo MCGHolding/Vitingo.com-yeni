@@ -338,6 +338,7 @@ export default function PaymentTermsBuilder({
                 <div>
                   <label className="text-xs text-gray-600 mb-1 block">Vade</label>
                   <Select
+                    key={`vade-${term.id}-${term.dueType || 'empty'}`}
                     value={term.dueType || ''}
                     onValueChange={(value) => {
                       handleTermChange(term.id, 'dueType', value);
