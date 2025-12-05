@@ -132,6 +132,10 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
   };
 
   const handleRemoveTerm = (termId) => {
+    // En az 1 ödeme kalmalı
+    if (paymentTerms.length <= 1) {
+      return;
+    }
     onChange(paymentTerms.filter(term => term.id !== termId));
   };
 
@@ -142,7 +146,12 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
         
         // If percentage changes, recalculate amount
         if (field === 'percentage') {
-          updated.amount = (contractAmount * value) / 100;
+          // Maksimum kontrolü
+          const maxAllowed = getMaxPercentageForTerm(termId);
+          if (value > maxAllowed) {
+            updated.percentage = maxAllowed;
+          }
+          updated.amount = (contractAmount * updated.percentage) / 100;
         }
         
         // If amount changes manually, recalculate percentage
