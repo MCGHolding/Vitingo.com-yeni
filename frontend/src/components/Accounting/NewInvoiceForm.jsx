@@ -222,11 +222,15 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         id: index + 1,
         percentage: term.percentage || 0,
         amount: (contractAmount * (term.percentage || 0)) / 100,
+        dueType: term.dueType || 'pesin',
+        dueDays: term.dueDays || 0,
         days: term.dueDays || 0,
-        description: term.notes || term.dueType || '',
-        dueDate: calculateDueDate(term.dueDays || 0)
+        description: term.notes || term.description || '',
+        dueDate: calculateDueDate(term.dueDays || 0),
+        notes: term.notes || ''
       })));
       console.log('💰 Calculated amounts based on contract amount:', contractAmount);
+      console.log('✅ Payment terms with dueType:', selectedProject.paymentTerms.map(t => ({ dueType: t.dueType, percentage: t.percentage })));
     }
   }, [selectedProject]);
 
