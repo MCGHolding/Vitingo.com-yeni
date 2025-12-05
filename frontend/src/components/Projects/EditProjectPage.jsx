@@ -3,9 +3,10 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { ArrowLeft, Save, Calendar, DollarSign, FileText } from 'lucide-react';
+import { ArrowLeft, Save, Calendar, DollarSign, FileText, Plus } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import PaymentTermsBuilder from './PaymentTermsBuilder';
+import SearchableSelect from '../ui/SearchableSelect';
 
 const CURRENCIES = [
   { value: 'TRY', label: '₺ TRY' },
