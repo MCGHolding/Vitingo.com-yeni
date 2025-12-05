@@ -321,7 +321,7 @@ export default function PaymentTermsBuilder({
                 </Button>
               </div>
 
-              <div className={`grid grid-cols-1 gap-3 ${hideAmounts ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+              <div className={`grid grid-cols-1 gap-3 ${hideAmounts ? 'md:grid-cols-2' : 'md:grid-cols-4'}`}>
                 {/* Percentage - Dynamic Options */}
                 <div>
                   <label className="text-xs text-gray-600 mb-1 block">
