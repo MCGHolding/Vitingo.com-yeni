@@ -26,22 +26,29 @@ export default function PaymentTermsBuilder({
   
   // contractAmount değiştiğinde payment term amount'larını güncelle
   React.useEffect(() => {
+    console.log('💰 ContractAmount changed:', contractAmount, 'Payment terms count:', paymentTerms?.length);
+    
     if (contractAmount > 0 && paymentTerms && paymentTerms.length > 0) {
       // Sadece amount'ları güncelle, diğer fieldlar değişmesin
       const needsUpdate = paymentTerms.some(term => {
         const expectedAmount = (contractAmount * (term.percentage || 0)) / 100;
-        return Math.abs(term.amount - expectedAmount) > 0.01; // 0.01 tolerance for floating point
+        const diff = Math.abs(term.amount - expectedAmount);
+        console.log(`  Term ${term.id}: current=${term.amount}, expected=${expectedAmount}, diff=${diff}`);
+        return diff > 0.01; // 0.01 tolerance for floating point
       });
+      
+      console.log('  Needs update?', needsUpdate);
       
       if (needsUpdate) {
         const updatedTerms = paymentTerms.map(term => ({
           ...term,
           amount: (contractAmount * (term.percentage || 0)) / 100
         }));
+        console.log('  ✅ Updating payment terms with new amounts');
         onChange(updatedTerms);
       }
     }
-  }, [contractAmount, paymentTerms.length]); // paymentTerms.length kullan, tüm array değil
+  }, [contractAmount, paymentTerms?.length]); // paymentTerms.length kullan, tüm array değil
   
   // ============ VADE SEÇENEKLERİ ============
   
