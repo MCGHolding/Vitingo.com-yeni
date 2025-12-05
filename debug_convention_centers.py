@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://invoiceflow-55.preview.emergentagent.com"
+BACKEND_URL = "https://dynamiform.preview.emergentagent.com"
 
 def debug_convention_centers():
     """Debug the convention centers DELETE issue"""
