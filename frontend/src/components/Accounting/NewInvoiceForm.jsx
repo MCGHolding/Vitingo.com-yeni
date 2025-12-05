@@ -960,9 +960,12 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     setPaymentTerms([...paymentTerms, {
       id: newId,
       percentage: remainingPercentage,
+      dueType: 'pesin',
       days: 30,
+      dueDays: 0,
       description: '',
-      dueDate: calculateDueDate(30)
+      dueDate: calculateDueDate(30),
+      notes: ''
     }]);
     setSelectedProfile(null);
   };
