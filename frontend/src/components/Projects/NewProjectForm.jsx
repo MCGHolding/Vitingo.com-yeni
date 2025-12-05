@@ -877,6 +877,7 @@ export default function NewProjectForm({ onClose, onSave }) {
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Miktar</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Birim</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Birim Fiyat</th>
+                    <th className="text-left py-3 px-2 font-medium text-gray-700 w-24">Para Birimi</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-32">Tutar</th>
                     <th className="text-left py-3 px-2 font-medium text-gray-700 w-16">İşlem</th>
                   </tr>
