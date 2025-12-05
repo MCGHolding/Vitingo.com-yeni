@@ -415,10 +415,18 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Sözleşme Tutarı *</label>
                   <Input
-                    type="number"
-                    value={formData.contractAmount}
-                    onChange={(e) => handleInputChange('contractAmount', parseFloat(e.target.value) || 0)}
-                    placeholder="0.00"
+                    type="text"
+                    value={formData.contractAmount ? formData.contractAmount.toLocaleString('tr-TR') : ''}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                      handleInputChange('contractAmount', parseFloat(numericValue) || 0);
+                    }}
+                    onBlur={(e) => {
+                      // Format on blur
+                      const formatted = formData.contractAmount ? formData.contractAmount.toLocaleString('tr-TR') : '';
+                      e.target.value = formatted;
+                    }}
+                    placeholder="0"
                     required
                   />
                 </div>
