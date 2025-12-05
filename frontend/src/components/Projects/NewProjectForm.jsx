@@ -311,6 +311,38 @@ export default function NewProjectForm({ onClose, onSave }) {
     }
   };
 
+  // Financial Items Management
+  const addFinancialItem = () => {
+    const newId = Math.max(...formData.financialItems.map(i => i.id), 0) + 1;
+    setFormData({
+      ...formData,
+      financialItems: [...formData.financialItems, { id: newId, description: '', quantity: 1, unitPrice: 0, total: 0 }]
+    });
+  };
+  
+  const removeFinancialItem = (id) => {
+    if (formData.financialItems.length === 1) return; // At least one item
+    setFormData({
+      ...formData,
+      financialItems: formData.financialItems.filter(item => item.id !== id)
+    });
+  };
+  
+  const updateFinancialItem = (id, field, value) => {
+    const updatedItems = formData.financialItems.map(item => {
+      if (item.id === id) {
+        const updated = { ...item, [field]: value };
+        // Calculate total
+        if (field === 'quantity' || field === 'unitPrice') {
+          updated.total = (updated.quantity || 0) * (updated.unitPrice || 0);
+        }
+        return updated;
+      }
+      return item;
+    });
+    setFormData({ ...formData, financialItems: updatedItems });
+  };
+
   const applyPaymentProfile = (profileId) => {
     const profile = paymentProfiles.find(p => p.id === profileId);
     if (profile && profile.paymentTerms) {
