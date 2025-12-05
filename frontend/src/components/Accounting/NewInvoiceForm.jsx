@@ -967,9 +967,19 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     setPaymentTerms(prev => prev.map(term => {
       if (term.id === id) {
         const updated = { ...term, [field]: value };
+        
+        // Yüzde değiştiğinde tutarı yeniden hesapla
+        if (field === 'percentage') {
+          const invoiceTotal = totals.total || 0;
+          updated.amount = (invoiceTotal * value) / 100;
+          console.log(`💰 Percentage changed to ${value}%, amount: ${updated.amount}`);
+        }
+        
+        // Gün değiştiğinde vade tarihini güncelle
         if (field === 'days') {
           updated.dueDate = calculateDueDate(value);
         }
+        
         return updated;
       }
       return term;
