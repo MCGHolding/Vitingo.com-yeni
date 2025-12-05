@@ -24,6 +24,17 @@ export default function PaymentTermsBuilder({
   invoiceDate = ''
 }) {
   
+  // contractAmount değiştiğinde payment term amount'larını güncelle
+  React.useEffect(() => {
+    if (contractAmount > 0 && paymentTerms.length > 0) {
+      const updatedTerms = paymentTerms.map(term => ({
+        ...term,
+        amount: (contractAmount * (term.percentage || 0)) / 100
+      }));
+      onChange(updatedTerms);
+    }
+  }, [contractAmount]);
+  
   // ============ VADE SEÇENEKLERİ ============
   
   // Fatura için gün bazlı vade seçenekleri
