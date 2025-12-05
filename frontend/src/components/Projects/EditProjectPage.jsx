@@ -283,14 +283,20 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Müşteri *</label>
-                  <Select value={formData.customerId || ''} onValueChange={(value) => {
-                    console.log('👤 Customer changed to:', value);
-                    const customer = customers.find(c => c.id === value);
-                    handleInputChange('customerId', value);
-                    handleInputChange('customerName', customer?.companyName || '');
-                  }}>
+                  <Select 
+                    key={`customer-${formData.customerId || 'empty'}`}
+                    value={formData.customerId} 
+                    onValueChange={(value) => {
+                      console.log('👤 Customer changed to:', value);
+                      const customer = customers.find(c => c.id === value);
+                      handleInputChange('customerId', value);
+                      handleInputChange('customerName', customer?.companyName || '');
+                    }}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Müşteri seçin" />
+                      <SelectValue placeholder="Müşteri seçin">
+                        {formData.customerName || 'Müşteri seçin'}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {customers.map(customer => (
@@ -301,7 +307,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                     </SelectContent>
                   </Select>
                   {formData.customerId && (
-                    <p className="text-xs text-gray-500 mt-1">Seçili: {formData.customerName || formData.customerId}</p>
+                    <p className="text-xs text-gray-500 mt-1">ID: {formData.customerId.substring(0, 8)}...</p>
                   )}
                 </div>
 
