@@ -221,6 +221,28 @@ const CurrentAccountsPage = () => {
     );
   };
 
+  const handleExportExcel = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/current-accounts/export/excel`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tum_cari_hesaplar_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Excel export sırasında hata oluştu');
+    }
+  };
+
+  const handleExportPDF = async () => {
+    alert('PDF export özelliği yakında eklenecek');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-[1600px] mx-auto p-6">
