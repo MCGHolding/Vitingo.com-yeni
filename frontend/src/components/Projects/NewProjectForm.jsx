@@ -931,22 +931,30 @@ export default function NewProjectForm({ onClose, onSave }) {
                         </select>
                       </td>
                       <td className="py-3 px-2">
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
-                            {formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : '₺'}
-                          </span>
-                          <Input
-                            type="text"
-                            value={item.unitPrice || ''}
-                            onChange={(e) => updateFinancialItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
-                            placeholder="0,00"
-                            className="w-full pl-8"
-                          />
-                        </div>
+                        <Input
+                          type="text"
+                          value={item.unitPrice || ''}
+                          onChange={(e) => updateFinancialItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                          placeholder="0,00"
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="py-3 px-2">
+                        <select
+                          value={item.currency || 'TRY'}
+                          onChange={(e) => updateFinancialItem(item.id, 'currency', e.target.value)}
+                          className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        >
+                          <option value="TRY">₺ TL</option>
+                          <option value="USD">$ USD</option>
+                          <option value="EUR">€ EUR</option>
+                          <option value="GBP">£ GBP</option>
+                          <option value="AED">د.إ AED</option>
+                        </select>
                       </td>
                       <td className="py-3 px-2">
                         <div className="bg-gray-50 px-3 py-2 rounded font-medium">
-                          {(formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : '₺')}
+                          {item.currency === 'USD' ? '$' : item.currency === 'EUR' ? '€' : item.currency === 'GBP' ? '£' : item.currency === 'AED' ? 'د.إ' : '₺'}
                           {item.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </td>
