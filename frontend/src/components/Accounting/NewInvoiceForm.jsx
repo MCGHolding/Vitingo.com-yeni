@@ -2807,9 +2807,6 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
           </div>
         </div>
       )}
-      
-      </div>
-      )}
 
       {/* Başarı Modal */}
       {successModal.open && (
