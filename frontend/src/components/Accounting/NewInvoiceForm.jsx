@@ -2287,7 +2287,9 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                       >
                         <option value={0}>%0 (KDV Yok)</option>
                         <option value={1}>%1</option>
+                        <option value={8}>%8</option>
                         <option value={10}>%10</option>
+                        <option value={18}>%18</option>
                         <option value={20}>%20</option>
                       </select>
                     </div>
