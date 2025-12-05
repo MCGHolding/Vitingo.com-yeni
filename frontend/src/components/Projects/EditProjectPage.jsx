@@ -524,11 +524,13 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Koşulları</label>
                 <PaymentTermsBuilder
                   paymentTerms={formData.paymentTerms}
-                  onPaymentTermsChange={(terms) => handleInputChange('paymentTerms', terms)}
+                  onChange={(terms) => handleInputChange('paymentTerms', terms)}
                   contractAmount={formData.contractAmount}
                   currency={formData.currency}
                   contractDate={formData.contractDate}
                   fairStartDate={formData.fairStartDate}
+                  installationStartDate={formData.installationStartDate}
+                  kurulumStartDate={formData.installationStartDate}
                 />
               </div>
             </CardContent>
