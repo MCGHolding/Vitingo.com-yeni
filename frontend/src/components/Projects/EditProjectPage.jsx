@@ -55,6 +55,16 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
     loadProject();
   }, [projectId]);
 
+  // Initialize financialItems if empty
+  useEffect(() => {
+    if (!formData.financialItems || formData.financialItems.length === 0) {
+      setFormData(prev => ({
+        ...prev,
+        financialItems: [{ id: 1, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
+      }));
+    }
+  }, []);
+
   const loadProject = async () => {
     try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
