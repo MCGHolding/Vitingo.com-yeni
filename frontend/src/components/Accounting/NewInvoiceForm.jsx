@@ -117,6 +117,9 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const [paymentTerms, setPaymentTerms] = useState([
     { id: 1, percentage: 100, amount: 0, days: 30, dueType: 'pesin', description: 'Vade', dueDate: '' }
   ]);
+  const [purchasePaymentTerms, setPurchasePaymentTerms] = useState([
+    { id: 1, percentage: 100, amount: 0, days: 30, dueType: '30', dueDays: 30, dueDate: '' }
+  ]);
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileDescription, setNewProfileDescription] = useState('');
   
