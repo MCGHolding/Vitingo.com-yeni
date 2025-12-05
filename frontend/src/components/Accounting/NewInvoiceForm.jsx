@@ -126,6 +126,9 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   // Projects for payment terms
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  
+  // NEW: Invoice creation mode
+  const [invoiceCreationMode, setInvoiceCreationMode] = useState(null); // 'manual' or 'project'
 
   // Debug log - Check data availability
   console.log('📊 NewInvoiceForm data status:', {
