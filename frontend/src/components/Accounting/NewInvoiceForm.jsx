@@ -115,7 +115,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [paymentTerms, setPaymentTerms] = useState([
-    { id: 1, percentage: 100, days: 30, dueType: 'pesin', description: 'Vade', dueDate: '' }
+    { id: 1, percentage: 100, amount: 0, days: 30, dueType: 'pesin', description: 'Vade', dueDate: '' }
   ]);
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileDescription, setNewProfileDescription] = useState('');
