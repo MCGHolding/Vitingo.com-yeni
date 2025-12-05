@@ -24,6 +24,30 @@ export default function PaymentTermsBuilder({
   invoiceDate = ''
 }) {
   
+  // ============ VADE SEÇENEKLERİ ============
+  
+  // Fatura için gün bazlı vade seçenekleri
+  const invoiceDueOptions = [
+    { value: 'immediate', label: 'Peşin (Fatura Kesim Tarihi)', days: 0 },
+    { value: '7', label: '7 Gün', days: 7 },
+    { value: '15', label: '15 Gün', days: 15 },
+    { value: '30', label: '30 Gün', days: 30 },
+    { value: '45', label: '45 Gün', days: 45 },
+    { value: '60', label: '60 Gün', days: 60 },
+    { value: '90', label: '90 Gün', days: 90 },
+    { value: '120', label: '120 Gün', days: 120 },
+    { value: 'custom', label: 'Özel (Gün Girin)', days: null }
+  ];
+
+  // Proje için olay bazlı vade seçenekleri
+  const projectDueOptions = [
+    { value: 'pesin', label: 'Sözleşme Tarihinde Peşin' },
+    { value: 'kurulum', label: 'Kurulum Başlayınca' },
+    { value: 'teslim', label: 'Teslimde' },
+    { value: 'takip', label: 'Teslimi Takip Eden' },
+    { value: 'ozel', label: 'Özel Tarih' }
+  ];
+  
   // ============ HELPER FUNCTIONS FOR DYNAMIC PERCENTAGE ============
   
   // Toplam kullanılan yüzdeyi hesapla
