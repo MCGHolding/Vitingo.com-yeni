@@ -400,7 +400,7 @@ export default function PaymentTermsBuilder({
                         console.log('✅ Güncellenen terms:', updatedTerms.map(t => ({ id: t.id, dueType: t.dueType })));
                         onChange(updatedTerms);
                       }}
-                      className="flex-1 px-3 py-2 border border-gray-200 rounded-md text-sm bg-white cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-64 px-3 py-2 border border-gray-200 rounded-md text-sm bg-white cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="">Vade Seçin...</option>
                       {sourceType === 'invoice' 
@@ -417,8 +417,8 @@ export default function PaymentTermsBuilder({
                       }
                     </select>
                     
-                    {/* Hesaplanan Tarih - SAĞDA */}
-                    <div className="flex-1 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md flex items-center justify-center">
+                    {/* Hesaplanan Tarih - SAĞDA - Sabit genişlik */}
+                    <div className="w-48 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md flex items-center justify-center">
                       <Calendar className="h-4 w-4 mr-2 text-blue-600" />
                       <span className="text-xs font-medium text-blue-800 truncate">
                         {term.dueType ? (
