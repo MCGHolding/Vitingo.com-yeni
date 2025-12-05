@@ -150,8 +150,12 @@ export default function PaymentTermsBuilder({ paymentTerms, onChange, contractAm
           const maxAllowed = getMaxPercentageForTerm(termId);
           if (value > maxAllowed) {
             updated.percentage = maxAllowed;
+          } else {
+            updated.percentage = value;
           }
+          // Tutarı yeniden hesapla
           updated.amount = (contractAmount * updated.percentage) / 100;
+          console.log(`💰 Percentage changed to ${updated.percentage}%, amount: ${updated.amount}`);
         }
         
         // If amount changes manually, recalculate percentage
