@@ -376,6 +376,7 @@ export default function NewProjectForm({ onClose, onSave }) {
           description: selectedProduct.name,
           unit: selectedProduct.unit || 'adet',
           unitPrice: unitPrice,
+          currency: selectedProduct.currency || 'TRY',
           total: quantity * unitPrice
         };
       }
