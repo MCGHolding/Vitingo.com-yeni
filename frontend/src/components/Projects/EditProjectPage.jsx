@@ -153,7 +153,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
     });
 
     setLoading(true);
-    try:
+    try {
       const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                         process.env.REACT_APP_BACKEND_URL || 
                         import.meta.env.REACT_APP_BACKEND_URL;
