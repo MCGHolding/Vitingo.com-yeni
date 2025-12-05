@@ -1,155 +1,213 @@
 <analysis>**original_problem_statement:**
-The user's primary goal was to perform a major architectural refactor of the frontend, replacing a state-based navigation system with a new, robust Enterprise Multi-Tenant URL Routing architecture. After successfully completing this migration, the user requested the integration of a new Advances (Avanslar) module. Subsequently, the user requested significant feature additions and redesigns for the Invoices (Faturalar) module, including a professional purchase invoice form with KDV (VAT) calculations. The current task is to fix and completely overhaul the Credit Cards (Kredi Kartları) management page, and then implement the full backend and UI fixes for the Purchase Invoices (Alış Faturaları) module.
+The user has outlined a new, ambitious plan to build VİTİNGO CRM, a comprehensive CRM system. The development will proceed in phases, starting with critical bug fixes, followed by the implementation of several new modules.
 
-PRODUCT REQUIREMENTS:
-- Integrate the Advances module and its pages (list, new request, settings).
-- Enhance the Invoices module with a tabbed UI, a dynamic invoice type dropdown, and a professional purchase invoice form with VAT calculations and a working backend.
-- Implement a fully functional Credit Cards management page with specific UI/UX features, validation, and security (encryption, role-based access).
-- Implement a list page for Purchase Invoices.
-- Ensure all UI elements and functionalities match the user's provided screenshots and detailed instructions.
-- Implement corresponding backend logic with real database persistence (MongoDB) for all new features.
+PRODUCT REQUIREMENTS (VİTİNGO CRM Plan):
+1.  **Phase 1: Bug Fixes (Highest Priority)**
+    *   **Fatura Vade Dropdown Sorunu:** Fix the due date dropdown in the invoice form, which is currently not working. The user has provided a detailed code replacement for the  component.
+    *   **Proje Tarih Kaydetme Sorunu:** Resolve an issue where date fields (Contract Date, Installation Start/End Date) are not being saved correctly on the Project Edit page. The user has provided a detailed checklist and code snippets for verification.
+2.  **Phase 2: Tahsilat/Ödeme Modülü (Collections/Payments Module)**
+    *   Create a new module for managing collections and payments, fully integrated with the Cari Hesaplar (Current Accounts) module.
+3.  **Phase 3: Akıllı Dashboard (Smart Dashboard)**
+    *   Develop an intelligent main dashboard featuring real-time metrics, charts (using Chart.js), alerts for upcoming due dates, and a log of recent activities.
+4.  **Phase 4: Bildirim Sistemi (Notification System)**
+    *   Implement a notification system for due date reminders, overdue payment warnings, and project deadlines.
+5.  **Phase 5: Raporlama Merkezi (Reporting Center)**
+    *   Build a reporting hub with features like an accounts receivable aging report, monthly income/expense analysis, and customer performance reports.
+
+Prior to this new plan, the agent built a complete Cari Hesaplar (Current Accounts) module from the ground up, including frontend pages, backend APIs, and export functionality.
 
 **User's preferred language**: Turkish
 
 **what currently exists?**
-The application has a stable URL-based, multi-tenant routing system.
-- **Credit Cards Module**: A complete, professional credit card management page exists at . It was rewritten from scratch and is fully functional. It includes a tabbed UI (Corporate/Personal), backend encryption (), frontend and backend validation (Luhn algorithm), automatic card-type detection (Visa/Mastercard/Amex), masked number display, and a role-based Preview feature for  users to view the unencrypted card number.
-- **Invoices Module**: The New Invoice page () features a tabbed layout. The Purchase Invoice form is highly advanced, with dynamic calculations, a working backend  endpoint that saves invoices to MongoDB, and updates related account balances (suppliers, banks). It also features a success modal after saving. A new list page for all purchase invoices has been created at . Dropdowns for Bank and Credit Card selection are now correctly populated.
+The agent has successfully built a multi-part Cari Hesaplar (Current Accounts) module. This includes:
+- A main page () with a sophisticated dashboard, advanced filters, and a paginated data table.
+- A detail page () showing a summary, transaction history, and company info for a single account.
+- A complete backend API in  () that calculates account balances in real-time from , , and  data.
+- Backend endpoints for exporting account lists and individual statements to Excel and PDF.
+
+Additionally, the agent performed major refactoring on the Projects module, converting the  and  to use a dynamic financial line-items table instead of a single contract amount. Numerous related bugs concerning date handling and data consistency were also fixed.
 
 **Last working item**:
--   Last item agent was working: The user requested a UI layout change for the Purchase Invoices form (). The agent was in the process of moving the summary statistics boxes (Net Total, VAT Total, etc.) from the bottom of the page to the top, directly underneath the header.
--   Status: **IN PROGRESS**
--   Agent Testing Done: N
--   Which testing method agent to use? **screenshot tool** to verify the new layout of the Alış Faturaları tab.
--   User Testing Done: N
+- Last item agent was working: The user provided a new VİTİNGO CRM development plan and instructed the agent to start with BÖLÜM 1: BUG FİXLER. The first bug to fix is the Fatura vade dropdown sorunu (Invoice due date dropdown issue). The agent was in the process of implementing the user's detailed solution for the  component.
+- Status: **IN PROGRESS**
+- Agent Testing Done: N
+- Which testing method agent to use? Frontend testing agent
+- User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Move Purchase Invoice Statistics Boxes to the Top (P0)**
+- Issue 1: Fatura vade dropdown sorunu (Invoice due date dropdown issue) (P0)
+- Issue 2: Proje tarih kaydetme sorunu (Project date saving issue) (P0)
+- Issue 3: Hesap Detay Sayfası API Hatası (Account Detail Page API Error) (P1)
+- Issue 4: Payment term amounts do not update on total change (P2)
 
 **Issues Detail:**
--   **Issue 1:**
-    -   **Attempted fixes:** The agent has not yet attempted the fix. The last action was to locate the code for the Alış Faturaları section to begin the refactor.
-    -   **Next debug checklist:**
-        1.  Open .
-        2.  Locate the JSX for the statistics boxes (currently at the bottom of the  block).
-        3.  Cut this JSX block.
-        4.  Paste it directly below the header section but before the  section, as per the user's detailed instructions in the last message.
-        5.  Ensure the old container for the statistics boxes at the bottom is removed to avoid duplication.
-        6.  Test using the screenshot tool to confirm the new layout.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a direct UI/UX request from the user to improve the layout and visibility of key totals on the form.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** frontend
-    -   **Blocked on other issue:** None
+- **Issue 1: Fatura vade dropdown sorunu**
+    - **Description:** On the new invoice form, the dropdowns for selecting the payment due date () are not functioning correctly, preventing users from setting payment terms. This is the first bug in the user's new VİTİNGO CRM plan.
+    - **Attempted fixes:** The agent was in the initial stages of analysis. The user provided a complete code replacement for the  component as the solution.
+    - **Next debug checklist:**
+        1. Locate the correct file for payment term logic (likely  or a similar file in ).
+        2. Replace the entire content of the file with the new, robust code provided by the user in Chat Message 363.
+        3. Verify that the component is correctly imported and used in , passing the required props (, , , , etc.).
+        4. Test the new invoice page () to confirm the dropdowns work and dates are calculated as expected.
+    - **Why fix this issue and what will be achieved with the fix?** This is a critical bug blocking the core functionality of creating new invoices with payment terms.
+    - **Status:** IN PROGRESS
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** frontend
+    - **Blocked on other issue:** None
+
+- **Issue 2: Proje tarih kaydetme sorunu**
+    - **Description:** On the , date fields like  and  are not being saved correctly. This is a recurring issue and is the second bug in the user's new plan.
+    - **Attempted fixes:** The agent previously addressed similar issues by standardizing date field names and fixing data loading logic, but the problem persists or has regressed.
+    - **Next debug checklist:** Follow the user's detailed 4-point check in Chat Message 354:
+        1.  Verify the  state structure in  includes all date fields.
+        2.  Ensure  correctly sets all date fields in the state from the API response.
+        3.  Ensure  correctly includes all date fields in the payload sent to the backend.
+        4.  Ensure the date input components are correctly bound to  with  and .
+    - **Why fix this issue and what will be achieved with the fix?** Fixes a critical data integrity bug, ensuring project information can be reliably updated.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** both
+    - **Blocked on other issue:** Issue 1
+
+- **Issue 3: Hesap Detay Sayfası API Hatası**
+    - **Description:** When navigating to the Current Account Detail Page (), the page shows a Hesap bulunamadı (Account not found) error. The API call to  is failing with a 404.
+    - **Attempted fixes:** The agent restarted the backend, but the issue persisted. The agent was unable to resolve it before the user pivoted to the VİTİNGO CRM plan.
+    - **Next debug checklist:**
+        1.  Review the  function in .
+        2.  Check the  query. The logic  is complex and may be failing. Simplify it to query by uid=0(root) gid=0(root) groups=0(root) first, and if that fails, try by .
+        3.  Add logging to see the  being received and what the query returns.
+    - **Why fix this issue and what will be achieved with the fix?** Fixes a broken core feature of the newly developed Cari Hesaplar module.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** N
+    - **Should Test frontend/backend/both after fix?** backend
+    - **Blocked on other issue:** Issue 1
+
+- **Issue 4: Payment term amounts do not update on total change**
+    - **Description:** On the project forms, when the total contract amount changes (by editing financial items), the new total is not passed down to the , so term amounts are not recalculated. This was a P0 bug from the initial handoff.
+    - **Attempted fixes:** Previous agent added  hooks that failed.
+    - **Next debug checklist:** The new  code from the user may already contain a fix. After implementing the fix for Issue 1, verify this behavior. If it persists, ensure a  hook in the parent form (/) calls  to recalculate amounts whenever  (or ) changes.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** frontend
+    - **Blocked on other issue:** Issue 1
 
 **In progress Task List**:
--   There are no other in-progress tasks.
+- None.
 
 **Upcoming and Future Tasks**
--   **(P1) Finalize Advances Module Backend:** A full review is needed to ensure all CRUD operations for the module are fully implemented and validated.
--   **(P2) Implement Full Advances Module Sidebar Navigation:** Ensure all sub-menu items for the Avanslar section navigate correctly.
--   **(P3) Decommission Old System Code:** Audit and clean up unused components from the old state-based system (e.g., ).
--   **(P4) Implement Backend Tenant Fetching:** In , replace mock tenant data with a real API call.
--   **(P5) Add Missing Modules:** Add the Sales Reports and Reports modules.
--   **(P6) Implement Query Parameters:** Add support for URL query parameters for filtering, sorting, and pagination across all list pages.
+- **Upcoming Tasks (VİTİNGO CRM Plan):**
+    - **P0: Tahsilat/Ödeme Modülü:** Create the Collections/Payments module.
+    - **P1: Akıllı Dashboard:** Implement the new main dashboard with charts and real-time metrics.
+    - **P2: Bildirim Sistemi:** Build the notification system.
+    - **P3: Raporlama Merkezi:** Create the reporting center.
+
+- **Future Tasks (Backlog):**
+    - Backend for Invoice Import & Export.
+    - Remove deprecated  endpoints from .
+    - Add Sales Reports and Reports modules from the original backlog.
 
 **Completed work in this session**
--   **Credit Cards Module - Complete Overhaul:**
-    -   Rewrote the entire credit card management page from scratch ().
-    -   Implemented a secure backend with  for encryption/decryption.
-    -   Added backend and frontend validation using the Luhn algorithm and expiry date checks.
-    -   Implemented a role-based Preview button for  to view unencrypted card numbers via a secure endpoint ().
-    -   Removed the Spending Limit field as per updated user requirements.
-    -   The feature is fully tested (manually by agent, verified by user) and complete.
-
--   **Purchase Invoices Module - Major Enhancements:**
-    -   Created a new backend router () and API endpoints (, , ).
-    -   Implemented complex backend logic to update supplier, bank, and cash account balances upon invoice payment.
-    -   Activated the Save button on the frontend () to persist data.
-    -   Created a new list page () at  to display all saved invoices.
-    -   Fixed multiple UI bugs:
-        -   Corrected currency display in total boxes to show both foreign currency and TL equivalent.
-        -   Fixed Bank and Credit Card dropdowns to display correct data from the API.
-        -   Added a success modal that appears after saving an invoice, replacing the generic .
-        -   Ensured the saved invoice row turns green and the Save button is disabled.
+- **Cari Hesaplar (Current Accounts) Module (Bölüm 1-5):**
+  - **Bölüm 1-2 (Frontend UI):** Created the full user interface for the Current Accounts module, including a dashboard, advanced filters, and a detailed data table using mock data.
+  - **Bölüm 3 (Backend API):** Implemented the  endpoint in  to calculate real-time balances from customer, invoice, and collection data.
+  - **Bölüm 4 (Detail Page):** Created the account detail page () with a corresponding API endpoint ().
+  - **Bölüm 5 (Export):** Implemented backend endpoints and frontend logic to export account lists and statements to **Excel** and **PDF**.
+- **Major Project Form Refactoring:**
+  - Refactored  to use the same dynamic financial line-items table as , replacing the old static Contract Amount input.
+  - Implemented backward compatibility to handle old projects that have a  but no .
+- **Critical Bug Fixes & Regressions:**
+  - **Financial Items Disappearing:** Fixed a bug in  where using the Fill Test Data button would erase the financial items table.
+  - **Inconsistent Date Pickers:** Standardized all date inputs in  to use the native HTML date picker.
+  - **Project-Based Invoice Items:** Fixed a bug where creating a project-based invoice did not automatically populate the financial items from the selected project.
+  - **Runtime Errors:** Resolved a  error in  by adding defensive coding (optional chaining, default empty arrays).
 
 **Earlier issues found/mentioned but not fixed**
--   None. The previously mentioned issue of unsaved purchase invoices has been resolved in this session.
+- The Hesap Detay Sayfası API Hatası (Issue 3) was discovered during this session but not resolved as the user pivoted to a new plan.
 
 **Known issue recurrence from previous fork**
--   The Credit Cards management page was a recurring issue, but it has now been completely rewritten and is considered stable and resolved.
+- The issue of project dates not saving correctly in the edit form (Issue 2) is a recurring problem that has appeared in previous forks.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Backend Security:** Implemented symmetric encryption for sensitive data (credit card numbers) using Python's  (Fernet) library.
--   **Role-Based Access Control (RBAC):** Created a special feature (viewing unencrypted data) accessible only to users with an  or  role, enforced on the backend by checking a request header.
--   **Data Validation:** Utilized the Luhn algorithm on both frontend and backend to validate credit card number integrity.
--   **Complex State Management in React:** Managed a dynamic list of invoice items, each with its own state, calculations, and UI feedback ( status).
--   **User-Driven Development:** The entire session was guided by highly specific, code-level instructions from the user, demonstrating a tight feedback loop.
+- **Full-Stack Feature Development:** Built an entire module (Cari Hesaplar) from scratch, including UI components, frontend pages, backend API logic, database aggregation, and file export functionality.
+- **Major Component Refactoring:** Overhauled the  to align its architecture with , demonstrating the ability to handle significant, complex UI and state logic changes.
+- **Backward Compatibility:** Implemented logic to handle legacy data models (e.g., creating a financial item from an old ), which is crucial for evolving applications.
+- **API and Data Debugging:** Successfully debugged issues by inspecting API responses, checking database records, and analyzing backend logs to pinpoint data-related problems versus frontend rendering bugs.
+- **Dependency Management:** Installed new backend Python packages () and updated .
 
 **key DB schema**
--   ****: 
--   ****: 
--   ****: Now includes a  field updated by purchase invoices.
--   ****: Now includes a  field updated by purchase invoices.
+- No new collections were added, but the new API logic reads from multiple existing collections to generate derived data:
+  - 
+  -  (optional)
+  - 
+  -  (optional)
+  - 
+  -  (optional)
 
 **changes in tech stack**
--   None.
+- Added  to the backend for Excel generation.
 
 **All files of reference**
--   **/app/frontend/src/components/Accounting/NewInvoiceForm.jsx**: **Primary file for the current task.** Contains the layout for the purchase invoice form that needs to be changed.
--   **/app/frontend/src/components/Settings/CreditCardsManagementV2.jsx**: The completed, stable credit card component.
--   **/app/backend/routes/credit_cards.py**: The backend logic for credit cards, including encryption and the  endpoint.
--   **/app/backend/routes/purchase_invoices.py**: The backend logic for saving purchase invoices and updating account balances.
--   **/app/frontend/src/pages/invoices/PurchaseInvoiceListPage.jsx**: The newly created page for listing purchase invoices.
--   **/app/frontend/src/App.js**: Contains the routing for the new purchase invoice list page.
+- **/app/frontend/src/components/Projects/PaymentTermsBuilder.jsx**: The target for the immediate bug fix (Issue 1).
+- **/app/frontend/src/components/Projects/EditProjectPage.jsx**: The location of the date-saving bug (Issue 2).
+- **/app/frontend/src/pages/accounting/CurrentAccountsPage.jsx**: Main page for the new module.
+- **/app/frontend/src/pages/accounting/CurrentAccountDetailPage.jsx**: Detail page for the new module.
+- **/app/backend/server.py**: Contains all the new backend logic for the Cari Hesaplar module and its export functions.
 
 **Areas that need refactoring**:
--   The original  is now obsolete and should be deleted.
+- ** is becoming a monolith.** The newly added logic for Cari Hesaplar is extensive. This file should be broken down into smaller, feature-specific route files (e.g., , ).
 
 **key api endpoints**
--   : Creates a new credit card (with encryption).
--   : Lists all saved credit cards (with masked numbers).
--   : Deletes a credit card.
--   : **(Role-protected)** Returns the unencrypted details of a single card.
--   : Saves a single purchase invoice item and updates relevant balances.
--   : Saves multiple purchase invoice items.
--   : Lists all saved purchase invoices.
+- **GET **: Fetches the list of all customer/supplier accounts with calculated balances.
+- **GET **: Fetches the detailed transaction history for a single account. (CURRENTLY BUGGED)
+- **GET **: Exports a single account's statement to Excel.
+- **GET **: Exports a single account's statement to PDF.
+- **GET **: Exports the entire list of accounts to Excel.
 
 **Critical Info for New Agent**
--   **Follow User Instructions Precisely:** The user provides extremely detailed, code-level instructions and acts as the lead architect and tester. Your primary job is to implement their requests accurately. Do not deviate from the provided code snippets unless absolutely necessary.
--   **Current Task is UI Only:** The immediate task is a simple JSX layout change in . No backend work is needed.
--   **The user is the tester:** The user will test the features after you complete them. Your testing should focus on verifying the implementation before handing it over. Use the screenshot tool for UI changes and  for backend changes.
+- **Follow the User's New Plan:** The user has provided a new, clear, multi-phase plan called VİTİNGO CRM. You MUST prioritize this plan. The immediate task is BÖLÜM 1: BUG FİXLER.
+- **Use User-Provided Solutions:** For the first two bugs, the user has given extremely detailed code and checklists. Follow them precisely to resolve the issues quickly. The first bug fix involves a complete replacement of the  component.
+- **Unresolved Cari Hesaplar Bug:** Be aware that the account detail page API () is broken (Issue 3). While not the current priority, it will need to be fixed before that module is fully functional.
+- **Monolithic Backend:** The  file is very large. Be careful when adding or modifying code. Consider proposing a refactor to split it into separate route files after the current bug fixes are complete.
 
 **documents created in this job**
--   None.
+- None.
 
 **Last 10 User Messages and any pending user messages**
--   **User:** Requested a success modal for saving purchase invoices. (COMPLETED)
--   **User:** Pointed out that Bank and Credit Card dropdowns were showing incorrect data. (COMPLETED)
--   **User:** Provided a screenshot showing the broken dropdowns. (ADDRESSED)
--   **User:** Confirmed the dropdowns were fixed but a temporary debug panel was visible. (COMPLETED)
--   **User:** Requested the debug panel be removed. (COMPLETED)
--   **User:** Confirmed the debug panel was gone. (ADDRESSED)
--   **User:** (PENDING) Pointed out that the statistics boxes on the purchase invoice form are at the bottom and should be moved to the top, under the header. Provided detailed instructions on how to restructure the JSX.
+- **10. (Chat 261):** User approves Bölüm 2 and provides the prompt for BÖLÜM 3: BACKEND API for the Current Accounts module. **(COMPLETED)**
+- **9. (Chat 262):** Agent acknowledges and starts working on Bölüm 3.
+- **8. (Chat 296):** Agent summarizes the completion of Bölüm 3.
+- **7. (Chat 297):** User approves Bölüm 3 and provides the prompt for BÖLÜM 4: HESAP DETAY SAYFASI (Account Detail Page). **(COMPLETED, but with a pending bug)**
+- **6. (Chat 330):** User approves Bölüm 4 and provides the prompt for BÖLÜM 5: EXCEL VE PDF EXPORT. **(COMPLETED)**
+- **5. (Chat 353):** Agent summarizes the completion of Bölüm 5.
+- **4. (Chat 354):** The user presents a completely new, multi-phase VİTİNGO CRM plan, starting with BÖLÜM 1: BUG FİXLER and provides detailed instructions for two specific bugs. **(PENDING - THIS IS THE NEW ACTIVE PLAN)**
+- **3. (Chat 355):** Agent acknowledges the new plan and starts on the first bug fix.
+- **2. (Chat 363):** User provides extremely detailed instructions and a full code replacement for  to fix the Fatura Vade Dropdown bug. **(PENDING - THIS IS THE CURRENT INSTRUCTION)**
+- **1. (Chat 364):** Agent acknowledges the detailed instructions and prepares to implement the fix.
 
 **Project Health Check:**
--   **Broken:** None.
--   **Mocked:** None. The project is in a very healthy state. The major problematic features have been fixed and are now fully functional.
+- **Broken:**
+    - Payment term selection on the New Invoice form.
+    - Saving dates on the Project Edit form.
+    - The Current Accounts detail page API endpoint.
+- **Mocked:**
+    - None. The application is now running against the real backend, though some API endpoints are bugged.
 
 **3rd Party Integrations**:
--   None.
+- : Used for Excel file generation on the backend.
+- : Used for PDF file generation on the backend.
 
 **Testing status**
--   Testing agent used after significant changes: NO
--   Troubleshoot agent used after agent stuck in loop: NO
--   Test files created: []
--   Known regressions: None.
+- Testing agent used after significant changes: NO
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: []
+- Known regressions:
+    - The Proje tarih kaydetme sorunu appears to be a regression or a recurring issue.
 
 **Credentials to test flow:**
--   To test the admin-only Preview feature for credit cards, assume the logged-in user has the role of  as seen in .
+- N/A
 
 **What agent forgot to execute**
--   The agent was in the middle of executing the user's last request (moving the stats boxes) when the session ended. It has not been forgotten, but is the immediate next step.</analysis>
+- The agent never fully resolved the 404 error on the  endpoint before the user pivoted to the new VİTİNGO CRM plan. This is captured as Issue 3.</analysis>

@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://dynamiform.preview.emergentagent.com"
+BACKEND_URL = "https://vitingo-dashboard.preview.emergentagent.com"
 
 def test_user_positions_apis():
     """

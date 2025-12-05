@@ -11,7 +11,7 @@ const PersonNewPage = () => {
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://dynamiform.preview.emergentagent.com';
+                    'https://vitingo-dashboard.preview.emergentagent.com';
 
   const handleSave = async (personData) => {
     try {
