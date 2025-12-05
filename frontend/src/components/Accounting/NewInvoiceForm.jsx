@@ -1717,21 +1717,65 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                     </button>
                   </div>
 
-                  {/* Profil Seçimi */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Vade Profili</label>
-                    <select
-                      value={selectedProfile?.id || ''}
-                      onChange={(e) => handleProfileSelect(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Manuel Vade Girişi</option>
-                      {paymentTermProfiles.map(profile => (
-                        <option key={profile.id} value={profile.id}>
-                          {profile.name} {profile.isDefault && '⭐'}
-                        </option>
-                      ))}
-                    </select>
+                  {/* Ödeme Koşulları Kaynağı Seçimi */}
+                  <div className="mb-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        📋 Kayıtlı Projeden Seç
+                      </label>
+                      <select
+                        value={selectedProject?.id || ''}
+                        onChange={(e) => handleProjectSelect(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="">Proje seçilmedi</option>
+                        {projects.map(project => (
+                          <option key={project.id} value={project.id}>
+                            {project.projectNumber} - {project.name} ({project.customerName})
+                          </option>
+                        ))}
+                      </select>
+                      {selectedProject && (
+                        <p className="mt-1 text-xs text-green-600">
+                          ✅ Proje ödeme koşulları uygulandı: {selectedProject.name}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white text-gray-500">veya</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        ⭐ Kayıtlı Vade Profilinden Seç
+                      </label>
+                      <select
+                        value={selectedProfile?.id || ''}
+                        onChange={(e) => {
+                          setSelectedProject(null); // Clear project selection
+                          handleProfileSelect(e.target.value);
+                        }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Manuel Vade Girişi</option>
+                        {paymentTermProfiles.map(profile => (
+                          <option key={profile.id} value={profile.id}>
+                            {profile.name} {profile.isDefault && '⭐'}
+                          </option>
+                        ))}
+                      </select>
+                      {selectedProfile && (
+                        <p className="mt-1 text-xs text-blue-600">
+                          ✅ Vade profili uygulandı: {selectedProfile.name}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {/* PaymentTermsBuilder Component */}
