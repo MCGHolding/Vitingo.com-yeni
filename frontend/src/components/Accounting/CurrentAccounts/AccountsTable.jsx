@@ -16,6 +16,8 @@ const AccountsTable = ({
 }) => {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const navigate = useNavigate();
+  const { tenantSlug } = useParams();
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('tr-TR', {
