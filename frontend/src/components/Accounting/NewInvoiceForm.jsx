@@ -214,6 +214,22 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
     loadProjects();
   }, []);
 
+  // Proje seçildiğinde ödeme tutarlarını hesapla
+  useEffect(() => {
+    if (selectedProject && selectedProject.contractAmount && selectedProject.paymentTerms) {
+      const contractAmount = selectedProject.contractAmount;
+      setPaymentTerms(selectedProject.paymentTerms.map((term, index) => ({
+        id: index + 1,
+        percentage: term.percentage || 0,
+        amount: (contractAmount * (term.percentage || 0)) / 100,
+        days: term.dueDays || 0,
+        description: term.notes || term.dueType || '',
+        dueDate: calculateDueDate(term.dueDays || 0)
+      })));
+      console.log('💰 Calculated amounts based on contract amount:', contractAmount);
+    }
+  }, [selectedProject]);
+
   // Regenerate invoice number when invoice type changes
   useEffect(() => {
     if (formData.invoiceType) {
