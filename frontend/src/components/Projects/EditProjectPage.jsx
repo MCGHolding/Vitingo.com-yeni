@@ -272,7 +272,8 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Müşteri *</label>
-                  <Select value={formData.customerId} onValueChange={(value) => {
+                  <Select value={formData.customerId || ''} onValueChange={(value) => {
+                    console.log('👤 Customer changed to:', value);
                     const customer = customers.find(c => c.id === value);
                     handleInputChange('customerId', value);
                     handleInputChange('customerName', customer?.companyName || '');
@@ -288,6 +289,9 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                       ))}
                     </SelectContent>
                   </Select>
+                  {formData.customerId && (
+                    <p className="text-xs text-gray-500 mt-1">Seçili: {formData.customerName || formData.customerId}</p>
+                  )}
                 </div>
 
                 <div>
