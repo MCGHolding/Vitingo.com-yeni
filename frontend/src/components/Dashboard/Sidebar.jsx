@@ -179,7 +179,7 @@ const getNavigation = (userDepartment) => {
       { name: 'Tahsilat Bekleyenler', href: '/accounting/pending-collection', icon: AlertTriangle },
       { name: 'Ödenmiş', href: '/accounting/paid', icon: CheckCircle },
       { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
-      { name: 'Cari Hesaplar', href: '/accounting/current-accounts', icon: DollarSign },
+      { name: 'Cari Hesaplar', href: '/cari-hesaplar', icon: DollarSign },
       { name: 'Tahsilat Makbuzu', href: '/accounting/collection-receipt', icon: CreditCard },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
@@ -203,7 +203,7 @@ const getNavigation = (userDepartment) => {
       { name: 'Tahsilat Bekleyenler', href: '/accounting/pending-collection', icon: AlertTriangle },
       { name: 'Ödenmiş', href: '/accounting/paid', icon: CheckCircle },
       { name: 'Vadesi Geçmiş', href: '/accounting/overdue', icon: XCircle },
-      { name: 'Cari Hesaplar', href: '/accounting/current-accounts', icon: DollarSign },
+      { name: 'Cari Hesaplar', href: '/cari-hesaplar', icon: DollarSign },
       { 
         name: 'Yeni Tahsilatlar', 
         href: '/accounting/new-collections', 
