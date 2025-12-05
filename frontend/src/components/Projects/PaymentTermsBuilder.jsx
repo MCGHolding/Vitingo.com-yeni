@@ -478,28 +478,30 @@ export default function PaymentTermsBuilder({
                 )
               )}
 
-              {/* Calculated Due Date Display */}
-              {term.dueType && (
-                <div className="col-span-full mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
-                  <div className="flex items-center text-xs text-blue-800">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    <span className="font-medium">Vade: </span>
-                    <span className="ml-1">
-                      {sourceType === 'invoice' ? (
+              {/* Hesaplanan Ödeme Tarihi - Vade'nin sağında */}
+              <div>
+                <label className="text-xs text-gray-600 mb-1 block">Hesaplanan Ödeme Tarihi</label>
+                <div className="h-10 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">
+                    {term.dueType ? (
+                      sourceType === 'invoice' ? (
                         /* FATURA için vade gösterimi */
                         <>
                           {term.dueType === 'immediate' && `${formatDate(invoiceDate || new Date())} (Peşin)`}
-                          {term.dueType === 'custom' && `${formatDate(term.dueDate)} (${term.customDays || 0} gün sonra)`}
-                          {!isNaN(parseInt(term.dueType)) && `${formatDate(term.dueDate)} (${term.dueType} gün sonra)`}
+                          {term.dueType === 'custom' && `${formatDate(term.dueDate)} (${term.customDays || 0} gün)`}
+                          {!isNaN(parseInt(term.dueType)) && `${formatDate(term.dueDate)} (${term.dueType} gün)`}
                         </>
                       ) : (
                         /* PROJE için vade gösterimi */
                         calculateDueDate(term)
-                      )}
-                    </span>
-                  </div>
+                      )
+                    ) : (
+                      <span className="text-gray-400">Vade seçin</span>
+                    )}
+                  </span>
                 </div>
-              )}
+              </div>
             </div>
           ))}
 
