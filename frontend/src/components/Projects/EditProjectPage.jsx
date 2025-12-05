@@ -487,10 +487,11 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Sözleşme Tarihi</label>
-                <Input
+                <input
                   type="date"
-                  value={formData.contractDate}
+                  value={formData.contractDate || ''}
                   onChange={(e) => handleInputChange('contractDate', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
