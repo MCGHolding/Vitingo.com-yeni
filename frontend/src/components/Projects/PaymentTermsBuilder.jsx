@@ -361,7 +361,7 @@ export default function PaymentTermsBuilder({
                 )}
 
                 {/* Vade + Hesaplanan Tarih - YAN YANA */}
-                <div>
+                <div className="flex-1">
                   <label className="text-xs text-gray-600 mb-1 block">Vade</label>
                   <div className="flex gap-2">
                     {/* Vade Dropdown */}
