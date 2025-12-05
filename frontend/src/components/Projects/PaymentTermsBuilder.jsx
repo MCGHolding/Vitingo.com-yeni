@@ -332,30 +332,22 @@ export default function PaymentTermsBuilder({
                   <Select
                     value={term.dueType || ''}
                     onValueChange={(value) => {
-                      // Fatura modunda sayısal değer veya özel ise
+                      handleTermChange(term.id, 'dueType', value);
+                      
+                      // Fatura modunda ek işlemler
                       if (sourceType === 'invoice') {
-                        const updated = { ...term, dueType: value };
-                        
                         if (value === 'immediate') {
-                          updated.dueDays = 0;
-                          updated.dueDate = invoiceDate || new Date().toISOString().split('T')[0];
+                          handleTermChange(term.id, 'dueDays', 0);
+                          handleTermChange(term.id, 'dueDate', invoiceDate || new Date().toISOString().split('T')[0]);
                         } else if (value === 'custom') {
-                          updated.dueDays = term.customDays || 0;
-                          updated.dueDate = calculateInvoiceDueDate(updated.dueDays);
+                          const days = parseInt(term.customDays) || 0;
+                          handleTermChange(term.id, 'dueDays', days);
+                          handleTermChange(term.id, 'dueDate', calculateInvoiceDueDate(days));
                         } else if (!isNaN(parseInt(value))) {
-                          updated.dueDays = parseInt(value);
-                          updated.dueDate = calculateInvoiceDueDate(parseInt(value));
+                          const days = parseInt(value);
+                          handleTermChange(term.id, 'dueDays', days);
+                          handleTermChange(term.id, 'dueDate', calculateInvoiceDueDate(days));
                         }
-                        
-                        handleTermChange(term.id, 'dueType', value);
-                        if (updated.dueDays !== undefined) {
-                          handleTermChange(term.id, 'dueDays', updated.dueDays);
-                        }
-                        if (updated.dueDate) {
-                          handleTermChange(term.id, 'dueDate', updated.dueDate);
-                        }
-                      } else {
-                        handleTermChange(term.id, 'dueType', value);
                       }
                     }}
                   >
