@@ -100,6 +100,8 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
       const response = await fetch(`${backendUrl}/api/customers`);
       if (response.ok) {
         const data = await response.json();
+        console.log('👤 Customers loaded:', data.length, 'customers');
+        console.log('👤 First customer:', data[0]);
         setCustomers(data);
       }
     } catch (error) {
