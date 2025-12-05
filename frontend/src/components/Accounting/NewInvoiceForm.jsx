@@ -980,9 +980,13 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
   const addPaymentTerm = () => {
     const newId = Math.max(...paymentTerms.map(t => t.id)) + 1;
     const remainingPercentage = Math.max(0, 100 - getTotalPercentage());
+    const invoiceTotal = totals.total || 0;
+    const remainingAmount = (invoiceTotal * remainingPercentage) / 100;
+    
     setPaymentTerms([...paymentTerms, {
       id: newId,
       percentage: remainingPercentage,
+      amount: remainingAmount,
       dueType: 'pesin',
       days: 30,
       dueDays: 0,
@@ -991,6 +995,7 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
       notes: ''
     }]);
     setSelectedProfile(null);
+    console.log('💰 Added new payment term with amount:', remainingAmount);
   };
 
   const removePaymentTerm = (id) => {
