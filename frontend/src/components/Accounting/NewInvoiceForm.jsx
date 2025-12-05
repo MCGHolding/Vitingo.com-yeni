@@ -1588,7 +1588,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                 <DollarSign className="inline h-4 w-4 mr-1" />
                 Para Birimi
               </label>
-              <Select value={formData.currency} onValueChange={handleCurrencyChange}>
+              <Select 
+                value={formData.currency} 
+                onValueChange={handleCurrencyChange}
+                disabled={!!selectedProject}
+              >
                 <SelectTrigger className="h-10">
                   <SelectValue placeholder="Para birimi seçin" />
                 </SelectTrigger>
@@ -1604,6 +1608,11 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
                   ))}
                 </SelectContent>
               </Select>
+              {selectedProject && (
+                <p className="text-xs text-green-600 mt-1">
+                  ✓ Para birimi projeden alındı
+                </p>
+              )}
             </div>
 
             {/* Date - Daraltılmış */}
