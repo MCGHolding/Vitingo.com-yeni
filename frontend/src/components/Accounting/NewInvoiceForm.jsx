@@ -2246,8 +2246,10 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
         </div>
       )}
         </div>
-      ) : (
-        /* ALIŞ FATURALARI - PROFESİYONEL 3 SATIRLI LAYOUT + KDV */
+      ) : null}
+      
+      {/* ALIŞ FATURALARI FORMU - Purchase modunda */}
+      {invoiceCreationMode === 'purchase' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           
           {/* Header */}
