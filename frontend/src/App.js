@@ -105,6 +105,7 @@ import PendingCollectionPage from './components/Accounting/PendingCollectionPage
 import PaidInvoicesPage from './components/Accounting/PaidInvoicesPage';
 import OverdueInvoicesPage from './components/Accounting/OverdueInvoicesPage';
 import CurrentAccountsPage from './pages/accounting/CurrentAccountsPage';
+import CurrentAccountDetailPage from './pages/accounting/CurrentAccountDetailPage';
 import CollectionReceiptPage from './components/Accounting/CollectionReceiptPage';
 import CollectionReceiptApprovalPage from './components/Accounting/CollectionReceiptApprovalPage';
 import NewBankForm from './components/Accounting/NewBankForm';
