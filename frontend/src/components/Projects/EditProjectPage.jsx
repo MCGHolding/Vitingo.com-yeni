@@ -63,7 +63,7 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
         financialItems: [{ id: 1, description: '', quantity: 1, unit: 'adet', unitPrice: 0, total: 0, productId: '' }]
       }));
     }
-  }, []);
+  }, [formData.financialItems]);
 
   const loadProject = async () => {
     try {
