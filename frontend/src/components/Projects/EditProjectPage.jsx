@@ -244,8 +244,9 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Şirketi Seç *</label>
                   <Select
-                    value={formData.companyId}
+                    value={formData.companyId || ''}
                     onValueChange={(value) => {
+                      console.log('🏢 Company changed to:', value);
                       const selectedCompany = groupCompanies.find(c => c.id === value);
                       handleInputChange('companyId', value);
                       handleInputChange('companyName', selectedCompany?.name || '');
@@ -262,6 +263,9 @@ export default function EditProjectPage({ projectId, onClose, onSave }) {
                       ))}
                     </SelectContent>
                   </Select>
+                  {formData.companyId && (
+                    <p className="text-xs text-gray-500 mt-1">Seçili: {formData.companyName || formData.companyId}</p>
+                  )}
                 </div>
               </div>
 
