@@ -349,7 +349,7 @@ export default function PaymentTermsBuilder({
 
                 {/* Amount - Only show if not hidden */}
                 {!hideAmounts && (
-                  <div>
+                  <div className="w-40">
                     <label className="text-xs text-gray-600 mb-1 block">Tutar</label>
                     <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm font-medium text-gray-800">
                       {term.amount?.toLocaleString('tr-TR', { 
