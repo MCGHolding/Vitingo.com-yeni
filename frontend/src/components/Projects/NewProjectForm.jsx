@@ -890,11 +890,19 @@ export default function NewProjectForm({ onClose, onSave }) {
                         </div>
                       </td>
                       <td className="py-3 px-2">
-                        <Input
-                          value={item.description}
-                          onChange={(e) => updateFinancialItem(item.id, 'description', e.target.value)}
-                          placeholder="Ürün/Hizmet seçin veya yazın..."
+                        <SearchableSelect
+                          options={products.map(product => ({
+                            id: product.id,
+                            label: product.name,
+                            sublabel: `${product.default_price ? product.default_price.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' ' + product.currency : ''} / ${product.unit}`.trim(),
+                            data: product
+                          }))}
+                          value={item.productId || ''}
+                          onChange={(productId) => handleProductSelect(item.id, productId)}
+                          placeholder="Ürün/Hizmet seçin..."
+                          searchPlaceholder="Ürün ara..."
                           className="min-w-[300px]"
+                          emptyMessage="Ürün bulunamadı"
                         />
                       </td>
                       <td className="py-3 px-2">
