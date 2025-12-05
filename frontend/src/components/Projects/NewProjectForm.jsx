@@ -792,62 +792,132 @@ export default function NewProjectForm({ onClose, onSave }) {
           </CardContent>
         </Card>
 
-        {/* Sözleşme Bilgileri */}
+        {/* Finansal Bilgiler (Fatura Kalemleri) */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <DollarSign className="h-5 w-5" />
-              <span>Sözleşme Bilgileri</span>
+              <span>Finansal Bilgiler</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Sözleşme Tarihi */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sözleşme Tarihi <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="date"
-                  value={formData.contractDate}
-                  onChange={(e) => setFormData({ ...formData, contractDate: e.target.value })}
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">Peşin ve özel vade hesaplamalarında kullanılır</p>
-              </div>
+            {/* Para Birimi Seçimi */}
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-700">
+                Para Birimi <span className="text-red-500">*</span>
+              </label>
+              <Select 
+                value={formData.currency} 
+                onValueChange={(v) => setFormData({ ...formData, currency: v })}
+              >
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CURRENCIES.map(c => (
+                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              {/* Sözleşme Tutarı */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sözleşme Tutarı <span className="text-red-500">*</span>
-                </label>
-                <div className="flex space-x-2">
-                  <Input
-                    type="text"
-                    value={formData.contractAmount ? formData.contractAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
-                    onChange={(e) => {
-                      const rawValue = e.target.value.replace(/[^\d,]/g, '').replace(',', '.');
-                      const numValue = parseFloat(rawValue) || 0;
-                      setFormData({ ...formData, contractAmount: numValue });
-                    }}
-                    placeholder="0,00"
-                    required
-                    className="flex-1"
-                  />
-                  <Select 
-                    value={formData.currency} 
-                    onValueChange={(v) => setFormData({ ...formData, currency: v })}
-                  >
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CURRENCIES.map(c => (
-                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+            {/* Fatura Kalemleri Tablosu */}
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                      Açıklama
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-24">
+                      Miktar
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-32">
+                      Birim Fiyat
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-32">
+                      Toplam
+                    </th>
+                    <th className="px-4 py-3 w-12"></th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {formData.financialItems.map((item, index) => (
+                    <tr key={item.id}>
+                      <td className="px-4 py-3">
+                        <Input
+                          value={item.description}
+                          onChange={(e) => updateFinancialItem(item.id, 'description', e.target.value)}
+                          placeholder="Kalem açıklaması"
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => updateFinancialItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
+                          min="0"
+                          step="0.01"
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Input
+                          type="number"
+                          value={item.unitPrice}
+                          onChange={(e) => updateFinancialItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-gray-900">
+                          {item.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {formData.financialItems.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFinancialItem(item.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            ×
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Add Item Button */}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addFinancialItem}
+              className="w-full flex items-center justify-center space-x-2 border-dashed border-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Yeni Kalem Ekle</span>
+            </Button>
+
+            {/* Total Display */}
+            <div className="flex justify-end">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 min-w-[300px]">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-700">Toplam Sözleşme Tutarı:</span>
+                  <span className="text-2xl font-bold text-blue-600">
+                    {calculateTotalFromItems().toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {formData.currency}
+                  </span>
                 </div>
+                <p className="text-xs text-gray-500 mt-2">Bu tutar ödeme koşullarında kullanılacaktır</p>
               </div>
             </div>
           </CardContent>
