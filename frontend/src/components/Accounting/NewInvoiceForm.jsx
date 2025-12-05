@@ -1663,39 +1663,39 @@ const NewInvoiceForm = ({ onBackToDashboard, onNewCustomer }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">KDV Oranı (%)</label>
                 <div className="flex gap-2">
-                  {/* Yan yana 4 kutu: 5, 10, 15, 20 */}
+                  {/* Yan yana 4 kutu: 0, 8, 18, 20 */}
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 5 }))}
+                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 0 }))}
                     className={`h-10 px-4 rounded-md border-2 font-medium text-sm transition-all ${
-                      formData.vatRate === 5
+                      formData.vatRate === 0
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
                     }`}
                   >
-                    5
+                    0
                   </button>
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 10 }))}
+                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 8 }))}
                     className={`h-10 px-4 rounded-md border-2 font-medium text-sm transition-all ${
-                      formData.vatRate === 10
+                      formData.vatRate === 8
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
                     }`}
                   >
-                    10
+                    8
                   </button>
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 15 }))}
+                    onClick={() => setFormData(prev => ({ ...prev, vatRate: 18 }))}
                     className={`h-10 px-4 rounded-md border-2 font-medium text-sm transition-all ${
-                      formData.vatRate === 15
+                      formData.vatRate === 18
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-300 hover:border-gray-400 text-gray-600 hover:bg-gray-50'
                     }`}
                   >
-                    15
+                    18
                   </button>
                   <button
                     type="button"
