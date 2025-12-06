@@ -1527,7 +1527,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                                         <span className="text-white text-sm">⬇️</span>
                                       </button>
                                       <button
-                                        onClick={() => deleteStatement(statement.id)}
+                                        onClick={() => deleteStatement(statement)}
                                         className="p-1 hover:bg-white/20 rounded transition opacity-0 group-hover:opacity-100"
                                         title="Sil"
                                       >
