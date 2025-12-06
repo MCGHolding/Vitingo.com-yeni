@@ -215,10 +215,10 @@ const NewPaymentPage = () => {
                         >
                           <div>
                             <div className="font-medium text-gray-900">
-                              {supplier.companyName || supplier.name}
+                              {supplier.company_title || supplier.companyName || supplier.name || supplier.company_short_name}
                             </div>
                             <div className="text-sm text-gray-500">
-                              {supplier.email || supplier.phone || '-'}
+                              {supplier.email || supplier.phone || supplier.mobile || '-'}
                             </div>
                           </div>
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
