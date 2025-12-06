@@ -657,11 +657,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         </div>
       )}
 
-      {/* OLD Tab Content (to be removed) */}
-      {activeMainTab === 'old_info' && (
-        <>
-          {/* Filters */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      {/* Tab Content: Ekstreler (mevcut) */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
