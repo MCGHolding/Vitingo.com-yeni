@@ -9147,7 +9147,8 @@ async def get_dashboard_stats():
         total_remaining = total_invoice_amount - total_paid
         
         # Bu ay kesilen faturalar
-        this_month_invoices = [inv for inv in invoices if inv.get("date", "")[:7] == datetime.now().strftime("%Y-%m")]
+        current_month = datetime.now(timezone.utc).strftime("%Y-%m")
+        this_month_invoices = [inv for inv in invoices if inv.get("date", "")[:7] == current_month]
         this_month_amount = sum(inv.get("total", 0) or inv.get("grandTotal", 0) or 0 for inv in this_month_invoices)
         
         # Vadesi geçen faturalar
