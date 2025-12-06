@@ -17099,6 +17099,103 @@ async def get_unread_count(user_id: str):
         logger.error(f"Error getting unread count: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Okunmamış bildirim sayısı alınamadı: {str(e)}")
 
+# Vadesi yaklaşan faturalar için bildirim oluştur
+@api_router.post("/notifications/check-due-invoices")
+async def check_due_invoices():
+    """Vadesi yaklaşan veya geçmiş faturalar için bildirim oluştur"""
+    try:
+        today = datetime.now(timezone.utc).date()
+        warning_date = today + timedelta(days=3)  # 3 gün içinde vadesi dolacaklar
+        
+        # Vadesi yaklaşan veya geçmiş faturaları bul
+        invoices = await db.invoices.find({
+            "status": {"$ne": "paid"},  # Ödenmeyen faturalar
+            "_id": 0
+        }).to_list(1000)
+        
+        created_notifications = []
+        
+        for invoice in invoices:
+            due_date_str = invoice.get('dueDate')
+            if not due_date_str:
+                continue
+            
+            # Parse due date
+            try:
+                if isinstance(due_date_str, str):
+                    due_date = datetime.fromisoformat(due_date_str.replace('Z', '+00:00')).date()
+                elif isinstance(due_date_str, datetime):
+                    due_date = due_date_str.date()
+                else:
+                    continue
+            except:
+                continue
+            
+            invoice_id = invoice.get('id') or invoice.get('invoiceNumber')
+            customer_name = invoice.get('customerName', 'Bilinmeyen Müşteri')
+            amount = invoice.get('total', 0)
+            currency = invoice.get('currency', 'TRY')
+            
+            # Bildirim zaten oluşturulmuş mu kontrol et
+            existing = await db.notifications.find_one({
+                "relatedId": invoice_id,
+                "type": {"$in": ["invoice_due_soon", "invoice_overdue"]},
+                "createdAt": {"$gte": datetime.now(timezone.utc) - timedelta(days=1)}
+            })
+            
+            if existing:
+                continue
+            
+            notification_data = None
+            
+            # Vadesi geçmiş
+            if due_date < today:
+                days_overdue = (today - due_date).days
+                notification_data = {
+                    "id": str(uuid.uuid4()),
+                    "type": "invoice_overdue",
+                    "title": f"⚠️ Vadesi Geçmiş Fatura",
+                    "message": f"{customer_name} - {invoice.get('invoiceNumber', '')} numaralı fatura {days_overdue} gündür gecikmiş. Tutar: {amount:,.2f} {currency}",
+                    "priority": "urgent",
+                    "relatedType": "invoice",
+                    "relatedId": invoice_id,
+                    "actionUrl": f"/invoices/{invoice_id}",
+                    "userId": None,  # Tüm kullanıcılar için
+                    "isRead": False,
+                    "createdAt": datetime.now(timezone.utc)
+                }
+            
+            # Vadesi yaklaşan (3 gün içinde)
+            elif due_date <= warning_date:
+                days_left = (due_date - today).days
+                notification_data = {
+                    "id": str(uuid.uuid4()),
+                    "type": "invoice_due_soon",
+                    "title": f"📅 Vadesi Yaklaşan Fatura",
+                    "message": f"{customer_name} - {invoice.get('invoiceNumber', '')} numaralı faturanın vadesi {days_left} gün içinde dolacak. Tutar: {amount:,.2f} {currency}",
+                    "priority": "high" if days_left <= 1 else "normal",
+                    "relatedType": "invoice",
+                    "relatedId": invoice_id,
+                    "actionUrl": f"/invoices/{invoice_id}",
+                    "userId": None,
+                    "isRead": False,
+                    "createdAt": datetime.now(timezone.utc)
+                }
+            
+            if notification_data:
+                await db.notifications.insert_one(notification_data)
+                created_notifications.append(notification_data)
+        
+        return {
+            "success": True,
+            "message": f"{len(created_notifications)} bildirim oluşturuldu",
+            "created_count": len(created_notifications)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error checking due invoices: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Vade kontrol hatası: {str(e)}")
+
 # ==================== END BİLDİRİM SİSTEMİ API ====================
 
 app.add_middleware(
