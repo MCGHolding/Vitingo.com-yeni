@@ -25,10 +25,21 @@ const CurrentAccountDetailPage = () => {
     setLoading(true);
     try {
       const response = await fetch(`${backendUrl}/api/current-accounts/${accountId}`);
-      if (response.ok) {
-        const data = await response.json();
+      
+      console.log('API Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error:', errorText);
+        throw new Error('Hesap bulunamadı');
+      }
+      
+      const data = await response.json();
+      console.log('Account data loaded:', data);
+      
+      if (data.success) {
         setAccount(data.account);
-        setTransactions(data.transactions || []);
+        setTransactions(data.movements || []);
         setSummary(data.summary || { totalDebit: 0, totalCredit: 0, balance: 0 });
       }
     } catch (error) {
