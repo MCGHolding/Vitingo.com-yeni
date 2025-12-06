@@ -20,6 +20,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [bankList, setBankList] = useState([]);
   const [showAddBank, setShowAddBank] = useState(false);
   const [newBank, setNewBank] = useState({ name: '', country: 'TR' });
+  const [editingBank, setEditingBank] = useState(null);
   
   // Banka Hesapları
   const [selectedBankId, setSelectedBankId] = useState('');
