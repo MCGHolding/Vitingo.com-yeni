@@ -25,7 +25,7 @@ const CustomerListPage = () => {
 
   // Backend URL - Always use env variable, ignore window.ENV override
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://vitingo-dashboard.preview.emergentagent.com';
+                    'https://crm-dashboard-114.preview.emergentagent.com';
 
   // Müşterileri yükle
   const loadCustomers = async () => {

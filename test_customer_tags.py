@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://vitingo-dashboard.preview.emergentagent.com"
+BACKEND_URL = "https://crm-dashboard-114.preview.emergentagent.com"
 
 def test_customer_tags_functionality():
     """
