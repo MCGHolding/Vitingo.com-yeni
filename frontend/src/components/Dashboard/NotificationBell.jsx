@@ -103,6 +103,7 @@ const NotificationBell = () => {
     
     const interval = setInterval(loadNotifications, 30000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   // Dropdown dışına tıklandığında kapat
