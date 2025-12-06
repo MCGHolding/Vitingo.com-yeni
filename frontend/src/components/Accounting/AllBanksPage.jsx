@@ -106,6 +106,10 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   // Ref for file input (React pattern instead of document.getElementById)
   const statementFileInputRef = useRef(null);
   
+  // New upload modal state
+  const [showNewUploadModal, setShowNewUploadModal] = useState(false);
+  const [selectedBankForUpload, setSelectedBankForUpload] = useState('');
+  
   // Countries list
   const countries = [
     { code: 'TR', name: 'Türkiye', flag: '🇹🇷' },
