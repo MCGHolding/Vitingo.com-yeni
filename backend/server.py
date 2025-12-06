@@ -16951,6 +16951,156 @@ async def export_all_accounts_excel():
 
 # ==================== END CARİ HESAPLAR API ====================
 
+# ==================== BİLDİRİM SİSTEMİ API ====================
+
+class NotificationCreate(BaseModel):
+    type: str  # invoice_due, payment_received, project_update, etc.
+    title: str
+    message: str
+    priority: str = "normal"  # low, normal, high, urgent
+    relatedType: Optional[str] = None  # invoice, project, customer, etc.
+    relatedId: Optional[str] = None
+    actionUrl: Optional[str] = None
+    userId: Optional[str] = None  # Target user ID, if None -> all users
+
+class NotificationUpdate(BaseModel):
+    isRead: bool
+
+class NotificationResponse(BaseModel):
+    id: str
+    type: str
+    title: str
+    message: str
+    priority: str
+    relatedType: Optional[str] = None
+    relatedId: Optional[str] = None
+    actionUrl: Optional[str] = None
+    userId: Optional[str] = None
+    isRead: bool = False
+    createdAt: datetime
+
+# Bildirim oluştur
+@api_router.post("/notifications", response_model=NotificationResponse)
+async def create_notification(notification: NotificationCreate):
+    """Yeni bildirim oluştur"""
+    try:
+        notification_doc = {
+            "id": str(uuid.uuid4()),
+            "type": notification.type,
+            "title": notification.title,
+            "message": notification.message,
+            "priority": notification.priority,
+            "relatedType": notification.relatedType,
+            "relatedId": notification.relatedId,
+            "actionUrl": notification.actionUrl,
+            "userId": notification.userId,
+            "isRead": False,
+            "createdAt": datetime.now(timezone.utc)
+        }
+        
+        await db.notifications.insert_one(notification_doc)
+        
+        return NotificationResponse(**notification_doc)
+        
+    except Exception as e:
+        logger.error(f"Error creating notification: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Bildirim oluşturulamadı: {str(e)}")
+
+# Kullanıcının bildirimlerini getir
+@api_router.get("/notifications/{user_id}")
+async def get_user_notifications(user_id: str, unread_only: bool = False):
+    """Kullanıcının bildirimlerini getir"""
+    try:
+        query = {"$or": [{"userId": user_id}, {"userId": None}]}
+        
+        if unread_only:
+            query["isRead"] = False
+        
+        notifications = await db.notifications.find(query, {"_id": 0}).sort("createdAt", -1).to_list(100)
+        
+        return {"notifications": notifications}
+        
+    except Exception as e:
+        logger.error(f"Error fetching notifications: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Bildirimler getirilemedi: {str(e)}")
+
+# Bildirimi okundu işaretle
+@api_router.patch("/notifications/{notification_id}")
+async def mark_notification_read(notification_id: str, update: NotificationUpdate):
+    """Bildirimi okundu işaretle"""
+    try:
+        result = await db.notifications.update_one(
+            {"id": notification_id},
+            {"$set": {"isRead": update.isRead}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Bildirim bulunamadı")
+        
+        return {"message": "Bildirim güncellendi", "success": True}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating notification: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Bildirim güncellenemedi: {str(e)}")
+
+# Tüm bildirimleri okundu işaretle
+@api_router.patch("/notifications/user/{user_id}/mark-all-read")
+async def mark_all_notifications_read(user_id: str):
+    """Kullanıcının tüm bildirimlerini okundu işaretle"""
+    try:
+        result = await db.notifications.update_many(
+            {"$or": [{"userId": user_id}, {"userId": None}], "isRead": False},
+            {"$set": {"isRead": True}}
+        )
+        
+        return {
+            "message": "Tüm bildirimler okundu işaretlendi",
+            "updated_count": result.modified_count,
+            "success": True
+        }
+        
+    except Exception as e:
+        logger.error(f"Error marking all notifications as read: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Bildirimler güncellenemedi: {str(e)}")
+
+# Bildirimi sil
+@api_router.delete("/notifications/{notification_id}")
+async def delete_notification(notification_id: str):
+    """Bildirimi sil"""
+    try:
+        result = await db.notifications.delete_one({"id": notification_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Bildirim bulunamadı")
+        
+        return {"message": "Bildirim silindi", "success": True}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting notification: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Bildirim silinemedi: {str(e)}")
+
+# Okunmamış bildirim sayısını getir
+@api_router.get("/notifications/{user_id}/unread-count")
+async def get_unread_count(user_id: str):
+    """Kullanıcının okunmamış bildirim sayısını getir"""
+    try:
+        count = await db.notifications.count_documents({
+            "$or": [{"userId": user_id}, {"userId": None}],
+            "isRead": False
+        })
+        
+        return {"unread_count": count}
+        
+    except Exception as e:
+        logger.error(f"Error getting unread count: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Okunmamış bildirim sayısı alınamadı: {str(e)}")
+
+# ==================== END BİLDİRİM SİSTEMİ API ====================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
