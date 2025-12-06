@@ -5040,6 +5040,275 @@ async def delete_bank_account(account_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== HANDOVER RECEIPT ENDPOINTS ====================
+
+@api_router.get("/handover-receipts")
+async def get_handover_receipts(
+    status: str = None,
+    projectId: str = None,
+    customerId: str = None
+):
+    """Teslim belgelerini listele"""
+    try:
+        query = {"status": {"$ne": "deleted"}}
+        if status:
+            query["status"] = status
+        if projectId:
+            query["projectId"] = projectId
+        if customerId:
+            query["customerId"] = customerId
+        
+        receipts = await db.handover_receipts.find(query, {"_id": 0}).sort("createdAt", -1).to_list(None)
+        
+        return {"receipts": receipts}
+        
+    except Exception as e:
+        logger.error(f"Error getting handover receipts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/handover-receipts/{receipt_id}")
+async def get_handover_receipt(receipt_id: str):
+    """Tek teslim belgesi detayı"""
+    try:
+        receipt = await db.handover_receipts.find_one({
+            "id": receipt_id,
+            "status": {"$ne": "deleted"}
+        }, {"_id": 0})
+        
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Belge bulunamadı")
+        
+        return {"receipt": receipt}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting handover receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/handover-receipts")
+async def create_handover_receipt(data: dict):
+    """Yeni teslim belgesi oluştur"""
+    try:
+        receipt_id = str(uuid4())
+        
+        # Proje bilgilerini çek
+        if data.get("projectId"):
+            project = await db.projects.find_one({"id": data["projectId"]}, {"_id": 0})
+            if project:
+                data["projectName"] = project.get("name", "")
+                data["customerId"] = project.get("customerId", "")
+                data["exhibitionName"] = project.get("fairName", "")
+                data["exhibitionLocation"] = project.get("fairLocation", "")
+                data["hallBoothNo"] = project.get("hallBoothNo", "")
+                data["showStartDate"] = project.get("startDate", "")
+                data["showEndDate"] = project.get("endDate", "")
+                data["standArea"] = project.get("standArea", 0)
+                
+                # Müşteri bilgilerini çek
+                if data.get("customerId"):
+                    customer = await db.customers.find_one({"id": data["customerId"]}, {"_id": 0})
+                    if customer:
+                        data["customerName"] = customer.get("name", "")
+                        data["customerEmail"] = customer.get("email", "")
+                        data["customerPhone"] = customer.get("phone", "")
+        
+        receipt_data = {
+            "id": receipt_id,
+            "projectId": data.get("projectId", ""),
+            "projectName": data.get("projectName", ""),
+            "customerId": data.get("customerId", ""),
+            "customerName": data.get("customerName", ""),
+            "customerEmail": data.get("customerEmail", ""),
+            "customerPhone": data.get("customerPhone", ""),
+            "exhibitionName": data.get("exhibitionName", ""),
+            "exhibitionLocation": data.get("exhibitionLocation", ""),
+            "hallBoothNo": data.get("hallBoothNo", ""),
+            "showStartDate": data.get("showStartDate", ""),
+            "showEndDate": data.get("showEndDate", ""),
+            "handoverDate": data.get("handoverDate", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
+            "standArea": data.get("standArea", 0),
+            "standType": data.get("standType", "wooden"),
+            "designCompany": data.get("designCompany", "Quattro Stand Events LLC"),
+            "language": data.get("language", "en"),
+            "notes": data.get("notes", ""),
+            "status": "draft",
+            "receiptNumber": f"HR-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{receipt_id[:4].upper()}",
+            "customerSignature": None,
+            "customerSignedAt": None,
+            "companySignature": None,
+            "companySignedAt": None,
+            "sentAt": None,
+            "viewedAt": None,
+            "createdAt": datetime.now(timezone.utc).isoformat(),
+            "createdBy": data.get("createdBy", "system")
+        }
+        
+        await db.handover_receipts.insert_one(receipt_data)
+        
+        return {
+            "success": True,
+            "id": receipt_id,
+            "receiptNumber": receipt_data["receiptNumber"],
+            "message": "Teslim belgesi oluşturuldu"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error creating handover receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.put("/handover-receipts/{receipt_id}")
+async def update_handover_receipt(receipt_id: str, data: dict):
+    """Teslim belgesi güncelle"""
+    try:
+        data["updatedAt"] = datetime.now(timezone.utc).isoformat()
+        
+        result = await db.handover_receipts.update_one(
+            {"id": receipt_id},
+            {"$set": data}
+        )
+        
+        if result.modified_count > 0:
+            return {"success": True, "message": "Belge güncellendi"}
+        
+        raise HTTPException(status_code=404, detail="Belge bulunamadı")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating handover receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/handover-receipts/{receipt_id}/send")
+async def send_handover_receipt(receipt_id: str, data: dict):
+    """Teslim belgesini müşteriye gönder"""
+    try:
+        receipt = await db.handover_receipts.find_one({"id": receipt_id}, {"_id": 0})
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Belge bulunamadı")
+        
+        # Public link oluştur
+        public_token = str(uuid4())
+        
+        await db.handover_receipts.update_one(
+            {"id": receipt_id},
+            {"$set": {
+                "status": "sent",
+                "sentAt": datetime.now(timezone.utc).isoformat(),
+                "publicToken": public_token,
+                "sentTo": data.get("email", receipt.get("customerEmail")),
+                "sentMethod": data.get("method", "email")
+            }}
+        )
+        
+        # Public URL
+        public_url = f"/handover/{public_token}"
+        
+        return {
+            "success": True,
+            "message": "Belge gönderildi",
+            "publicUrl": public_url,
+            "publicToken": public_token
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending handover receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/handover-receipts/public/{token}")
+async def get_public_handover_receipt(token: str):
+    """Public link ile teslim belgesi görüntüle (imza için)"""
+    try:
+        receipt = await db.handover_receipts.find_one({
+            "publicToken": token,
+            "status": {"$in": ["sent", "viewed", "signed"]}
+        }, {"_id": 0})
+        
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Belge bulunamadı veya süresi dolmuş")
+        
+        # İlk görüntüleme
+        if receipt.get("status") == "sent":
+            await db.handover_receipts.update_one(
+                {"publicToken": token},
+                {"$set": {"status": "viewed", "viewedAt": datetime.now(timezone.utc).isoformat()}}
+            )
+            receipt["status"] = "viewed"
+        
+        # Hassas bilgileri çıkar
+        receipt.pop("publicToken", None)
+        
+        return {"receipt": receipt}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting public receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/handover-receipts/public/{token}/sign")
+async def sign_handover_receipt(token: str, data: dict):
+    """Müşteri imzası kaydet"""
+    try:
+        receipt = await db.handover_receipts.find_one({
+            "publicToken": token,
+            "status": {"$in": ["sent", "viewed"]}
+        }, {"_id": 0})
+        
+        if not receipt:
+            raise HTTPException(status_code=404, detail="Belge bulunamadı")
+        
+        await db.handover_receipts.update_one(
+            {"publicToken": token},
+            {"$set": {
+                "status": "signed",
+                "customerSignature": data.get("signature"),
+                "customerSignedAt": datetime.now(timezone.utc).isoformat(),
+                "customerSignedName": data.get("signerName", ""),
+                "customerSignedIP": data.get("ip", ""),
+                "signedAt": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        return {"success": True, "message": "İmza kaydedildi"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error signing receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.delete("/handover-receipts/{receipt_id}")
+async def delete_handover_receipt(receipt_id: str):
+    """Teslim belgesi sil"""
+    try:
+        result = await db.handover_receipts.update_one(
+            {"id": receipt_id},
+            {"$set": {"status": "deleted", "deletedAt": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        if result.modified_count > 0:
+            return {"success": True, "message": "Belge silindi"}
+        
+        raise HTTPException(status_code=404, detail="Belge bulunamadı")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 @api_router.put("/banks/{bank_id}", response_model=Bank)
 async def update_bank(bank_id: str, bank_update: BankUpdate):
     """Update a bank"""
