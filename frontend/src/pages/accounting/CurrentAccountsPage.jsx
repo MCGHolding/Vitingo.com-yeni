@@ -21,6 +21,10 @@ const CurrentAccountsPage = () => {
   const [itemsPerPage] = useState(25);
   const [selectedAccounts, setSelectedAccounts] = useState([]);
   
+  // WhatsApp Modal
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [whatsAppRecipient, setWhatsAppRecipient] = useState(null);
+  
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // all, debtor, creditor, zero
