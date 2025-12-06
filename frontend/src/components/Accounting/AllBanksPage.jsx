@@ -1723,16 +1723,15 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
               <div className="p-6">
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 sticky top-0">
+                    <thead className="bg-gray-50 sticky top-0 z-10">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tarih</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Açıklama</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Gelen</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Giden</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Bakiye</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Proje</th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Durum</th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tarih</th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Açıklama</th>
+                        <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase">Tutar</th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlem Türü</th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Alt Kategori</th>
+                        <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase">Durum</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
