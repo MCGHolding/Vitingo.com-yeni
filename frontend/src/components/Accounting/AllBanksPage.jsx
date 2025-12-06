@@ -1736,73 +1736,118 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {selectedStatement.transactions?.map((txn, idx) => (
-                        <tr key={idx} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
-                            {new Date(txn.date).toLocaleDateString('tr-TR')}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-900 max-w-xs truncate">
-                            {txn.description}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-right whitespace-nowrap">
-                            {txn.amount > 0 ? (
-                              <span className="text-green-600 font-medium">
-                                +{txn.amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                              </span>
-                            ) : '-'}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-right whitespace-nowrap">
-                            {txn.amount < 0 ? (
-                              <span className="text-red-600 font-medium">
-                                {Math.abs(txn.amount).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                              </span>
-                            ) : '-'}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-right font-medium whitespace-nowrap">
-                            {txn.balance?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                          </td>
-                          <td className="px-4 py-3 text-sm">
-                            {txn.category ? (
-                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
-                                {txn.category}
-                              </span>
-                            ) : (
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {selectedStatement.transactions?.map((txn, idx) => {
+                        const txnId = txn.id || `txn-${idx}`;
+                        const updated = updatedTransactions[txnId] || {};
+                        const currentType = updated.type || txn.type || '';
+                        const currentCategoryId = updated.categoryId || txn.categoryId || '';
+                        const currentSubCategoryId = updated.subCategoryId || txn.subCategoryId || '';
+                        
+                        const selectedType = transactionTypes.find(t => t.id === currentType);
+                        const availableSubTypes = selectedType?.subTypes || [];
+                        
+                        return (
+                          <tr key={idx} className={`hover:bg-gray-50 ${txn.autoMatched ? 'bg-green-50' : txn.suggestedMatch ? 'bg-yellow-50' : ''}`}>
+                            <td className="px-3 py-2 text-xs text-gray-900 whitespace-nowrap">
+                              {new Date(txn.date).toLocaleDateString('tr-TR')}
+                            </td>
+                            <td className="px-3 py-2 text-xs text-gray-900 max-w-xs">
+                              <div className="truncate" title={txn.description}>
+                                {txn.description}
+                              </div>
+                              {txn.autoMatched && (
+                                <span className="text-green-600 text-[10px]">🤖 Otomatik eşleşti</span>
+                              )}
+                              {txn.suggestedMatch && (
+                                <span className="text-orange-600 text-[10px]">💡 Öneri var</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-xs text-right whitespace-nowrap">
+                              {txn.amount > 0 ? (
+                                <span className="text-green-600 font-semibold">
+                                  +{txn.amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                                </span>
+                              ) : (
+                                <span className="text-red-600 font-semibold">
+                                  {txn.amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2">
                               <select
-                                className="text-xs border border-gray-300 rounded px-2 py-1"
-                                defaultValue=""
+                                value={currentType}
+                                onChange={(e) => handleTransactionUpdate(txnId, 'type', e.target.value)}
+                                className="text-xs border border-gray-300 rounded px-2 py-1 w-full"
                               >
-                                <option value="">Seçiniz</option>
-                                <option value="income">Gelir</option>
-                                <option value="expense">Gider</option>
-                                <option value="transfer">Transfer</option>
-                                <option value="salary">Maaş</option>
-                                <option value="rent">Kira</option>
-                                <option value="utilities">Fatura</option>
-                                <option value="other">Diğer</option>
+                                <option value="">-- İşlem Türü Seç --</option>
+                                {transactionTypes.map(type => (
+                                  <option key={type.id} value={type.id}>
+                                    {type.icon} {type.name}
+                                  </option>
+                                ))}
                               </select>
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-sm">
-                            {txn.project ? (
-                              <span className="text-blue-600 text-xs">{txn.project}</span>
-                            ) : (
+                            </td>
+                            <td className="px-3 py-2">
+                              {currentType ? (
+                                <select
+                                  value={currentCategoryId}
+                                  onChange={(e) => {
+                                    handleTransactionUpdate(txnId, 'categoryId', e.target.value);
+                                    handleTransactionUpdate(txnId, 'subCategoryId', '');
+                                  }}
+                                  className="text-xs border border-gray-300 rounded px-2 py-1 w-full"
+                                >
+                                  <option value="">-- Kategori Seç --</option>
+                                  {availableSubTypes.map(sub => (
+                                    <option key={sub.id} value={sub.id}>
+                                      {sub.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <span className="text-xs text-gray-400">Önce tür seçin</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2">
                               <input
                                 type="text"
-                                placeholder="Proje"
-                                className="text-xs border border-gray-300 rounded px-2 py-1 w-24"
+                                placeholder="Alt kategori"
+                                value={currentSubCategoryId}
+                                onChange={(e) => handleTransactionUpdate(txnId, 'subCategoryId', e.target.value)}
+                                className="text-xs border border-gray-300 rounded px-2 py-1 w-full"
                               />
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            {txn.status === 'matched' ? (
-                              <span className="text-green-600 text-xs">✓ Eşleşti</span>
-                            ) : txn.status === 'suggested' ? (
-                              <span className="text-orange-600 text-xs">? Öneri</span>
-                            ) : (
-                              <span className="text-gray-400 text-xs">○ Bekliyor</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="px-3 py-2 text-center">
+                              {txn.autoMatched ? (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  ✓ {Math.round(txn.confidence * 100)}%
+                                </span>
+                              ) : txn.suggestedMatch ? (
+                                <button
+                                  onClick={() => {
+                                    const match = txn.suggestedMatch;
+                                    handleTransactionUpdate(txnId, 'type', match.learned.type);
+                                    handleTransactionUpdate(txnId, 'categoryId', match.learned.categoryId);
+                                    handleTransactionUpdate(txnId, 'subCategoryId', match.learned.subCategoryId);
+                                  }}
+                                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 hover:bg-orange-200"
+                                >
+                                  ? {Math.round(txn.suggestedMatch.confidence * 100)}%
+                                </button>
+                              ) : updated.type ? (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  ✏️ Manuel
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                  ○ Bekliyor
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
