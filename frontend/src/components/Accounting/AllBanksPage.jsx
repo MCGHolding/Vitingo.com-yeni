@@ -1757,15 +1757,53 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       {/* IBAN */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">IBAN *</label>
-                        <input 
-                          type="text" 
-                          value={accountForm.iban}
-                          onChange={(e) => setAccountForm(prev => ({...prev, iban: e.target.value.toUpperCase()}))}
-                          disabled={selectedAccount && !isEditing && !showAccountForm}
-                          placeholder="Örn: TR12 3456 7890 1234 5678 9012 34"
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100"
-                        />
-                        <p className="mt-1 text-xs text-gray-500">IBAN ülke koduna göre otomatik doğrulanır</p>
+                        <div className="relative">
+                          <input 
+                            type="text" 
+                            value={accountForm.iban}
+                            onChange={handleAccountIBANChange}
+                            disabled={selectedAccount && !isEditing && !showAccountForm}
+                            placeholder={accountForm.country ? getIBANPlaceholder(accountForm.country) : "Örn: TR12 3456 7890 1234 5678 9012 34"}
+                            maxLength={accountForm.country && IBAN_SPECS[accountForm.country] ? IBAN_SPECS[accountForm.country].length + Math.floor(IBAN_SPECS[accountForm.country].length / 4) : 42}
+                            className={`w-full px-4 py-2.5 pr-10 border rounded-lg focus:ring-2 outline-none disabled:bg-gray-100 transition-all
+                              ${ibanValidation.touched && accountForm.iban ? 
+                                (ibanValidation.valid ? 
+                                  'border-green-500 focus:border-green-500 focus:ring-green-200' : 
+                                  'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                ) : 
+                                'border-gray-300 focus:border-green-500 focus:ring-green-500'
+                              }`}
+                          />
+                          {/* Validation Icon */}
+                          {ibanValidation.touched && accountForm.iban && (
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              {ibanValidation.valid ? (
+                                <CheckCircle2 className="w-5 h-5 text-green-600" />
+                              ) : (
+                                <XCircle className="w-5 h-5 text-red-600" />
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {/* Validation Message */}
+                        {ibanValidation.touched && accountForm.iban && (
+                          <p className={`mt-1.5 text-xs flex items-center gap-1.5 ${ibanValidation.valid ? 'text-green-600' : 'text-red-600'}`}>
+                            {ibanValidation.valid ? (
+                              <>
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span className="font-medium">{ibanValidation.message}</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-3.5 h-3.5" />
+                                <span className="font-medium">{ibanValidation.message}</span>
+                              </>
+                            )}
+                          </p>
+                        )}
+                        {!ibanValidation.touched && !accountForm.iban && (
+                          <p className="mt-1 text-xs text-gray-500">IBAN 40+ ülke için gerçek zamanlı doğrulanır (MOD-97 kontrolü)</p>
+                        )}
                       </div>
                       
                       {/* Şube Adı */}
