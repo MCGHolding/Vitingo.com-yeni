@@ -1721,7 +1721,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       {accountForm.accountHolder && (
                         <p className="mt-2 text-sm text-green-600 flex items-center">
                           <span className="mr-1">✓</span>
-                          Hesap sahibi otomatik olarak <strong className="mx-1">"{accountForm.accountHolder}"</strong> şeklinde doldurulacaktır
+                          Hesap sahibi otomatik olarak <strong className="mx-1">&quot;{accountForm.accountHolder}&quot;</strong> şeklinde doldurulacaktır
                         </p>
                       )}
                     </div>
