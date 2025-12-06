@@ -223,7 +223,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
 
   // Mevcut bankalardan benzersiz banka isimlerini çıkar ve bankList'e aktar
   useEffect(() => {
-    if (banks.length > 0 && bankList.length === 0) {
+    if (banks.length > 0) {
       const uniqueBanks = [];
       const seenNames = new Set();
       
@@ -232,7 +232,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         if (name && !seenNames.has(name.toLowerCase())) {
           seenNames.add(name.toLowerCase());
           uniqueBanks.push({
-            id: `bank-${Date.now()}-${Math.random()}`,
+            id: account.id || `bank-${Date.now()}-${Math.random()}`,
             name: name,
             country: account.country || 'TR',
             created_at: account.created_at || new Date().toISOString()
@@ -244,7 +244,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         setBankList(uniqueBanks);
       }
     }
-  }, [banks, bankList.length]);
+  }, [banks]);
 
   // Grup şirketlerini yükle
   useEffect(() => {
