@@ -782,7 +782,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
             <h3 className="text-2xl font-bold text-gray-900 mb-4">⚠️ Dikkat!</h3>
             <div className="bg-red-50 p-4 rounded-lg mb-6">
               <p className="text-gray-700 text-base leading-relaxed">
-                <strong>"{bankToDelete?.bank_name}"</strong> bankası kayıtlarımızdan silinecektir.
+                <strong>&quot;{bankToDelete?.bank_name}&quot;</strong> bankası kayıtlarımızdan silinecektir.
                 <br /><br />
                 Bu işlem geri alınamaz. Onaylıyor musunuz?
               </p>
