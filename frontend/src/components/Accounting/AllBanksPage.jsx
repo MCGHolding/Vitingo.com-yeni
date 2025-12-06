@@ -391,8 +391,274 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         </nav>
       </div>
 
-      {/* Tab Content: Banka Bilgileri */}
-      {activeMainTab === 'info' && (
+      {/* Tab Content: Bankalar */}
+      {activeMainTab === 'banks' && (
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Bankalar</h3>
+              <p className="text-sm text-gray-500">Çalıştığınız bankaları ekleyin</p>
+            </div>
+            <button
+              onClick={() => setShowAddBank(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+            >
+              <span className="mr-2">+</span> Yeni Banka
+            </button>
+          </div>
+          
+          {/* Banka Ekleme Formu */}
+          {showAddBank && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+              <h4 className="font-medium text-gray-900 mb-4">Yeni Banka Ekle</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Banka Adı *</label>
+                  <input
+                    type="text"
+                    value={newBank.name}
+                    onChange={(e) => setNewBank({ ...newBank, name: e.target.value })}
+                    placeholder="Örn: Garanti BBVA"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ülke *</label>
+                  <select
+                    value={newBank.country}
+                    onChange={(e) => setNewBank({ ...newBank, country: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    {countries.map(c => (
+                      <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-end space-x-2">
+                  <button
+                    onClick={() => {
+                      if (!newBank.name) {
+                        alert('Banka adı gerekli');
+                        return;
+                      }
+                      const bank = {
+                        id: `bank-${Date.now()}-${Math.random()}`,
+                        name: newBank.name,
+                        country: newBank.country,
+                        created_at: new Date().toISOString()
+                      };
+                      setBankList(prev => [...prev, bank]);
+                      setNewBank({ name: '', country: 'TR' });
+                      setShowAddBank(false);
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Kaydet
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAddBank(false);
+                      setNewBank({ name: '', country: 'TR' });
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                  >
+                    İptal
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Banka Listesi - Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {bankList.map(bank => {
+              const country = countries.find(c => c.code === bank.country);
+              return (
+                <div
+                  key={bank.id}
+                  className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-blue-300 transition group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">{country?.flag || '🏦'}</span>
+                      <div>
+                        <h4 className="font-medium text-gray-900">{bank.name}</h4>
+                        <p className="text-xs text-gray-500">{country?.name || bank.country}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`"${bank.name}" bankasını silmek istiyor musunuz?`)) {
+                          setBankList(prev => prev.filter(b => b.id !== bank.id));
+                        }
+                      }}
+                      className="p-1 opacity-0 group-hover:opacity-100 hover:bg-red-100 rounded transition text-red-500"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {/* Boş durum veya ekleme kartı */}
+            {bankList.length === 0 && !showAddBank && (
+              <div
+                onClick={() => setShowAddBank(true)}
+                className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
+              >
+                <span className="text-3xl">➕</span>
+                <p className="mt-2 text-sm text-gray-500">İlk bankayı ekle</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Tab Content: Banka Hesapları */}
+      {activeMainTab === 'accounts' && (
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Banka Hesapları</h3>
+              <p className="text-sm text-gray-500">Banka hesap bilgilerinizi yönetin</p>
+            </div>
+          </div>
+          
+          {/* Banka yoksa uyarı */}
+          {bankList.length === 0 ? (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+              <span className="text-3xl">⚠️</span>
+              <p className="mt-2 text-yellow-800 font-medium">Önce "Bankalar" sekmesinden banka eklemelisiniz</p>
+              <button
+                onClick={() => setActiveMainTab('banks')}
+                className="mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+              >
+                Banka Ekle
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Banka Seçimi */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Banka Seçin</label>
+                <div className="flex flex-wrap gap-2">
+                  {bankList.map(bank => {
+                    const country = countries.find(c => c.code === bank.country);
+                    return (
+                      <button
+                        key={bank.id}
+                        onClick={() => setSelectedBankId(bank.id)}
+                        className={`px-4 py-2 rounded-lg border transition flex items-center space-x-2 ${
+                          selectedBankId === bank.id
+                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                        }`}
+                      >
+                        <span>{country?.flag || '🏦'}</span>
+                        <span>{bank.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Seçili Banka Hesapları */}
+              {selectedBankId && (
+                <div>
+                  {/* Hesap listesi - mevcut banks array'inden bu bankaya ait olanlar */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {banks
+                      .filter(account => {
+                        const selectedBank = bankList.find(b => b.id === selectedBankId);
+                        return selectedBank && account.bank_name?.toLowerCase().includes(selectedBank.name.toLowerCase());
+                      })
+                      .map(account => (
+                        <div key={account.id} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center space-x-2">
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
+                                {account.currency || 'TRY'}
+                              </span>
+                              {account.branch_name && (
+                                <span className="text-sm text-gray-500">{account.branch_name}</span>
+                              )}
+                            </div>
+                            <div className="flex space-x-1">
+                              <button 
+                                onClick={() => handleEdit(account)}
+                                className="p-1 hover:bg-gray-100 rounded"
+                              >
+                                ✏️
+                              </button>
+                              <button 
+                                onClick={() => handleDelete(account)}
+                                className="p-1 hover:bg-red-100 rounded text-red-500"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2 text-sm">
+                            {account.iban && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">IBAN</span>
+                                <span className="font-mono text-gray-900">{account.iban}</span>
+                              </div>
+                            )}
+                            {account.swift_code && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">SWIFT</span>
+                                <span className="font-mono text-gray-900">{account.swift_code}</span>
+                              </div>
+                            )}
+                            {account.account_number && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Hesap No</span>
+                                <span className="font-mono text-gray-900">{account.account_number}</span>
+                              </div>
+                            )}
+                            {account.account_holder && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Hesap Sahibi</span>
+                                <span className="text-gray-900">{account.account_holder}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    
+                    {/* Yeni hesap ekle kartı */}
+                    <div
+                      onClick={() => {
+                        alert('Yeni hesap ekleme özelliği yakında eklenecek');
+                      }}
+                      className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition flex flex-col items-center justify-center min-h-[150px]"
+                    >
+                      <span className="text-3xl">➕</span>
+                      <p className="mt-2 text-sm text-gray-500">Yeni Hesap Ekle</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Banka seçilmemişse */}
+              {!selectedBankId && (
+                <div className="bg-gray-50 rounded-xl p-8 text-center">
+                  <span className="text-4xl">👆</span>
+                  <p className="mt-2 text-gray-600">Hesapları görmek için yukarıdan bir banka seçin</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* OLD Tab Content (to be removed) */}
+      {activeMainTab === 'old_info' && (
         <>
           {/* Filters */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
