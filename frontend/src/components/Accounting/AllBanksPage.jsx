@@ -323,10 +323,21 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
-  const viewStatement = (statement) => {
-    if (statement.file) {
-      const url = URL.createObjectURL(statement.file);
-      window.open(url, '_blank');
+  const viewStatement = async (statement) => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/banks/${statement.bankId}/statements/${statement.id}`);
+      
+      if (response.ok) {
+        const fullStatement = await response.json();
+        setSelectedStatement(fullStatement);
+        setShowTransactionsModal(true);
+      } else {
+        alert('Ekstre detayları yüklenemedi');
+      }
+    } catch (error) {
+      console.error('Error loading statement:', error);
+      alert('Hata: ' + error.message);
     }
   };
 
