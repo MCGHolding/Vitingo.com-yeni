@@ -358,30 +358,35 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
           file: file,
           
           // Tarih bilgileri
-          periodStart: result.periodStart,
-          periodEnd: result.periodEnd,
+          periodStart: result.headerInfo?.periodStart,
+          periodEnd: result.headerInfo?.periodEnd,
+          startDate: result.headerInfo?.periodStart,
+          endDate: result.headerInfo?.periodEnd,
           
           // Bakiye bilgileri
-          currency: result.currency,
-          openingBalance: result.openingBalance,
-          closingBalance: result.closingBalance,
-          netChange: result.netChange,
+          currency: result.headerInfo?.currency,
+          openingBalance: result.headerInfo?.openingBalance,
+          closingBalance: result.headerInfo?.closingBalance,
+          netChange: result.statistics?.netChange,
           
           // Toplam bilgiler
-          totalIncoming: result.totalIncoming,
-          totalOutgoing: result.totalOutgoing,
+          totalIncoming: result.statistics?.totalIncoming,
+          totalOutgoing: result.statistics?.totalOutgoing,
+          totalCredits: result.statistics?.totalIncoming,
+          totalDebits: result.statistics?.totalOutgoing,
           
           // İşlem istatistikleri
-          transactionCount: result.transactionCount,
-          categorizedCount: result.categorizedCount,
-          pendingCount: result.pendingCount,
+          transactionCount: result.statistics?.transactionCount,
+          totalTransactions: result.statistics?.transactionCount,
+          categorizedCount: result.statistics?.categorizedCount,
+          pendingCount: result.statistics?.pendingCount,
           
           // Detaylar
           transactions: result.transactions || [],
-          statistics: {
-            transactionCount: result.transactionCount,
-            categorizedCount: result.categorizedCount,
-            pendingCount: result.pendingCount
+          statistics: result.statistics || {
+            transactionCount: 0,
+            categorizedCount: 0,
+            pendingCount: 0
           }
         };
         
