@@ -8709,9 +8709,9 @@ async def get_collection_new(collection_id: str):
         logger.error(f"Error getting collection: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.delete("/collections/{collection_id}")
-async def delete_collection(collection_id: str):
-    """Tahsilat sil (iptal et)"""
+@api_router.delete("/collections-new/{collection_id}")
+async def delete_collection_new(collection_id: str):
+    """Tahsilat sil (iptal et) (Yeni Sistem)"""
     try:
         # Önce tahsilatı bul
         collection = await db.collections.find_one({
