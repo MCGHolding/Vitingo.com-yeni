@@ -21,6 +21,9 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [selectedBankForStatement, setSelectedBankForStatement] = useState(null);
   const [statements, setStatements] = useState([]);
   
+  // Currency tabs state - her banka için aktif para birimi
+  const [activeCurrency, setActiveCurrency] = useState({});
+  
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [bankToDelete, setBankToDelete] = useState(null);
