@@ -443,7 +443,8 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         };
         
         setStatements(prev => [...prev, newStatement]);
-        alert(`✅ Ekstre parse edildi!\n📊 ${result.transactionCount || 0} işlem bulundu\n✓ ${result.categorizedCount || 0} işlem otomatik eşleşti`);
+        console.log(`✅ Ekstre parse edildi: ${result.statistics?.transactionCount || 0} işlem bulundu`);
+        // Alert kaldırıldı - sessiz yükleme
       } else {
         const error = await response.json();
         console.error('❌ API Error:', error);
