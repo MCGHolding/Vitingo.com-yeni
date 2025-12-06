@@ -766,9 +766,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                     
                     {/* Yeni hesap ekle kartı */}
                     <div
-                      onClick={() => {
-                        alert('Yeni hesap ekleme özelliği yakında eklenecek');
-                      }}
+                      onClick={() => setShowAddAccount(true)}
                       className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition flex flex-col items-center justify-center min-h-[150px]"
                     >
                       <span className="text-3xl">➕</span>
