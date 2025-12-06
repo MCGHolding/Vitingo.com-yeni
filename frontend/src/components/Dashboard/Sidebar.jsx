@@ -373,6 +373,7 @@ export default function Sidebar({
   onNewContract,
   onSalesReports,
   onCustomerReports,
+  onHandoverReceipts,
   onHandovers,
   onSurveys,
   // Accounting handlers
