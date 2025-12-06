@@ -148,7 +148,6 @@ import {
 
 // === YENİ TENANT-BASED ROUTING ===
 import TenantLayout from './layouts/TenantLayout';
-import { DashboardPage } from './pages/dashboard';
 import { 
   CustomerListPage, 
   CustomerDetailPage, 
