@@ -207,12 +207,42 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
+  // Handle IBAN input change with real-time validation
+  const handleAccountIBANChange = (e) => {
+    const rawValue = e.target.value;
+    const formatted = formatIBANUtil(rawValue);
+    
+    // Update form state
+    setAccountForm(prev => ({ ...prev, iban: formatted }));
+    
+    // Mark as touched
+    setIbanValidation(prev => ({ ...prev, touched: true }));
+    
+    // Run validation
+    const validation = validateIBANUtil(formatted, accountForm.country);
+    setIbanValidation({
+      valid: validation.valid,
+      error: validation.error,
+      message: validation.message,
+      touched: true,
+      countryCode: validation.countryCode,
+      countryName: validation.countryName,
+      formatted: validation.formatted
+    });
+  };
+
   // Save bank account
   const handleSaveAccount = async () => {
     console.log('🔵 handleSaveAccount called');
     console.log('📋 accountForm:', accountForm);
     console.log('🔍 selectedAccount:', selectedAccount);
     console.log('🆕 showAccountForm:', showAccountForm);
+    
+    // Validate IBAN before saving
+    if (accountForm.iban && !ibanValidation.valid && ibanValidation.touched) {
+      alert('❌ Lütfen geçerli bir IBAN girin');
+      return;
+    }
     
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
