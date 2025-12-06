@@ -1376,7 +1376,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       id="statement-upload"
                       accept=".pdf"
                       className="hidden"
-                      onChange={handleStatementFileSelect}
+                      onChange={(e) => handleStatementUpload(e, selectedBankForStatement)}
                     />
                     <div className="text-5xl mb-3">📄</div>
                     <p className="font-medium text-gray-900">PDF Ekstre Yükle</p>
