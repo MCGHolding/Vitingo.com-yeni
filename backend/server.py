@@ -35,7 +35,7 @@ import re
 import shutil
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
+from reportlab.lib.units import inch, mm, cm
 import base64
 import asyncio
 from emergentintegrations.llm.openai.image_generation import OpenAIImageGeneration
