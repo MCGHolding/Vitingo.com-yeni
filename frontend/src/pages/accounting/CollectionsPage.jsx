@@ -21,7 +21,7 @@ const CollectionsPage = () => {
   const loadCollections = async () => {
     setLoading(true);
     try {
-      let url = `${backendUrl}/api/collections`;
+      let url = `${backendUrl}/api/collections-new`;
       const params = new URLSearchParams();
       if (filters.startDate) params.append('start_date', filters.startDate);
       if (filters.endDate) params.append('end_date', filters.endDate);
@@ -45,7 +45,7 @@ const CollectionsPage = () => {
     if (!window.confirm('Bu tahsilatı iptal etmek istediğinize emin misiniz?')) return;
     
     try {
-      const response = await fetch(`${backendUrl}/api/collections/${id}`, {
+      const response = await fetch(`${backendUrl}/api/collections-new/${id}`, {
         method: 'DELETE'
       });
       if (response.ok) {
