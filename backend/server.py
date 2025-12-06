@@ -8714,7 +8714,7 @@ async def delete_collection_new(collection_id: str):
     """Tahsilat sil (iptal et) (Yeni Sistem)"""
     try:
         # Önce tahsilatı bul
-        collection = await db.collections.find_one({
+        collection = await db.collections_new.find_one({
             "$or": [
                 {"id": collection_id},
                 {"_id": ObjectId(collection_id) if len(collection_id) == 24 else None}
@@ -8725,7 +8725,7 @@ async def delete_collection_new(collection_id: str):
             raise HTTPException(status_code=404, detail="Tahsilat bulunamadı")
         
         # Soft delete
-        await db.collections.update_one(
+        await db.collections_new.update_one(
             {"$or": [{"id": collection_id}, {"_id": collection.get("_id")}]},
             {"$set": {"status": "deleted", "deleted_at": datetime.now(timezone.utc).isoformat()}}
         )
