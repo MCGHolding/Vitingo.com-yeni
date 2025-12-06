@@ -14,15 +14,19 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [groupCompanies, setGroupCompanies] = useState([]);
   
   // Tab state
-  const [activeMainTab, setActiveMainTab] = useState('info'); // 'info' | 'accounts' | 'statements'
-  const [activeBank, setActiveBank] = useState(null); // Selected bank ID for accounts tab
+  const [activeMainTab, setActiveMainTab] = useState('banks'); // 'banks' | 'accounts' | 'statements'
+  
+  // Bankalar (sadece ad + ülke) - master data
+  const [bankList, setBankList] = useState([]);
+  const [showAddBank, setShowAddBank] = useState(false);
+  const [newBank, setNewBank] = useState({ name: '', country: 'TR' });
+  
+  // Banka Hesapları
+  const [selectedBankId, setSelectedBankId] = useState('');
   
   // Statements state
   const [selectedBankForStatement, setSelectedBankForStatement] = useState(null);
   const [statements, setStatements] = useState([]);
-  
-  // Currency tabs state - her banka için aktif para birimi
-  const [activeCurrency, setActiveCurrency] = useState({});
   
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
