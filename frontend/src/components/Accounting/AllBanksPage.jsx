@@ -438,7 +438,9 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
           {/* Banka Ekleme Formu */}
           {showAddBank && (
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-              <h4 className="font-medium text-gray-900 mb-4">Yeni Banka Ekle</h4>
+              <h4 className="font-medium text-gray-900 mb-4">
+                {editingBank ? 'Banka Düzenle' : 'Yeni Banka Ekle'}
+              </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Banka Adı *</label>
@@ -469,24 +471,36 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                         alert('Banka adı gerekli');
                         return;
                       }
-                      const bank = {
-                        id: `bank-${Date.now()}-${Math.random()}`,
-                        name: newBank.name,
-                        country: newBank.country,
-                        created_at: new Date().toISOString()
-                      };
-                      setBankList(prev => [...prev, bank]);
+                      
+                      if (editingBank) {
+                        setBankList(prev => prev.map(b => 
+                          b.id === editingBank.id 
+                            ? { ...b, name: newBank.name, country: newBank.country }
+                            : b
+                        ));
+                      } else {
+                        const bank = {
+                          id: `bank-${Date.now()}-${Math.random()}`,
+                          name: newBank.name,
+                          country: newBank.country,
+                          created_at: new Date().toISOString()
+                        };
+                        setBankList(prev => [...prev, bank]);
+                      }
+                      
                       setNewBank({ name: '', country: 'TR' });
                       setShowAddBank(false);
+                      setEditingBank(null);
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
-                    Kaydet
+                    {editingBank ? 'Güncelle' : 'Kaydet'}
                   </button>
                   <button
                     onClick={() => {
                       setShowAddBank(false);
                       setNewBank({ name: '', country: 'TR' });
+                      setEditingBank(null);
                     }}
                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                   >
