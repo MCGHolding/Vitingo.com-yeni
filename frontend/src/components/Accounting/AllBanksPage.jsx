@@ -45,9 +45,17 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   
   // Countries list
   const countries = [
-    { code: 'Turkey', name: 'Türkiye', flag: '🇹🇷' },
-    { code: 'UAE', name: 'BAE', flag: '🇦🇪' },
-    { code: 'USA', name: 'ABD', flag: '🇺🇸' }
+    { code: 'TR', name: 'Türkiye', flag: '🇹🇷' },
+    { code: 'US', name: 'Amerika', flag: '🇺🇸' },
+    { code: 'GB', name: 'İngiltere', flag: '🇬🇧' },
+    { code: 'DE', name: 'Almanya', flag: '🇩🇪' },
+    { code: 'AE', name: 'BAE', flag: '🇦🇪' },
+    { code: 'SA', name: 'Suudi Arabistan', flag: '🇸🇦' },
+    { code: 'FR', name: 'Fransa', flag: '🇫🇷' },
+    { code: 'IT', name: 'İtalya', flag: '🇮🇹' },
+    { code: 'ES', name: 'İspanya', flag: '🇪🇸' },
+    { code: 'NL', name: 'Hollanda', flag: '🇳🇱' },
+    { code: 'CH', name: 'İsviçre', flag: '🇨🇭' }
   ];
 
   // Load group companies
