@@ -14,8 +14,12 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [groupCompanies, setGroupCompanies] = useState([]);
   
   // Tab state
-  const [activeMainTab, setActiveMainTab] = useState('info'); // 'info' | 'accounts'
+  const [activeMainTab, setActiveMainTab] = useState('info'); // 'info' | 'accounts' | 'statements'
   const [activeBank, setActiveBank] = useState(null); // Selected bank ID for accounts tab
+  
+  // Statements state
+  const [selectedBankForStatement, setSelectedBankForStatement] = useState(null);
+  const [statements, setStatements] = useState([]);
   
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
