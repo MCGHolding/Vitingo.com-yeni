@@ -103,6 +103,9 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [emailBanks, setEmailBanks] = useState([]);
   const [emailMode, setEmailMode] = useState('single'); // 'single' or 'country'
   
+  // Ref for file input (React pattern instead of document.getElementById)
+  const statementFileInputRef = useRef(null);
+  
   // Countries list
   const countries = [
     { code: 'TR', name: 'Türkiye', flag: '🇹🇷' },
