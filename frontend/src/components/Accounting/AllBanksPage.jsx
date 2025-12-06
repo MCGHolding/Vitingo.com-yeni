@@ -336,16 +336,6 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
             🏦 Banka Bilgileri
           </button>
           <button 
-            onClick={() => setActiveMainTab('accounts')}
-            className={`px-4 py-2 border-b-2 font-medium transition-colors ${
-              activeMainTab === 'accounts' 
-                ? 'border-green-500 text-green-600' 
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            💳 Banka Hesapları
-          </button>
-          <button 
             onClick={() => setActiveMainTab('statements')}
             className={`px-4 py-2 border-b-2 font-medium transition-colors ${
               activeMainTab === 'statements' 
