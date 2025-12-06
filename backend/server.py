@@ -8831,10 +8831,10 @@ async def create_payment(payment: PaymentCreate):
         payment_data["updated_at"] = datetime.now(timezone.utc).isoformat()
         
         if not payment_data.get("receiptNo"):
-            count = await db.payments.count_documents({})
+            count = await db.payments_new.count_documents({})
             payment_data["receiptNo"] = f"ODE-{datetime.now().year}-{str(count + 1).zfill(5)}"
         
-        await db.payments.insert_one(payment_data)
+        await db.payments_new.insert_one(payment_data)
         
         logger.info(f"Payment created: {payment_data['receiptNo']}")
         return {"success": True, "id": payment_data["id"], "receiptNo": payment_data["receiptNo"]}
