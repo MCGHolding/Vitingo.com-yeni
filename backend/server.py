@@ -17198,6 +17198,43 @@ async def check_due_invoices():
 
 # ==================== END BİLDİRİM SİSTEMİ API ====================
 
+# ===================== MAIN APP SETUP =====================
+
+# Include the API router in the main app
+app.include_router(api_router)
+
+# Contracts endpoints are above, before app.include_router
+
+# Placeholder - contracts moved above
+
+# Include lead routes
+app.include_router(leads_router.router)
+
+# Include project routes
+app.include_router(projects_router.router)
+
+# Include payment profiles router
+app.include_router(payment_profiles_router.router)
+
+# Include email router
+app.include_router(email_routes.router)
+email_routes.set_database(db)
+
+# Include proposal router
+app.include_router(proposal_router)
+
+# Include company group router
+app.include_router(company_group_router)
+
+# Include advances router
+app.include_router(advances_router.router)
+
+# Include credit cards router
+app.include_router(credit_cards_router.router)
+
+# Include purchase invoices router
+app.include_router(purchase_invoices_router.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
