@@ -1604,6 +1604,12 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       currency: 'TRY',
                       accountType: 'current'
                     });
+                    setIbanValidation({
+                      valid: false,
+                      error: null,
+                      message: '',
+                      touched: false
+                    });
                     setShowAccountForm(true);
                     setIsEditing(false);
                   }}
