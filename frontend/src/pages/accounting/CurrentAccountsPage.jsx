@@ -346,6 +346,25 @@ const CurrentAccountsPage = () => {
           itemsPerPage={itemsPerPage}
           totalItems={filteredAccounts.length}
           onPageChange={setCurrentPage}
+          onWhatsAppClick={(account) => {
+            setWhatsAppRecipient({
+              id: account.id,
+              name: account.name,
+              companyName: account.name,
+              phone: account.phone,
+              type: account.type,
+              totalDebt: account.receivables,
+              overdueAmount: account.overdueAmount || 0
+            });
+            setShowWhatsApp(true);
+          }}
+        />
+        
+        {/* WhatsApp Modal */}
+        <WhatsAppModal
+          isOpen={showWhatsApp}
+          onClose={() => setShowWhatsApp(false)}
+          recipient={whatsAppRecipient}
         />
         
       </div>
