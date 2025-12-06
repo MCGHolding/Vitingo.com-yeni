@@ -359,14 +359,24 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       <div className="border-b mb-6">
         <nav className="flex gap-4">
           <button 
-            onClick={() => setActiveMainTab('info')}
+            onClick={() => setActiveMainTab('banks')}
             className={`px-4 py-2 border-b-2 font-medium transition-colors ${
-              activeMainTab === 'info' 
+              activeMainTab === 'banks' 
                 ? 'border-green-500 text-green-600' 
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            🏦 Banka Bilgileri
+            🏦 Bankalar
+          </button>
+          <button 
+            onClick={() => setActiveMainTab('accounts')}
+            className={`px-4 py-2 border-b-2 font-medium transition-colors ${
+              activeMainTab === 'accounts' 
+                ? 'border-green-500 text-green-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            💳 Banka Hesapları
           </button>
           <button 
             onClick={() => setActiveMainTab('statements')}
