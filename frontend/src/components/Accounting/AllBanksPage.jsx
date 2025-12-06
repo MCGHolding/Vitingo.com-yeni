@@ -28,25 +28,44 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   // Yeni Hesap Ekleme
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
+  const [companies, setCompanies] = useState([]);
   const [newAccount, setNewAccount] = useState({
     currency: 'TRY',
     iban: '',
     swift: '',
     accountNo: '',
     branchName: '',
-    accountHolder: '',
+    companyId: '',
+    companyName: '',
+    address: '',
   });
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   
-  // Para birimleri
+  // Para birimleri ve ülke IBAN formatları
   const currencies = [
-    { code: 'TRY', name: 'Türk Lirası', flag: '🇹🇷' },
-    { code: 'USD', name: 'Amerikan Doları', flag: '🇺🇸' },
-    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
-    { code: 'GBP', name: 'İngiliz Sterlini', flag: '🇬🇧' },
-    { code: 'AED', name: 'BAE Dirhemi', flag: '🇦🇪' },
-    { code: 'SAR', name: 'Suudi Riyali', flag: '🇸🇦' },
-    { code: 'CHF', name: 'İsviçre Frangı', flag: '🇨🇭' },
+    { code: 'TRY', name: 'Türk Lirası', flag: '🇹🇷', country: 'TR', ibanLength: 26 },
+    { code: 'USD', name: 'Amerikan Doları', flag: '🇺🇸', country: 'US', ibanLength: 0 },
+    { code: 'EUR', name: 'Euro', flag: '🇪🇺', country: 'DE', ibanLength: 22 },
+    { code: 'GBP', name: 'İngiliz Sterlini', flag: '🇬🇧', country: 'GB', ibanLength: 22 },
+    { code: 'AED', name: 'BAE Dirhemi', flag: '🇦🇪', country: 'AE', ibanLength: 23 },
+    { code: 'SAR', name: 'Suudi Riyali', flag: '🇸🇦', country: 'SA', ibanLength: 24 },
+    { code: 'CHF', name: 'İsviçre Frangı', flag: '🇨🇭', country: 'CH', ibanLength: 21 },
   ];
+  
+  // Türk bankaları SWIFT kodları
+  const turkishBankSwiftCodes = {
+    '0001': 'TCZBTR2A', '0004': 'TRHBTR2A', '0010': 'TELOTR2A', '0012': 'TVBATR2A',
+    '0015': 'VAKFTRIS', '0017': 'KLNPTRIS', '0032': 'BTVOTR2A', '0046': 'AKBKTRIS',
+    '0059': 'SEBATRIS', '0062': 'GARBTRIS', '0064': 'ISABTR2A', '0067': 'YAABORIS',
+    '0091': 'AABORIS', '0092': 'CIABORIS', '0096': 'TGBATRIS', '0099': 'INGBTRIS',
+    '0100': 'ADYBTRIS', '0103': 'FABORIS', '0108': 'TRLBTRIS', '0109': 'ICBKTRIS',
+    '0111': 'FINBTRIS', '0115': 'DNZBTRIS', '0121': 'OABORIS', '0123': 'TSFBTRIS',
+    '0124': 'ABORTR2A', '0125': 'BABORTR2A', '0134': 'DENITRIS', '0135': 'AFKBTRIS',
+    '0137': 'FABORIS', '0142': 'ICBKTRIS', '0143': 'AKTFTRIS', '0146': 'EABORIS',
+    '0148': 'KLABORIS', '0203': 'ALBTTR2A', '0205': 'KTEFTRIS', '0206': 'TGBATRIS',
+    '0210': 'ZABORIS', '0215': 'VKFTTR2A',
+  };
   
   // Statements state
   const [selectedBankForStatement, setSelectedBankForStatement] = useState(null);
