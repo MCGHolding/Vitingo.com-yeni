@@ -8619,7 +8619,7 @@ async def get_collections_new(
             else:
                 query["date"] = {"$lte": end_date}
         
-        collections = await db.collections.find(query, {"_id": 0}).sort("date", -1).to_list(None)
+        collections = await db.collections_new.find(query, {"_id": 0}).sort("date", -1).to_list(None)
         
         # ID'leri string'e çevir
         for c in collections:
