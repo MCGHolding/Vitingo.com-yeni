@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Dashboard from '../../components/Accounting/CurrentAccounts/Dashboard';
 import Filters from '../../components/Accounting/CurrentAccounts/Filters';
 import AccountsTable from '../../components/Accounting/CurrentAccounts/AccountsTable';
+import WhatsAppModal from '../../components/WhatsApp/WhatsAppModal';
 
 const CurrentAccountsPage = () => {
   const navigate = useNavigate();
