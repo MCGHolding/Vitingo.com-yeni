@@ -1870,9 +1870,11 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                   Kapat
                 </button>
                 <button
-                  className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+                  onClick={handleSaveTransactions}
+                  className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium flex items-center"
                 >
-                  💾 Değişiklikleri Kaydet
+                  <span className="mr-2">💾</span>
+                  Kaydet ve Öğren ({Object.keys(updatedTransactions).length})
                 </button>
               </div>
             </div>
