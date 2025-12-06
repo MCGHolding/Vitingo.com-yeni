@@ -1534,7 +1534,11 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                         </span>
                       </div>
                     </div>
-                  ))}
+                        ))}
+                      </div>
+                    </div>
+                  ));
+                })()}
               </div>
               
               {/* Yeni Hesap Butonu */}
