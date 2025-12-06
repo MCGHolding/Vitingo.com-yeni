@@ -70,6 +70,8 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   // Statements state
   const [selectedBankForStatement, setSelectedBankForStatement] = useState(null);
   const [statements, setStatements] = useState([]);
+  const [selectedStatement, setSelectedStatement] = useState(null);
+  const [showTransactionsModal, setShowTransactionsModal] = useState(false);
   
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
