@@ -872,6 +872,20 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Tahsilatlar') {
+      if (onCollections) {
+        onCollections();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Ödemeler') {
+      if (onPayments) {
+        onPayments();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Tahsilat Makbuzu') {
       if (onCollectionReceipt) {
         onCollectionReceipt();
