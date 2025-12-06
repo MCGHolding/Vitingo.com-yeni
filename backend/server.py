@@ -8847,7 +8847,7 @@ async def create_payment(payment: PaymentCreate):
 async def get_payment(payment_id: str):
     """Tek ödeme detayı"""
     try:
-        payment = await db.payments.find_one({
+        payment = await db.payments_new.find_one({
             "$or": [
                 {"id": payment_id},
                 {"_id": ObjectId(payment_id) if len(payment_id) == 24 else None}
