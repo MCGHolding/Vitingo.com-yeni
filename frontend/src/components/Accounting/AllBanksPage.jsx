@@ -430,52 +430,179 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
 
                 {/* Banks in this company */}
                 <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {companyBanks.map((bank) => (
-                    <div key={bank.id} className="border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-300 transition-all duration-200">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
+                  {companyBanks.map((bank) => {
+                    // Her banka için aktif dövizi al veya varsayılan olarak 'TRY' kullan
+                    const bankActiveCurrency = activeCurrency[bank.id] || 'TRY';
+                    
+                    // Bankanın sahip olduğu dövizleri belirle
+                    const currencies = [];
+                    if (bank.iban || bank.account_number) currencies.push('TRY');
+                    if (bank.iban_usd || bank.us_account_number) currencies.push('USD');
+                    if (bank.iban_eur) currencies.push('EUR');
+                    
+                    // Döviz tabler için içerik oluştur
+                    const renderCurrencyContent = (currency) => {
+                      if (bank.country === 'Turkey' || bank.country === 'UAE') {
+                        if (currency === 'TRY') {
+                          return (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
+                              {bank.swift_code && (
+                                <div><span className="font-medium">SWIFT:</span> {bank.swift_code}</div>
+                              )}
+                              {bank.iban && (
+                                <div><span className="font-medium">IBAN:</span> {bank.iban}</div>
+                              )}
+                              {bank.branch_name && (
+                                <div><span className="font-medium">Şube:</span> {bank.branch_name}</div>
+                              )}
+                              {bank.branch_code && (
+                                <div><span className="font-medium">Şube Kodu:</span> {bank.branch_code}</div>
+                              )}
+                              {bank.account_holder && (
+                                <div><span className="font-medium">Hesap Sahibi:</span> {bank.account_holder}</div>
+                              )}
+                              {bank.account_number && (
+                                <div><span className="font-medium">Hesap No:</span> {bank.account_number}</div>
+                              )}
+                            </div>
+                          );
+                        } else if (currency === 'USD') {
+                          return (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
+                              {bank.swift_code && (
+                                <div><span className="font-medium">SWIFT:</span> {bank.swift_code}</div>
+                              )}
+                              {bank.iban_usd && (
+                                <div><span className="font-medium">IBAN (USD):</span> {bank.iban_usd}</div>
+                              )}
+                              {bank.branch_name && (
+                                <div><span className="font-medium">Şube:</span> {bank.branch_name}</div>
+                              )}
+                              {bank.branch_code && (
+                                <div><span className="font-medium">Şube Kodu:</span> {bank.branch_code}</div>
+                              )}
+                              {bank.account_holder && (
+                                <div><span className="font-medium">Hesap Sahibi:</span> {bank.account_holder}</div>
+                              )}
+                            </div>
+                          );
+                        } else if (currency === 'EUR') {
+                          return (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
+                              {bank.swift_code && (
+                                <div><span className="font-medium">SWIFT:</span> {bank.swift_code}</div>
+                              )}
+                              {bank.iban_eur && (
+                                <div><span className="font-medium">IBAN (EUR):</span> {bank.iban_eur}</div>
+                              )}
+                              {bank.branch_name && (
+                                <div><span className="font-medium">Şube:</span> {bank.branch_name}</div>
+                              )}
+                              {bank.branch_code && (
+                                <div><span className="font-medium">Şube Kodu:</span> {bank.branch_code}</div>
+                              )}
+                              {bank.account_holder && (
+                                <div><span className="font-medium">Hesap Sahibi:</span> {bank.account_holder}</div>
+                              )}
+                            </div>
+                          );
+                        }
+                      } else if (bank.country === 'USA') {
+                        return (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
+                            {bank.routing_number && (
+                              <div><span className="font-medium">Routing Number:</span> {bank.routing_number}</div>
+                            )}
+                            {bank.us_account_number && (
+                              <div><span className="font-medium">Account Number:</span> {bank.us_account_number}</div>
+                            )}
+                            {bank.bank_address && (
+                              <div><span className="font-medium">Banka Adresi:</span> {bank.bank_address}</div>
+                            )}
+                            {bank.recipient_address && (
+                              <div><span className="font-medium">Alıcı Adresi:</span> {bank.recipient_address}</div>
+                            )}
+                            {bank.recipient_name && (
+                              <div><span className="font-medium">Alıcı İsmi:</span> {bank.recipient_name}</div>
+                            )}
+                            {bank.recipient_zip_code && (
+                              <div><span className="font-medium">Zip Code:</span> {bank.recipient_zip_code}</div>
+                            )}
+                          </div>
+                        );
+                      }
+                      return null;
+                    };
+                    
+                    return (
+                      <div key={bank.id} className="border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-300 transition-all duration-200">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-3">
                             <Building2 className="h-5 w-5 text-blue-600" />
                             <h3 className="text-lg font-bold text-gray-900">{bank.bank_name}</h3>
                           </div>
-                          
-                          {renderBankDetails(bank)}
-                          
-                          <div className="mt-3 text-xs text-gray-400">
-                            Ekleme: {new Date(bank.created_at).toLocaleDateString('tr-TR')}
+
+                          {/* Action Buttons */}
+                          <div className="flex space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleShareSingle(bank)}
+                              className="flex items-center space-x-1 text-green-600 hover:text-green-700 border-green-200 hover:border-green-300"
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(bank)}
+                              className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 border-blue-200 hover:border-blue-300"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete(bank)}
+                              className="flex items-center space-x-1 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex space-x-2 ml-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleShareSingle(bank)}
-                            className="flex items-center space-x-1 text-green-600 hover:text-green-700 border-green-200 hover:border-green-300"
-                          >
-                            <Share2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(bank)}
-                            className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 border-blue-200 hover:border-blue-300"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDelete(bank)}
-                            className="flex items-center space-x-1 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                        {/* Döviz Tabları - Sadece birden fazla döviz varsa göster */}
+                        {currencies.length > 1 && (
+                          <div className="border-b mb-4">
+                            <div className="flex gap-2">
+                              {currencies.map(currency => (
+                                <button
+                                  key={currency}
+                                  onClick={() => setActiveCurrency(prev => ({ ...prev, [bank.id]: currency }))}
+                                  className={`px-3 py-1.5 text-sm font-medium border-b-2 transition-colors ${
+                                    bankActiveCurrency === currency
+                                      ? 'border-blue-500 text-blue-600'
+                                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                                  }`}
+                                >
+                                  {currency === 'TRY' ? '₺ TRY' : currency === 'USD' ? '$ USD' : '€ EUR'}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Döviz İçeriği */}
+                        <div>
+                          {renderCurrencyContent(bankActiveCurrency)}
+                        </div>
+                        
+                        <div className="mt-3 text-xs text-gray-400">
+                          Ekleme: {new Date(bank.created_at).toLocaleDateString('tr-TR')}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             );
