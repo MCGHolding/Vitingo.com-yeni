@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://crm-dashboard-114.preview.emergentagent.com"
+BACKEND_URL = "https://vitingo-banking.preview.emergentagent.com"
 
 def test_customer_can_delete_check(customer_id):
     """Test checking if a customer can be deleted (no related records)"""

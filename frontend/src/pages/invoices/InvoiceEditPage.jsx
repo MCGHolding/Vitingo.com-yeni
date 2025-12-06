@@ -12,7 +12,7 @@ const InvoiceEditPage = () => {
 
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://crm-dashboard-114.preview.emergentagent.com';
+                    'https://vitingo-banking.preview.emergentagent.com';
 
   useEffect(() => {
     const loadInvoice = async () => {

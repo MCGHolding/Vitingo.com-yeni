@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://crm-dashboard-114.preview.emergentagent.com"
+BACKEND_URL = "https://vitingo-banking.preview.emergentagent.com"
 
 def verify_update_issue():
     """Verify the update issue by checking database state"""
