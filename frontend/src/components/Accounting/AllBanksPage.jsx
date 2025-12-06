@@ -110,6 +110,26 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [showNewUploadModal, setShowNewUploadModal] = useState(false);
   const [selectedBankForUpload, setSelectedBankForUpload] = useState('');
   
+  // New bank accounts tab states
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [showAccountForm, setShowAccountForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [accountSearchTerm, setAccountSearchTerm] = useState('');
+  const [accountForm, setAccountForm] = useState({
+    groupCompany: '',
+    country: '',
+    bankName: '',
+    swiftCode: '',
+    iban: '',
+    branchName: '',
+    branchCode: '',
+    accountHolder: '',
+    accountNumber: '',
+    currency: 'TRY',
+    accountType: 'current'
+  });
+  
   // Countries list
   const countries = [
     { code: 'TR', name: 'Türkiye', flag: '🇹🇷' },
