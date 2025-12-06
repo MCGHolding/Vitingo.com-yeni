@@ -183,6 +183,108 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
+  // Load bank accounts from backend
+  const loadBankAccounts = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/bank-accounts`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setBankAccounts(data.accounts || []);
+      }
+    } catch (error) {
+      console.error('Error loading bank accounts:', error);
+    }
+  };
+
+  // Save bank account
+  const handleSaveAccount = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const data = {
+        ...accountForm,
+        status: 'active'
+      };
+      
+      if (selectedAccount && !showAccountForm) {
+        // Update existing account
+        const response = await fetch(`${backendUrl}/api/bank-accounts/${selectedAccount.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          await loadBankAccounts();
+          setIsEditing(false);
+          setSelectedAccount(null);
+          console.log('✅ Hesap güncellendi');
+        } else {
+          const error = await response.json();
+          alert('❌ Güncelleme hatası: ' + (error.detail || 'Bilinmeyen hata'));
+        }
+      } else {
+        // Create new account
+        const response = await fetch(`${backendUrl}/api/bank-accounts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          await loadBankAccounts();
+          setShowAccountForm(false);
+          setAccountForm({
+            groupCompany: '',
+            country: '',
+            bankName: '',
+            swiftCode: '',
+            iban: '',
+            branchName: '',
+            branchCode: '',
+            accountHolder: '',
+            accountNumber: '',
+            currency: 'TRY',
+            accountType: 'current'
+          });
+          console.log('✅ Hesap oluşturuldu');
+        } else {
+          const error = await response.json();
+          alert('❌ Oluşturma hatası: ' + (error.detail || 'Bilinmeyen hata'));
+        }
+      }
+    } catch (error) {
+      console.error('Error saving account:', error);
+      alert('❌ Hata: ' + error.message);
+    }
+  };
+
+  // Delete bank account
+  const handleDeleteAccount = async (accountId) => {
+    if (!window.confirm('Bu hesabı silmek istediğinize emin misiniz?')) return;
+    
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/bank-accounts/${accountId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        await loadBankAccounts();
+        setSelectedAccount(null);
+        console.log('✅ Hesap silindi');
+      } else {
+        const error = await response.json();
+        alert('❌ Silme hatası: ' + (error.detail || 'Bilinmeyen hata'));
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      alert('❌ Hata: ' + error.message);
+    }
+  };
+
+
   // Load statements from backend
   const loadStatements = async () => {
     try {
