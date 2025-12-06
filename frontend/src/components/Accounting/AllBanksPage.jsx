@@ -321,19 +321,43 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         const result = await response.json();
         
         const newStatement = {
-          id: result.statementId,
+          id: result.statementId || result.id,
           bankId: bankId,
-          filename: file.name,
+          filename: result.fileName || file.name,
           period: new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' }),
           uploadDate: new Date().toLocaleDateString('tr-TR'),
           file: file,
-          parsed: result,
+          
+          // Tarih bilgileri
+          periodStart: result.periodStart,
+          periodEnd: result.periodEnd,
+          
+          // Bakiye bilgileri
+          currency: result.currency,
+          openingBalance: result.openingBalance,
+          closingBalance: result.closingBalance,
+          netChange: result.netChange,
+          
+          // Toplam bilgiler
+          totalIncoming: result.totalIncoming,
+          totalOutgoing: result.totalOutgoing,
+          
+          // İşlem istatistikleri
+          transactionCount: result.transactionCount,
+          categorizedCount: result.categorizedCount,
+          pendingCount: result.pendingCount,
+          
+          // Detaylar
           transactions: result.transactions || [],
-          statistics: result.statistics || {}
+          statistics: {
+            transactionCount: result.transactionCount,
+            categorizedCount: result.categorizedCount,
+            pendingCount: result.pendingCount
+          }
         };
         
         setStatements(prev => [...prev, newStatement]);
-        alert(`✅ Ekstre parse edildi!\n📊 ${result.statistics?.transactionCount || 0} işlem bulundu\n✓ ${result.autoMatchedCount || 0} işlem otomatik eşleşti`);
+        alert(`✅ Ekstre parse edildi!\n📊 ${result.transactionCount || 0} işlem bulundu\n✓ ${result.categorizedCount || 0} işlem otomatik eşleşti`);
       } else {
         const error = await response.json();
         alert('❌ Yükleme hatası: ' + (error.detail || 'Bilinmeyen hata'));
