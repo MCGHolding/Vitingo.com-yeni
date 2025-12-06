@@ -110,6 +110,7 @@ import CollectionsPage from './pages/accounting/CollectionsPage';
 import NewCollectionPage from './pages/accounting/NewCollectionPage';
 import PaymentsPage from './pages/accounting/PaymentsPage';
 import NewPaymentPage from './pages/accounting/NewPaymentPage';
+import DashboardPage from './pages/DashboardPage';
 import CollectionReceiptPage from './components/Accounting/CollectionReceiptPage';
 import CollectionReceiptApprovalPage from './components/Accounting/CollectionReceiptApprovalPage';
 import NewBankForm from './components/Accounting/NewBankForm';
