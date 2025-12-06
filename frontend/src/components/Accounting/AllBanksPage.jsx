@@ -219,7 +219,16 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     setIbanValidation(prev => ({ ...prev, touched: true }));
     
     // Run validation
+    console.log('🔍 IBAN Validation Debug:', {
+      formatted,
+      selectedCountry: accountForm.country,
+      formState: accountForm
+    });
+    
     const validation = validateIBANUtil(formatted, accountForm.country);
+    
+    console.log('📊 Validation Result:', validation);
+    
     setIbanValidation({
       valid: validation.valid,
       error: validation.error,
