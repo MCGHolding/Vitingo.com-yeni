@@ -12,7 +12,8 @@ const AccountsTable = ({
   totalPages,
   itemsPerPage,
   totalItems,
-  onPageChange
+  onPageChange,
+  onWhatsAppClick
 }) => {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
