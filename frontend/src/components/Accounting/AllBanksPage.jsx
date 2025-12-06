@@ -291,6 +291,74 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       }
     }
   };
+
+  const handleSaveBank = async () => {
+    if (!newBank.name) {
+      alert('Banka adı gerekli');
+      return;
+    }
+    
+    const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+    
+    if (editingBank) {
+      // Düzenleme - Backend'e güncelleme isteği
+      try {
+        await fetch(`${backendUrl}/api/banks/${editingBank.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bank_name: newBank.name,
+            country: newBank.country
+          })
+        });
+      } catch (error) {
+        console.error('Update error:', error);
+      }
+      
+      // Local state güncelle
+      setBankList(prev => prev.map(b => 
+        b.id === editingBank.id 
+          ? { ...b, name: newBank.name, country: newBank.country }
+          : b
+      ));
+    } else {
+      // Yeni ekleme - Backend'e kaydet
+      const bankData = {
+        bank_name: newBank.name,
+        country: newBank.country,
+      };
+      
+      let savedBank = null;
+      
+      try {
+        const response = await fetch(`${backendUrl}/api/banks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bankData)
+        });
+        
+        if (response.ok) {
+          savedBank = await response.json();
+        }
+      } catch (error) {
+        console.error('Save error:', error);
+      }
+      
+      // Local state'e ekle
+      const bank = {
+        id: savedBank?.id || `bank-${Date.now()}-${Math.random()}`,
+        name: newBank.name,
+        country: newBank.country,
+        created_at: new Date().toISOString()
+      };
+      setBankList(prev => [...prev, bank]);
+    }
+    
+    // Formu temizle ve kapat
+    setNewBank({ name: '', country: 'TR' });
+    setShowAddBank(false);
+    setEditingBank(null);
+  };
   
   const getCountryInfo = (countryCode) => {
     return countries.find(c => c.code === countryCode) || { name: countryCode, flag: '🏦', code: countryCode };
