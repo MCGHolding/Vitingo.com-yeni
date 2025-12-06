@@ -8928,6 +8928,115 @@ async def get_customer_open_invoices(customer_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== ÖDEMELER (PAYMENTS-NEW) API ====================
+
+@api_router.get("/payments-new")
+async def get_payments_new(
+    supplier_id: str = None,
+    start_date: str = None,
+    end_date: str = None,
+    status: str = None
+):
+    """Ödemeleri listele (Yeni Sistem)"""
+    try:
+        query = {"status": {"$ne": "deleted"}}
+        
+        if supplier_id:
+            query["supplierId"] = supplier_id
+        if status:
+            query["status"] = status
+        if start_date:
+            query["date"] = {"$gte": start_date}
+        if end_date:
+            if "date" in query:
+                query["date"]["$lte"] = end_date
+            else:
+                query["date"] = {"$lte": end_date}
+        
+        payments = await db.payments_new.find(query, {"_id": 0}).sort("date", -1).to_list(None)
+        
+        for p in payments:
+            if not p.get("id"):
+                p["id"] = str(uuid.uuid4())
+        
+        total = sum(p.get("amount", 0) for p in payments)
+        
+        return {
+            "payments": payments,
+            "total": total,
+            "count": len(payments)
+        }
+    except Exception as e:
+        logger.error(f"Error getting payments: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/payments-new")
+async def create_payment_new(payment: PaymentCreate):
+    """Yeni ödeme oluştur (Yeni Sistem)"""
+    try:
+        payment_data = payment.dict()
+        payment_data["id"] = str(uuid.uuid4())
+        payment_data["created_at"] = datetime.now(timezone.utc).isoformat()
+        payment_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        
+        if not payment_data.get("receiptNo"):
+            count = await db.payments_new.count_documents({})
+            payment_data["receiptNo"] = f"ODE-{datetime.now().year}-{str(count + 1).zfill(5)}"
+        
+        await db.payments_new.insert_one(payment_data)
+        
+        logger.info(f"Payment created: {payment_data['receiptNo']}")
+        return {"success": True, "id": payment_data["id"], "receiptNo": payment_data["receiptNo"]}
+        
+    except Exception as e:
+        logger.error(f"Error creating payment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/payments-new/{payment_id}")
+async def get_payment_new(payment_id: str):
+    """Tek ödeme detayı (Yeni Sistem)"""
+    try:
+        payment = await db.payments_new.find_one({
+            "$or": [
+                {"id": payment_id},
+                {"_id": ObjectId(payment_id) if len(payment_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if not payment:
+            raise HTTPException(status_code=404, detail="Ödeme bulunamadı")
+        
+        if not payment.get("id"):
+            payment["id"] = payment_id
+        
+        return payment
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting payment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/payments-new/{payment_id}")
+async def delete_payment_new(payment_id: str):
+    """Ödeme iptal et (Yeni Sistem)"""
+    try:
+        result = await db.payments_new.update_one(
+            {"$or": [{"id": payment_id}, {"_id": ObjectId(payment_id) if len(payment_id) == 24 else None}]},
+            {"$set": {"status": "deleted", "deleted_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Ödeme bulunamadı")
+        
+        return {"success": True, "message": "Ödeme iptal edildi"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting payment: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ===================== COLLECTION STATISTICS ENDPOINT =====================
 
 class CollectionStatistics(BaseModel):
