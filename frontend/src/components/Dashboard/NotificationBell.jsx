@@ -99,12 +99,13 @@ const NotificationBell = () => {
 
   // Component mount olduğunda ve her 30 saniyede bir bildirimleri yükle
   useEffect(() => {
+    if (!user?.id) return;
+    
     loadNotifications();
     
     const interval = setInterval(loadNotifications, 30000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  }, [user?.id]); // loadNotifications is stable, no need to include
 
   // Dropdown dışına tıklandığında kapat
   useEffect(() => {
