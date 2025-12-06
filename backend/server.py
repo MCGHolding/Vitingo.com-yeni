@@ -9246,10 +9246,10 @@ async def get_dashboard_stats():
             
             month_invoices = sum(
                 inv.get("total", 0) or inv.get("grandTotal", 0) or 0
-                for inv in invoices if inv.get("date", "")[:7] == month_str
+                for inv in invoices if str(inv.get("date", ""))[:7] == month_str
             )
             month_collections = sum(
-                c.get("amount", 0) for c in collections if c.get("date", "")[:7] == month_str
+                c.get("amount", 0) for c in collections if str(c.get("date", ""))[:7] == month_str
             )
             
             monthly_trend.append({
