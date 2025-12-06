@@ -265,6 +265,12 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
           await loadBankAccounts();
           setIsEditing(false);
           setSelectedAccount(null);
+          setIbanValidation({
+            valid: false,
+            error: null,
+            message: '',
+            touched: false
+          });
           console.log('✅ Hesap güncellendi');
         } else {
           const error = await response.json();
