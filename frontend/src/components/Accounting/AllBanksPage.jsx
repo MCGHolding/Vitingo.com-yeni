@@ -1271,50 +1271,106 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                     {statements.filter(s => s.bankId === selectedBankForStatement).length === 0 ? (
                       <p className="text-gray-500 text-sm">Henüz ekstre yüklenmemiş</p>
                     ) : (
-                      <div className="space-y-2">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {statements
                           .filter(s => s.bankId === selectedBankForStatement)
                           .map(statement => (
-                            <div key={statement.id} className="flex items-center justify-between bg-white p-3 rounded-lg border">
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-3 mb-2">
-                                  <span className="text-xl">📄</span>
+                            <div key={statement.id} className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
+                              {/* Header */}
+                              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                  <span className="text-2xl">📄</span>
                                   <div>
-                                    <p className="font-medium text-gray-900 text-sm">{statement.filename}</p>
-                                    <p className="text-xs text-gray-500">{statement.period} • {statement.uploadDate}</p>
+                                    <p className="font-semibold text-white text-sm">{statement.filename}</p>
+                                    <p className="text-blue-100 text-xs">Yüklenme: {statement.uploadDate}</p>
                                   </div>
                                 </div>
-                                {statement.statistics && (
-                                  <div className="ml-8 flex items-center space-x-4 text-xs">
-                                    <span className="text-green-600">📊 {statement.statistics.transactionCount} işlem</span>
-                                    <span className="text-blue-600">✓ {statement.statistics.categorizedCount} eşleşti</span>
-                                    {statement.statistics.pendingCount > 0 && (
-                                      <span className="text-orange-600">⚠ {statement.statistics.pendingCount} bekliyor</span>
+                                <div className="flex items-center space-x-1">
+                                  <button
+                                    onClick={() => downloadStatement(statement)}
+                                    className="p-1.5 hover:bg-white/20 rounded-lg transition"
+                                    title="İndir"
+                                  >
+                                    <span className="text-white">⬇️</span>
+                                  </button>
+                                  <button
+                                    onClick={() => deleteStatement(statement.id)}
+                                    className="p-1.5 hover:bg-white/20 rounded-lg transition"
+                                    title="Sil"
+                                  >
+                                    <span className="text-white">🗑️</span>
+                                  </button>
+                                </div>
+                              </div>
+                              
+                              {/* Body */}
+                              <div className="p-4 space-y-3">
+                                {/* Tarih Aralığı */}
+                                <div className="flex items-center justify-between text-sm">
+                                  <div>
+                                    <p className="text-gray-500 text-xs">Başlangıç</p>
+                                    <p className="font-semibold text-gray-900">
+                                      {statement.startDate ? new Date(statement.startDate).toLocaleDateString('tr-TR') : 'N/A'}
+                                    </p>
+                                  </div>
+                                  <div className="text-gray-300">→</div>
+                                  <div className="text-right">
+                                    <p className="text-gray-500 text-xs">Bitiş</p>
+                                    <p className="font-semibold text-gray-900">
+                                      {statement.endDate ? new Date(statement.endDate).toLocaleDateString('tr-TR') : 'N/A'}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                {/* Bakiye Bilgileri */}
+                                <div className="bg-gray-100 rounded-lg p-3 space-y-2">
+                                  <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">Açılış Bakiyesi</span>
+                                    <span className="font-semibold text-gray-900">
+                                      {statement.openingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {statement.currency || 'TRY'}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">Kapanış Bakiyesi</span>
+                                    <span className="font-semibold text-green-600">
+                                      {statement.closingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {statement.currency || 'TRY'}
+                                    </span>
+                                  </div>
+                                  <div className="border-t border-gray-300 pt-2 mt-2">
+                                    <div className="flex items-center justify-between text-sm">
+                                      <span className="text-gray-700 font-medium">Net Değişim</span>
+                                      <span className={`font-bold ${(statement.closingBalance - statement.openingBalance) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                        {(statement.closingBalance - statement.openingBalance) >= 0 ? '+' : ''}
+                                        {(statement.closingBalance - statement.openingBalance)?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {statement.currency || 'TRY'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* İşlem İstatistikleri */}
+                                <div className="flex items-center justify-between text-xs">
+                                  <div className="flex items-center space-x-3">
+                                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                                      📊 {statement.statistics?.transactionCount || 0} işlem
+                                    </span>
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                                      ✓ {statement.statistics?.categorizedCount || 0}
+                                    </span>
+                                    {(statement.statistics?.pendingCount || 0) > 0 && (
+                                      <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">
+                                        ⚠ {statement.statistics.pendingCount}
+                                      </span>
                                     )}
                                   </div>
-                                )}
-                              </div>
-                              <div className="flex items-center space-x-2">
+                                </div>
+                                
+                                {/* Görüntüle Butonu */}
                                 <button
                                   onClick={() => viewStatement(statement)}
-                                  className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700"
-                                  title="İşlemleri Gör"
+                                  className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition font-medium flex items-center justify-center space-x-2"
                                 >
-                                  📊 İşlemler
-                                </button>
-                                <button
-                                  onClick={() => downloadStatement(statement)}
-                                  className="p-2 hover:bg-gray-100 rounded-lg"
-                                  title="İndir"
-                                >
-                                  ⬇️
-                                </button>
-                                <button
-                                  onClick={() => deleteStatement(statement.id)}
-                                  className="p-2 hover:bg-red-100 rounded-lg text-red-500"
-                                  title="Sil"
-                                >
-                                  🗑️
+                                  <span>📊</span>
+                                  <span>İşlemleri Görüntüle</span>
                                 </button>
                               </div>
                             </div>
