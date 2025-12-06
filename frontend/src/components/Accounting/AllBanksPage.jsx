@@ -25,6 +25,29 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   // Banka Hesapları
   const [selectedBankId, setSelectedBankId] = useState('');
   
+  // Yeni Hesap Ekleme
+  const [showAddAccount, setShowAddAccount] = useState(false);
+  const [editingAccount, setEditingAccount] = useState(null);
+  const [newAccount, setNewAccount] = useState({
+    currency: 'TRY',
+    iban: '',
+    swift: '',
+    accountNo: '',
+    branchName: '',
+    accountHolder: '',
+  });
+  
+  // Para birimleri
+  const currencies = [
+    { code: 'TRY', name: 'Türk Lirası', flag: '🇹🇷' },
+    { code: 'USD', name: 'Amerikan Doları', flag: '🇺🇸' },
+    { code: 'EUR', name: 'Euro', flag: '🇪🇺' },
+    { code: 'GBP', name: 'İngiliz Sterlini', flag: '🇬🇧' },
+    { code: 'AED', name: 'BAE Dirhemi', flag: '🇦🇪' },
+    { code: 'SAR', name: 'Suudi Riyali', flag: '🇸🇦' },
+    { code: 'CHF', name: 'İsviçre Frangı', flag: '🇨🇭' },
+  ];
+  
   // Statements state
   const [selectedBankForStatement, setSelectedBankForStatement] = useState(null);
   const [statements, setStatements] = useState([]);
