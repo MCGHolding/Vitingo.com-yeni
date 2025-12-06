@@ -534,9 +534,28 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
-  const deleteStatement = (statementId) => {
+  const deleteStatement = async (statement) => {
     if (window.confirm('Bu ekstreyi silmek istediğinize emin misiniz?')) {
-      setStatements(prev => prev.filter(s => s.id !== statementId));
+      try {
+        const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+        
+        // Backend'e DELETE isteği gönder
+        const response = await fetch(`${backendUrl}/api/banks/${statement.bankId}/statements/${statement.id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          // Başarılı silme - frontend state'ini güncelle
+          setStatements(prev => prev.filter(s => s.id !== statement.id));
+          console.log('✅ Ekstre silindi:', statement.id);
+        } else {
+          const error = await response.json();
+          alert('❌ Silme hatası: ' + (error.detail || 'Bilinmeyen hata'));
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('❌ Silme hatası: ' + error.message);
+      }
     }
   };
 
