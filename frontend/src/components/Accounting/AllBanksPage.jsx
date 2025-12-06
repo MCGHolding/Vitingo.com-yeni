@@ -260,6 +260,28 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       setStatements(prev => prev.filter(s => s.id !== statementId));
     }
   };
+
+  const handleDeleteBank = async (bankId) => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/banks/${bankId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        setBankList(prev => prev.filter(b => b.id !== bankId));
+        
+        if (selectedBankId === bankId) {
+          setSelectedBankId('');
+        }
+      } else {
+        alert('Banka silinemedi');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      setBankList(prev => prev.filter(b => b.id !== bankId));
+    }
+  };
   
   const getCountryInfo = (countryCode) => {
     return countries.find(c => c.code === countryCode) || { name: countryCode, flag: '🏦', code: countryCode };
