@@ -14,7 +14,7 @@ const CustomerEditPageWrapper = () => {
 
   // Backend URL - Always use env variable, ignore window.ENV override
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://bank-manager-4.preview.emergentagent.com';
+                    'https://bank-verify-2.preview.emergentagent.com';
 
   // Müşteri detayını yükle
   useEffect(() => {

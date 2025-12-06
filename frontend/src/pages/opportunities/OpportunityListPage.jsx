@@ -15,7 +15,7 @@ const OpportunityListPage = () => {
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://bank-manager-4.preview.emergentagent.com';
+                    'https://bank-verify-2.preview.emergentagent.com';
 
   // URL'den filtre belirle
   const getFilterFromPath = () => {
