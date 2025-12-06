@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { downloadPDF } from '../../utils/pdfDownload';
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
