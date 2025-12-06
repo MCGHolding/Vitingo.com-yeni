@@ -748,7 +748,8 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                                       await fetch(`${backendUrl}/api/banks/${account.id}`, {
                                         method: 'DELETE'
                                       });
-                                      loadBanks();
+                                      // Sadece local state'i güncelle, loadBanks() çağırma
+                                      setBanks(prev => prev.filter(b => b.id !== account.id));
                                     } catch (error) {
                                       console.error('Delete error:', error);
                                     }
