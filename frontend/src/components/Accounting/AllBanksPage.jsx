@@ -294,6 +294,12 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
             currency: 'TRY',
             accountType: 'current'
           });
+          setIbanValidation({
+            valid: false,
+            error: null,
+            message: '',
+            touched: false
+          });
           console.log('✅ Hesap oluşturuldu');
         } else {
           const error = await response.json();
