@@ -182,6 +182,7 @@ const getNavigation = (userDepartment) => {
       { name: 'Cari Hesaplar', href: '/cari-hesaplar', icon: DollarSign },
       { name: 'Tahsilatlar', href: '/tahsilatlar', icon: CreditCard },
       { name: 'Ödemeler', href: '/odemeler', icon: FileCheck },
+      { name: 'Raporlar', href: '/raporlar', icon: BarChart3 },
       { name: 'Tahsilat Makbuzu', href: '/accounting/collection-receipt', icon: CreditCard },
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
@@ -208,6 +209,7 @@ const getNavigation = (userDepartment) => {
       { name: 'Cari Hesaplar', href: '/cari-hesaplar', icon: DollarSign },
       { name: 'Tahsilatlar', href: '/tahsilatlar', icon: CreditCard },
       { name: 'Ödemeler', href: '/odemeler', icon: FileCheck },
+      { name: 'Raporlar', href: '/raporlar', icon: BarChart3 },
       { 
         name: 'Yeni Tahsilatlar', 
         href: '/accounting/new-collections', 
