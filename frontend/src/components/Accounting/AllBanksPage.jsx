@@ -518,26 +518,43 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
               return (
                 <div
                   key={bank.id}
-                  className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-blue-300 transition group"
+                  className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md hover:border-blue-300 transition group relative"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <span className="text-2xl">{country?.flag || '🏦'}</span>
-                      <div>
-                        <h4 className="font-medium text-gray-900">{bank.name}</h4>
-                        <p className="text-xs text-gray-500">{country?.name || bank.country}</p>
-                      </div>
-                    </div>
+                  {/* Düzenle/Sil Butonları - Hover'da görünür */}
+                  <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition">
                     <button
-                      onClick={() => {
-                        if (window.confirm(`"${bank.name}" bankasını silmek istiyor musunuz?`)) {
-                          setBankList(prev => prev.filter(b => b.id !== bank.id));
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingBank(bank);
+                        setShowAddBank(true);
+                        setNewBank({ name: bank.name, country: bank.country });
+                      }}
+                      className="p-1.5 bg-white hover:bg-blue-50 rounded-lg border border-gray-200 shadow-sm transition"
+                      title="Düzenle"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm(`"${bank.name}" bankasını silmek istediğinize emin misiniz?\n\nBu bankaya ait hesaplar da silinecektir.`)) {
+                          handleDeleteBank(bank.id);
                         }
                       }}
-                      className="p-1 opacity-0 group-hover:opacity-100 hover:bg-red-100 rounded transition text-red-500"
+                      className="p-1.5 bg-white hover:bg-red-50 rounded-lg border border-gray-200 shadow-sm transition text-red-500"
+                      title="Sil"
                     >
                       🗑️
                     </button>
+                  </div>
+                  
+                  {/* Banka İçeriği */}
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">{country?.flag || '🏦'}</span>
+                    <div>
+                      <h4 className="font-medium text-gray-900">{bank.name}</h4>
+                      <p className="text-xs text-gray-500">{country?.name || bank.country}</p>
+                    </div>
                   </div>
                 </div>
               );
