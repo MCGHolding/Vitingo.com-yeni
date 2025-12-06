@@ -334,6 +334,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   useEffect(() => {
     loadGroupCompanies();
     loadBanks();
+    loadBankAccounts();
   }, []);
   
   // Load statements when banks are loaded
