@@ -17660,6 +17660,480 @@ async def send_bulk_payment_reminder():
 
 # ==================== END WHATSAPP MESAJ API ====================
 
+# ==================== PDF EXPORT API'LERİ ====================
+
+@api_router.get("/export/invoice/{invoice_id}/pdf")
+async def export_invoice_pdf(invoice_id: str):
+    """Fatura PDF oluştur"""
+    try:
+        invoice = await db.invoices.find_one({
+            "$or": [
+                {"id": invoice_id},
+                {"_id": ObjectId(invoice_id) if len(invoice_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if not invoice:
+            raise HTTPException(status_code=404, detail="Fatura bulunamadı")
+        
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+        
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        # Başlık
+        title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=24, spaceAfter=30, alignment=1)
+        elements.append(Paragraph("FATURA", title_style))
+        
+        # Şirket bilgisi
+        company_style = ParagraphStyle('Company', fontSize=10, alignment=1, textColor=colors.HexColor('#6b7280'))
+        elements.append(Paragraph("Quattro Stand - Exhibition Solutions", company_style))
+        elements.append(Spacer(1, 20))
+        
+        # Fatura bilgileri
+        invoice_no = invoice.get("invoice_number") or invoice.get("invoiceNo") or ""
+        invoice_date = str(invoice.get("date", ""))[:10]
+        due_date = str(invoice.get("dueDate") or invoice.get("due_date") or "")[:10]
+        customer_name = invoice.get("customerName") or invoice.get("customer_name") or ""
+        
+        info_data = [
+            ["Fatura No:", invoice_no, "Fatura Tarihi:", invoice_date],
+            ["Müşteri:", customer_name, "Vade Tarihi:", due_date],
+        ]
+        
+        info_table = Table(info_data, colWidths=[3*cm, 6*cm, 3*cm, 4*cm])
+        info_table.setStyle(TableStyle([
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('FONTNAME', (2, 0), (2, -1), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f9fafb')),
+        ]))
+        elements.append(info_table)
+        elements.append(Spacer(1, 25))
+        
+        # Kalemler tablosu
+        items = invoice.get("items") or invoice.get("lineItems") or []
+        
+        table_data = [["#", "Açıklama", "Miktar", "Birim Fiyat", "Tutar"]]
+        
+        for i, item in enumerate(items, 1):
+            desc = item.get("description") or item.get("name") or ""
+            qty = item.get("quantity", 1)
+            price = item.get("unitPrice") or item.get("unit_price") or item.get("price", 0)
+            total = item.get("total") or (qty * price)
+            
+            table_data.append([str(i), desc[:40], str(qty), f"TL {price:,.2f}", f"TL {total:,.2f}"])
+        
+        # Toplamlar
+        subtotal = invoice.get("subtotal", 0) or sum(item.get("total", 0) for item in items)
+        tax_rate = invoice.get("taxRate", 20)
+        tax = invoice.get("taxAmount", 0) or (subtotal * tax_rate / 100)
+        grand = invoice.get("total") or invoice.get("grandTotal") or (subtotal + tax)
+        
+        table_data.append(["", "", "", "Ara Toplam:", f"TL {subtotal:,.2f}"])
+        table_data.append(["", "", "", f"KDV (%{tax_rate}):", f"TL {tax:,.2f}"])
+        table_data.append(["", "", "", "GENEL TOPLAM:", f"TL {grand:,.2f}"])
+        
+        items_table = Table(table_data, colWidths=[1*cm, 8*cm, 2*cm, 3*cm, 3*cm])
+        items_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563eb')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('TOPPADDING', (0, 0), (-1, 0), 12),
+            ('FONTSIZE', (0, 1), (-1, -4), 9),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 8),
+            ('TOPPADDING', (0, 1), (-1, -1), 8),
+            ('FONTNAME', (3, -3), (4, -1), 'Helvetica-Bold'),
+            ('BACKGROUND', (3, -1), (-1, -1), colors.HexColor('#dbeafe')),
+            ('GRID', (0, 0), (-1, -4), 0.5, colors.HexColor('#e5e7eb')),
+            ('LINEABOVE', (3, -3), (-1, -3), 1, colors.HexColor('#d1d5db')),
+            ('ALIGN', (2, 0), (-1, -1), 'RIGHT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(items_table)
+        elements.append(Spacer(1, 40))
+        
+        # Footer
+        footer = ParagraphStyle('Footer', fontSize=8, textColor=colors.HexColor('#9ca3af'), alignment=1)
+        elements.append(Paragraph("Bu fatura elektronik ortamda oluşturulmuştur.", footer))
+        elements.append(Paragraph("Quattro Stand - Vitingo CRM", footer))
+        
+        doc.build(elements)
+        
+        pdf_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        
+        return {
+            "success": True,
+            "filename": f"Fatura_{invoice_no}.pdf",
+            "content": pdf_base64
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating invoice PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/export/collection/{collection_id}/pdf")
+async def export_collection_receipt_pdf(collection_id: str):
+    """Tahsilat Makbuzu PDF"""
+    try:
+        collection = await db.collections_new.find_one({
+            "$or": [
+                {"id": collection_id},
+                {"_id": ObjectId(collection_id) if len(collection_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if not collection:
+            raise HTTPException(status_code=404, detail="Tahsilat bulunamadı")
+        
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+        
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        # Başlık
+        title_style = ParagraphStyle('Title', fontSize=24, spaceAfter=10, alignment=1, textColor=colors.HexColor('#059669'))
+        elements.append(Paragraph("TAHSİLAT MAKBUZU", title_style))
+        
+        company_style = ParagraphStyle('Company', fontSize=10, alignment=1, textColor=colors.HexColor('#6b7280'))
+        elements.append(Paragraph("Quattro Stand - Exhibition Solutions", company_style))
+        elements.append(Spacer(1, 30))
+        
+        # Makbuz bilgileri
+        receipt_no = collection.get("receiptNo", "")
+        coll_date = str(collection.get("date", ""))[:10]
+        customer = collection.get("customerName", "")
+        amount = collection.get("amount", 0)
+        currency = collection.get("currency", "TRY")
+        method = collection.get("paymentMethod", "")
+        invoice_no = collection.get("invoiceNo", "")
+        description = collection.get("description", "")
+        
+        method_labels = {
+            'cash': 'Nakit',
+            'bank_transfer': 'Havale/EFT',
+            'credit_card': 'Kredi Kartı',
+            'check': 'Çek'
+        }
+        
+        info_data = [
+            ["Makbuz No:", receipt_no],
+            ["Tarih:", coll_date],
+            ["Müşteri:", customer],
+            ["Fatura No:", invoice_no or "-"],
+            ["Ödeme Şekli:", method_labels.get(method, method)],
+            ["Açıklama:", description or "-"],
+        ]
+        
+        info_table = Table(info_data, colWidths=[4*cm, 10*cm])
+        info_table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 11),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+            ('TOPPADDING', (0, 0), (-1, -1), 10),
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f0fdf4')),
+            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#059669')),
+        ]))
+        elements.append(info_table)
+        elements.append(Spacer(1, 30))
+        
+        # Tutar kutusu
+        amount_style = ParagraphStyle('Amount', fontSize=28, alignment=1, textColor=colors.HexColor('#059669'))
+        elements.append(Paragraph(f"<b>TL {amount:,.2f}</b>", amount_style))
+        elements.append(Spacer(1, 10))
+        
+        currency_label = ParagraphStyle('Currency', fontSize=12, alignment=1, textColor=colors.HexColor('#6b7280'))
+        elements.append(Paragraph(f"({currency})", currency_label))
+        elements.append(Spacer(1, 50))
+        
+        # İmza alanı
+        sig_data = [["Teslim Alan", "Teslim Eden"],
+                    ["", ""],
+                    ["İmza: ________________", "İmza: ________________"]]
+        
+        sig_table = Table(sig_data, colWidths=[7*cm, 7*cm])
+        sig_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('TOPPADDING', (0, 0), (-1, -1), 15),
+        ]))
+        elements.append(sig_table)
+        elements.append(Spacer(1, 40))
+        
+        # Footer
+        footer = ParagraphStyle('Footer', fontSize=8, textColor=colors.HexColor('#9ca3af'), alignment=1)
+        elements.append(Paragraph("Bu makbuz elektronik ortamda oluşturulmuştur.", footer))
+        
+        doc.build(elements)
+        
+        pdf_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        
+        return {
+            "success": True,
+            "filename": f"Tahsilat_Makbuzu_{receipt_no}.pdf",
+            "content": pdf_base64
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating collection receipt PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/export/payment/{payment_id}/pdf")
+async def export_payment_receipt_pdf(payment_id: str):
+    """Ödeme Makbuzu PDF"""
+    try:
+        payment = await db.payments_new.find_one({
+            "$or": [
+                {"id": payment_id},
+                {"_id": ObjectId(payment_id) if len(payment_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if not payment:
+            raise HTTPException(status_code=404, detail="Ödeme bulunamadı")
+        
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+        
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        # Başlık
+        title_style = ParagraphStyle('Title', fontSize=24, spaceAfter=10, alignment=1, textColor=colors.HexColor('#dc2626'))
+        elements.append(Paragraph("ÖDEME MAKBUZU", title_style))
+        
+        company_style = ParagraphStyle('Company', fontSize=10, alignment=1, textColor=colors.HexColor('#6b7280'))
+        elements.append(Paragraph("Quattro Stand - Exhibition Solutions", company_style))
+        elements.append(Spacer(1, 30))
+        
+        receipt_no = payment.get("receiptNo", "")
+        pay_date = str(payment.get("date", ""))[:10]
+        supplier = payment.get("supplierName", "")
+        amount = payment.get("amount", 0)
+        currency = payment.get("currency", "TRY")
+        method = payment.get("paymentMethod", "")
+        invoice_no = payment.get("invoiceNo", "")
+        description = payment.get("description", "")
+        
+        method_labels = {
+            'cash': 'Nakit',
+            'bank_transfer': 'Havale/EFT',
+            'credit_card': 'Kredi Kartı',
+            'check': 'Çek'
+        }
+        
+        info_data = [
+            ["Makbuz No:", receipt_no],
+            ["Tarih:", pay_date],
+            ["Tedarikçi:", supplier],
+            ["Fatura No:", invoice_no or "-"],
+            ["Ödeme Şekli:", method_labels.get(method, method)],
+            ["Açıklama:", description or "-"],
+        ]
+        
+        info_table = Table(info_data, colWidths=[4*cm, 10*cm])
+        info_table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 11),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+            ('TOPPADDING', (0, 0), (-1, -1), 10),
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#fef2f2')),
+            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#dc2626')),
+        ]))
+        elements.append(info_table)
+        elements.append(Spacer(1, 30))
+        
+        amount_style = ParagraphStyle('Amount', fontSize=28, alignment=1, textColor=colors.HexColor('#dc2626'))
+        elements.append(Paragraph(f"<b>TL {amount:,.2f}</b>", amount_style))
+        elements.append(Spacer(1, 10))
+        
+        currency_label = ParagraphStyle('Currency', fontSize=12, alignment=1, textColor=colors.HexColor('#6b7280'))
+        elements.append(Paragraph(f"({currency})", currency_label))
+        elements.append(Spacer(1, 50))
+        
+        sig_data = [["Ödemeyi Yapan", "Ödemeyi Alan"],
+                    ["", ""],
+                    ["İmza: ________________", "İmza: ________________"]]
+        
+        sig_table = Table(sig_data, colWidths=[7*cm, 7*cm])
+        sig_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('TOPPADDING', (0, 0), (-1, -1), 15),
+        ]))
+        elements.append(sig_table)
+        elements.append(Spacer(1, 40))
+        
+        footer = ParagraphStyle('Footer', fontSize=8, textColor=colors.HexColor('#9ca3af'), alignment=1)
+        elements.append(Paragraph("Bu makbuz elektronik ortamda oluşturulmuştur.", footer))
+        
+        doc.build(elements)
+        
+        pdf_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        
+        return {
+            "success": True,
+            "filename": f"Odeme_Makbuzu_{receipt_no}.pdf",
+            "content": pdf_base64
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating payment receipt PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/export/statement/{account_id}/pdf")
+async def export_statement_pdf(account_id: str):
+    """Cari Hesap Ekstresi PDF"""
+    try:
+        # Müşteri veya tedarikçi bul
+        customer = await db.customers.find_one({
+            "$or": [{"id": account_id}, {"_id": ObjectId(account_id) if len(account_id) == 24 else None}]
+        }, {"_id": 0})
+        
+        account_name = ""
+        account_type = ""
+        
+        if customer:
+            account_name = customer.get("companyName") or customer.get("name") or ""
+            account_type = "Müşteri"
+        else:
+            supplier = await db.suppliers.find_one({
+                "$or": [{"id": account_id}, {"_id": ObjectId(account_id) if len(account_id) == 24 else None}]
+            }, {"_id": 0})
+            if supplier:
+                account_name = supplier.get("companyName") or supplier.get("name") or ""
+                account_type = "Tedarikçi"
+        
+        if not account_name:
+            raise HTTPException(status_code=404, detail="Hesap bulunamadı")
+        
+        # Hareketleri topla
+        movements = []
+        
+        invoices = await db.invoices.find({
+            "$or": [{"customerId": account_id}, {"customer_id": account_id}],
+            "status": {"$ne": "deleted"}
+        }, {"_id": 0}).to_list(None)
+        
+        for inv in invoices:
+            movements.append({
+                "date": str(inv.get("date", ""))[:10],
+                "type": "Fatura",
+                "desc": f"#{inv.get('invoice_number') or inv.get('invoiceNo')}",
+                "debit": inv.get("total") or inv.get("grandTotal") or 0,
+                "credit": 0
+            })
+        
+        collections = await db.collections_new.find({
+            "customerId": account_id,
+            "status": {"$ne": "deleted"}
+        }, {"_id": 0}).to_list(None)
+        
+        for col in collections:
+            movements.append({
+                "date": str(col.get("date", ""))[:10],
+                "type": "Tahsilat",
+                "desc": f"#{col.get('receiptNo')}",
+                "debit": 0,
+                "credit": col.get("amount", 0)
+            })
+        
+        movements.sort(key=lambda x: x["date"])
+        
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=1.5*cm, leftMargin=1.5*cm, topMargin=2*cm, bottomMargin=2*cm)
+        
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        title_style = ParagraphStyle('Title', fontSize=20, spaceAfter=10, alignment=1)
+        elements.append(Paragraph("CARİ HESAP EKSTRESİ", title_style))
+        elements.append(Spacer(1, 5))
+        
+        info_style = ParagraphStyle('Info', fontSize=10, spaceAfter=4)
+        elements.append(Paragraph(f"<b>Hesap:</b> {account_name}", info_style))
+        elements.append(Paragraph(f"<b>Tip:</b> {account_type}", info_style))
+        elements.append(Paragraph(f"<b>Tarih:</b> {datetime.now().strftime('%d.%m.%Y')}", info_style))
+        elements.append(Spacer(1, 20))
+        
+        table_data = [["Tarih", "İşlem", "Açıklama", "Borç", "Alacak", "Bakiye"]]
+        
+        balance = 0
+        total_debit = 0
+        total_credit = 0
+        
+        for m in movements:
+            balance += m["debit"] - m["credit"]
+            total_debit += m["debit"]
+            total_credit += m["credit"]
+            
+            table_data.append([
+                m["date"],
+                m["type"],
+                m["desc"],
+                f"TL {m['debit']:,.2f}" if m["debit"] else "-",
+                f"TL {m['credit']:,.2f}" if m["credit"] else "-",
+                f"TL {balance:,.2f}"
+            ])
+        
+        table_data.append(["", "", "TOPLAM", f"TL {total_debit:,.2f}", f"TL {total_credit:,.2f}", f"TL {balance:,.2f}"])
+        
+        stmt_table = Table(table_data, colWidths=[2.5*cm, 2*cm, 4*cm, 3*cm, 3*cm, 3*cm])
+        stmt_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#059669')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+            ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#ecfdf5')),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#d1d5db')),
+            ('ALIGN', (3, 0), (-1, -1), 'RIGHT'),
+        ]))
+        elements.append(stmt_table)
+        elements.append(Spacer(1, 30))
+        
+        summary_style = ParagraphStyle('Summary', fontSize=12, spaceAfter=8)
+        if balance > 0:
+            elements.append(Paragraph(f"<b>Güncel Bakiye:</b> <font color='#dc2626'>TL {balance:,.2f} BORÇLU</font>", summary_style))
+        elif balance < 0:
+            elements.append(Paragraph(f"<b>Güncel Bakiye:</b> <font color='#059669'>TL {abs(balance):,.2f} ALACAKLI</font>", summary_style))
+        else:
+            elements.append(Paragraph("<b>Güncel Bakiye:</b> TL 0,00 DENK", summary_style))
+        
+        doc.build(elements)
+        
+        pdf_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        
+        return {
+            "success": True,
+            "filename": f"Ekstre_{account_name.replace(' ', '_')}.pdf",
+            "content": pdf_base64
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating statement PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== END PDF EXPORT API'LERİ ====================
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
