@@ -4903,13 +4903,15 @@ async def create_bank(bank_input: BankCreate):
     try:
         logger.info(f"Creating bank: {bank_input.bank_name} in {bank_input.country}")
         
-        # Validate required fields based on country
-        if bank_input.country in ["Turkey", "UAE"]:
-            if not bank_input.swift_code or not bank_input.iban:
-                raise HTTPException(status_code=400, detail="SWIFT code and IBAN are required for Turkey/UAE banks")
-        elif bank_input.country == "USA":
-            if not bank_input.routing_number or not bank_input.us_account_number:
-                raise HTTPException(status_code=400, detail="Routing number and account number are required for USA banks")
+        # Validate required fields based on country (only if account details are provided)
+        # Allow creating banks with just name and country for master data
+        if bank_input.swift_code or bank_input.iban or bank_input.routing_number:
+            if bank_input.country in ["Turkey", "UAE"]:
+                if not bank_input.swift_code or not bank_input.iban:
+                    raise HTTPException(status_code=400, detail="SWIFT code and IBAN are required for Turkey/UAE banks")
+            elif bank_input.country == "USA":
+                if not bank_input.routing_number or not bank_input.us_account_number:
+                    raise HTTPException(status_code=400, detail="Routing number and account number are required for USA banks")
         
         bank_dict = bank_input.dict()
         bank_obj = Bank(**bank_dict)
