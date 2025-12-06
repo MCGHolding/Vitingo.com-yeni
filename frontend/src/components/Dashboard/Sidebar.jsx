@@ -795,6 +795,13 @@ export default function Sidebar({
     }
 
     // Handle Reports menu actions
+    if (subItem && subItem.name === 'Teslim Belgeleri') {
+      if (onHandoverReceipts) {
+        onHandoverReceipts();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Satış Raporları') {
       if (onSalesReports) {
         onSalesReports();
