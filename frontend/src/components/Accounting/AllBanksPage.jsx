@@ -193,6 +193,23 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     loadCompanies();
   }, []);
 
+  // İşlem türlerini yükle
+  useEffect(() => {
+    const loadTransactionTypes = async () => {
+      try {
+        const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/settings/transaction-types`);
+        if (response.ok) {
+          const types = await response.json();
+          setTransactionTypes(types);
+        }
+      } catch (error) {
+        console.error('Error loading transaction types:', error);
+      }
+    };
+    loadTransactionTypes();
+  }, []);
+
   // Filter banks based on search and company
   useEffect(() => {
     let filtered = [...banks];
