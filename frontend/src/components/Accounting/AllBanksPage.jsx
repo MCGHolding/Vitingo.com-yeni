@@ -1388,11 +1388,14 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                   {/* Yükleme Kutusu */}
                   <div 
                     className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-purple-400 hover:bg-purple-50 transition cursor-pointer"
-                    onClick={() => document.getElementById('statement-upload').click()}
+                    onClick={() => {
+                      console.log('🖱️ Upload area clicked, triggering file input');
+                      statementFileInputRef.current?.click();
+                    }}
                   >
                     <input
+                      ref={statementFileInputRef}
                       type="file"
-                      id="statement-upload"
                       accept=".pdf"
                       className="hidden"
                       onChange={(e) => handleStatementUpload(e, selectedBankForStatement)}
