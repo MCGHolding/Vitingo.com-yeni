@@ -1224,7 +1224,18 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                     }
                     
                     if (response.ok) {
-                      loadBanks();
+                      const savedAccount = await response.json();
+                      
+                      if (editingAccount) {
+                        // Güncelleme: mevcut hesabı değiştir
+                        setBanks(prev => prev.map(b => 
+                          b.id === editingAccount.id ? savedAccount : b
+                        ));
+                      } else {
+                        // Yeni ekleme: listeye ekle
+                        setBanks(prev => [...prev, savedAccount]);
+                      }
+                      
                       setShowAddAccount(false);
                       setEditingAccount(null);
                       setNewAccount({
