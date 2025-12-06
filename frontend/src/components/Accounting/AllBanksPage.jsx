@@ -709,26 +709,53 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                         return selectedBank && account.bank_name?.toLowerCase().includes(selectedBank.name.toLowerCase());
                       })
                       .map(account => (
-                        <div key={account.id} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition">
+                        <div key={account.id} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition group">
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center space-x-2">
                               <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
-                                {account.currency || 'TRY'}
+                                {currencies.find(c => c.code === account.currency)?.flag} {account.currency || 'TRY'}
                               </span>
                               {account.branch_name && (
                                 <span className="text-sm text-gray-500">{account.branch_name}</span>
                               )}
                             </div>
-                            <div className="flex space-x-1">
-                              <button 
-                                onClick={() => handleEdit(account)}
-                                className="p-1 hover:bg-gray-100 rounded"
+                            
+                            {/* Düzenle/Sil Butonları */}
+                            <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition">
+                              <button
+                                onClick={() => {
+                                  setNewAccount({
+                                    currency: account.currency || 'TRY',
+                                    iban: account.iban || '',
+                                    swift: account.swift_code || '',
+                                    accountNo: account.account_number || '',
+                                    branchName: account.branch_name || '',
+                                    accountHolder: account.account_holder || '',
+                                  });
+                                  setEditingAccount(account);
+                                  setShowAddAccount(true);
+                                }}
+                                className="p-1.5 hover:bg-gray-100 rounded-lg"
+                                title="Düzenle"
                               >
                                 ✏️
                               </button>
-                              <button 
-                                onClick={() => handleDelete(account)}
-                                className="p-1 hover:bg-red-100 rounded text-red-500"
+                              <button
+                                onClick={async () => {
+                                  if (window.confirm('Bu hesabı silmek istediğinize emin misiniz?')) {
+                                    try {
+                                      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+                                      await fetch(`${backendUrl}/api/banks/${account.id}`, {
+                                        method: 'DELETE'
+                                      });
+                                      loadBanks();
+                                    } catch (error) {
+                                      console.error('Delete error:', error);
+                                    }
+                                  }
+                                }}
+                                className="p-1.5 hover:bg-red-100 rounded-lg text-red-500"
+                                title="Sil"
                               >
                                 🗑️
                               </button>
