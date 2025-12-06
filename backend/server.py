@@ -9177,7 +9177,7 @@ async def get_dashboard_stats():
         total_collections = sum(c.get("amount", 0) for c in collections)
         this_month_collections = sum(
             c.get("amount", 0) for c in collections 
-            if c.get("date", "")[:7] == current_month
+            if str(c.get("date", ""))[:7] == current_month
         )
         
         # Ödemeler
@@ -9185,7 +9185,7 @@ async def get_dashboard_stats():
         total_payments = sum(p.get("amount", 0) for p in payments)
         this_month_payments = sum(
             p.get("amount", 0) for p in payments 
-            if p.get("date", "")[:7] == current_month
+            if str(p.get("date", ""))[:7] == current_month
         )
         
         # Yaklaşan vadeler (7 gün içinde)
