@@ -2410,6 +2410,8 @@ function App() {
               {/* Tahsilatlar ve Ödemeler */}
               <Route path="tahsilatlar" element={<CollectionsPage />} />
               <Route path="tahsilatlar/yeni" element={<NewCollectionPage />} />
+              <Route path="odemeler" element={<PaymentsPage />} />
+              <Route path="odemeler/yeni" element={<NewPaymentPage />} />
 
               {/* Alış Faturaları */}
               <Route path="alis-faturalari" element={<PurchaseInvoiceListPage />} />
