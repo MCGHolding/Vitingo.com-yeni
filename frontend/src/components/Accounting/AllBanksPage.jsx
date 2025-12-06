@@ -1532,6 +1532,26 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                           currency: account.currency || 'TRY',
                           accountType: account.accountType || 'current'
                         });
+                        // Validate existing IBAN when account is selected
+                        if (account.iban) {
+                          const validation = validateIBANUtil(account.iban, account.country);
+                          setIbanValidation({
+                            valid: validation.valid,
+                            error: validation.error,
+                            message: validation.message,
+                            touched: true,
+                            countryCode: validation.countryCode,
+                            countryName: validation.countryName,
+                            formatted: validation.formatted
+                          });
+                        } else {
+                          setIbanValidation({
+                            valid: false,
+                            error: null,
+                            message: '',
+                            touched: false
+                          });
+                        }
                         setShowAccountForm(false);
                         setIsEditing(false);
                       }}
