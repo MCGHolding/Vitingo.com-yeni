@@ -1359,63 +1359,42 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       {/* Tab Content: Ekstreler */}
       {activeMainTab === 'statements' && (
         <div className="p-6">
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Banka Ekstreleri</h3>
-            <p className="text-gray-500 text-sm">Banka ekstrelerinizi yükleyin ve görüntüleyin</p>
+          {/* Header with Upload Button */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Banka Ekstreleri</h3>
+              <p className="text-gray-500 text-sm">Yüklenmiş banka ekstrelerinizi görüntüleyin</p>
+            </div>
+            <button
+              onClick={() => setShowNewUploadModal(true)}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center space-x-2 transition"
+            >
+              <span className="text-lg">📤</span>
+              <span>Yeni Ekstre Yükle</span>
+            </button>
           </div>
           
-          {/* Banka Seçimi */}
+          {/* Bankaları ve ekstrelerini göster - sadece ekstre olanlar */}
           {banks.length > 0 ? (
             <>
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Banka Seçin</label>
-                <div className="flex flex-wrap gap-2">
-                  {banks.map(bank => (
-                    <button
-                      key={bank.id}
-                      onClick={() => setSelectedBankForStatement(bank.id)}
-                      className={`px-4 py-2 rounded-lg border transition ${
-                        selectedBankForStatement === bank.id
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      {bank.bank_name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Ekstre Yükleme Alanı */}
-              {selectedBankForStatement && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Yükleme Kutusu */}
-                  <div 
-                    className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-purple-400 hover:bg-purple-50 transition cursor-pointer"
-                    onClick={() => {
-                      console.log('🖱️ Upload area clicked, triggering file input');
-                      statementFileInputRef.current?.click();
-                    }}
+              {/* Ekstre olan bankaları filtrele */}
+              {banks.filter(bank => statements.some(s => s.bankId === bank.id)).length === 0 ? (
+                <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed">
+                  <span className="text-6xl mb-4 block">📄</span>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz ekstre yüklenmemiş</h3>
+                  <p className="text-gray-500 mb-4">İlk ekstreyi yüklemek için yukarıdaki butona tıklayın</p>
+                  <button
+                    onClick={() => setShowNewUploadModal(true)}
+                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
                   >
-                    <input
-                      ref={statementFileInputRef}
-                      type="file"
-                      accept=".pdf"
-                      className="hidden"
-                      onChange={(e) => handleStatementUpload(e, selectedBankForStatement)}
-                    />
-                    <div className="text-5xl mb-3">📄</div>
-                    <p className="font-medium text-gray-900">PDF Ekstre Yükle</p>
-                    <p className="text-sm text-gray-500 mt-1">Sürükle & Bırak veya tıklayın</p>
-                    <p className="text-xs text-gray-400 mt-2">Desteklenen format: PDF</p>
-                  </div>
-                  
-                  {/* Yüklenen Ekstreler Listesi */}
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <h4 className="font-medium text-gray-900 mb-3">Yüklenen Ekstreler</h4>
-                    {statements.filter(s => s.bankId === selectedBankForStatement).length === 0 ? (
-                      <p className="text-gray-500 text-sm">Henüz ekstre yüklenmemiş</p>
-                    ) : (
+                    Yeni Ekstre Yükle
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {banks
+                    .filter(bank => statements.some(s => s.bankId === bank.id))
+                    .map(bank => (
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {statements
                           .filter(s => s.bankId === selectedBankForStatement)
