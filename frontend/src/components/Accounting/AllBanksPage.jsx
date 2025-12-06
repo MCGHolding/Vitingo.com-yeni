@@ -1306,46 +1306,68 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                               {/* Body */}
                               <div className="p-4 space-y-3">
                                 {/* Tarih Aralığı */}
-                                <div className="flex items-center justify-between text-sm">
-                                  <div>
-                                    <p className="text-gray-500 text-xs">Başlangıç</p>
-                                    <p className="font-semibold text-gray-900">
-                                      {statement.startDate ? new Date(statement.startDate).toLocaleDateString('tr-TR') : 'N/A'}
-                                    </p>
-                                  </div>
-                                  <div className="text-gray-300">→</div>
-                                  <div className="text-right">
-                                    <p className="text-gray-500 text-xs">Bitiş</p>
-                                    <p className="font-semibold text-gray-900">
-                                      {statement.endDate ? new Date(statement.endDate).toLocaleDateString('tr-TR') : 'N/A'}
-                                    </p>
-                                  </div>
-                                </div>
-                                
-                                {/* Bakiye Bilgileri */}
-                                <div className="bg-gray-100 rounded-lg p-3 space-y-2">
+                                {statement.periodStart && statement.periodEnd && (
                                   <div className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-600">Açılış Bakiyesi</span>
-                                    <span className="font-semibold text-gray-900">
-                                      {statement.openingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {statement.currency || 'TRY'}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center justify-between text-sm">
-                                    <span className="text-gray-600">Kapanış Bakiyesi</span>
-                                    <span className="font-semibold text-green-600">
-                                      {statement.closingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {statement.currency || 'TRY'}
-                                    </span>
-                                  </div>
-                                  <div className="border-t border-gray-300 pt-2 mt-2">
-                                    <div className="flex items-center justify-between text-sm">
-                                      <span className="text-gray-700 font-medium">Net Değişim</span>
-                                      <span className={`font-bold ${(statement.closingBalance - statement.openingBalance) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                        {(statement.closingBalance - statement.openingBalance) >= 0 ? '+' : ''}
-                                        {(statement.closingBalance - statement.openingBalance)?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} {statement.currency || 'TRY'}
-                                      </span>
+                                    <div>
+                                      <p className="text-gray-500 text-xs">Başlangıç</p>
+                                      <p className="font-semibold text-gray-900">
+                                        {statement.periodStart}
+                                      </p>
+                                    </div>
+                                    <div className="text-gray-300 text-xl">→</div>
+                                    <div className="text-right">
+                                      <p className="text-gray-500 text-xs">Bitiş</p>
+                                      <p className="font-semibold text-gray-900">
+                                        {statement.periodEnd}
+                                      </p>
                                     </div>
                                   </div>
-                                </div>
+                                )}
+                                
+                                {/* Bakiye Bilgileri */}
+                                {statement.openingBalance !== undefined && statement.closingBalance !== undefined && (
+                                  <div className="bg-gray-100 rounded-lg p-3 space-y-2">
+                                    <div className="flex items-center justify-between text-sm">
+                                      <span className="text-gray-600">Açılış Bakiyesi</span>
+                                      <span className="font-semibold text-gray-900">
+                                        {statement.openingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-sm">
+                                      <span className="text-gray-600">Kapanış Bakiyesi</span>
+                                      <span className="font-semibold text-green-600">
+                                        {statement.closingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
+                                      </span>
+                                    </div>
+                                    <div className="border-t border-gray-300 pt-2 mt-2">
+                                      <div className="flex items-center justify-between text-sm">
+                                        <span className="text-gray-700 font-medium">Net Değişim</span>
+                                        <span className={`font-bold ${statement.netChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                          {statement.netChange >= 0 ? '+' : ''}
+                                          {statement.netChange?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Gelen/Giden Özeti */}
+                                {statement.totalIncoming !== undefined && statement.totalOutgoing !== undefined && (
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="bg-green-50 rounded-lg p-2 text-center">
+                                      <p className="text-green-600 font-medium">Toplam Gelen</p>
+                                      <p className="text-green-700 font-bold text-sm">
+                                        +{statement.totalIncoming?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                                      </p>
+                                    </div>
+                                    <div className="bg-red-50 rounded-lg p-2 text-center">
+                                      <p className="text-red-600 font-medium">Toplam Giden</p>
+                                      <p className="text-red-700 font-bold text-sm">
+                                        -{statement.totalOutgoing?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
                                 
                                 {/* İşlem İstatistikleri */}
                                 <div className="flex items-center justify-between text-xs">
