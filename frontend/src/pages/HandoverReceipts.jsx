@@ -46,7 +46,10 @@ const HandoverReceipts = () => {
       const response = await fetch(`${backendUrl}/api/projects`);
       if (response.ok) {
         const data = await response.json();
-        setProjects(data.projects || []);
+        // Backend returns array directly or {projects: []}
+        const projectList = Array.isArray(data) ? data : (data.projects || []);
+        setProjects(projectList);
+        console.log('✅ Loaded projects:', projectList.length);
       }
     } catch (error) {
       console.error('Error loading projects:', error);
