@@ -303,6 +303,93 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
+  // ==================== VALİDASYON FONKSİYONLARI ====================
+  
+  const validateIBAN = (iban, currency) => {
+    if (!iban) return { valid: false, error: 'IBAN zorunludur' };
+    
+    const cleanIBAN = iban.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    const currencyInfo = currencies.find(c => c.code === currency);
+    const expectedCountry = currencyInfo?.country || 'TR';
+    
+    if (currency === 'TRY' && !cleanIBAN.startsWith('TR')) {
+      return { valid: false, error: 'Türk Lirası hesabı için IBAN "TR" ile başlamalıdır' };
+    }
+    
+    if (!/^[A-Z]{2}/.test(cleanIBAN)) {
+      return { valid: false, error: 'IBAN ülke kodu ile başlamalıdır (örn: TR, DE, GB)' };
+    }
+    
+    if (currency === 'TRY' && cleanIBAN.length !== 26) {
+      return { valid: false, error: `Türk IBAN'ı 26 karakter olmalıdır (şu an: ${cleanIBAN.length})` };
+    }
+    
+    if (!/^[A-Z0-9]+$/.test(cleanIBAN)) {
+      return { valid: false, error: 'IBAN sadece harf ve rakam içermelidir' };
+    }
+    
+    const rearranged = cleanIBAN.slice(4) + cleanIBAN.slice(0, 4);
+    const numericIBAN = rearranged.replace(/[A-Z]/g, (char) => (char.charCodeAt(0) - 55).toString());
+    
+    let remainder = numericIBAN;
+    while (remainder.length > 2) {
+      const block = remainder.slice(0, 9);
+      remainder = (parseInt(block, 10) % 97).toString() + remainder.slice(9);
+    }
+    
+    if (parseInt(remainder, 10) % 97 !== 1) {
+      return { valid: false, error: 'Geçersiz IBAN kontrol numarası' };
+    }
+    
+    return { valid: true, error: null };
+  };
+
+  const validateSWIFT = (swift) => {
+    if (!swift) return { valid: false, error: 'SWIFT kodu zorunludur' };
+    
+    const cleanSwift = swift.replace(/\s/g, '').toUpperCase();
+    
+    if (cleanSwift.length !== 8 && cleanSwift.length !== 11) {
+      return { valid: false, error: 'SWIFT kodu 8 veya 11 karakter olmalıdır' };
+    }
+    
+    if (!/^[A-Z]{4}/.test(cleanSwift)) {
+      return { valid: false, error: 'İlk 4 karakter banka kodu olmalıdır (sadece harf)' };
+    }
+    
+    if (!/^[A-Z]{4}[A-Z]{2}/.test(cleanSwift)) {
+      return { valid: false, error: '5-6. karakterler ülke kodu olmalıdır (sadece harf)' };
+    }
+    
+    if (!/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}/.test(cleanSwift)) {
+      return { valid: false, error: '7-8. karakterler lokasyon kodu olmalıdır' };
+    }
+    
+    if (cleanSwift.length === 11 && !/^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}[A-Z0-9]{3}$/.test(cleanSwift)) {
+      return { valid: false, error: '9-11. karakterler şube kodu olmalıdır' };
+    }
+    
+    return { valid: true, error: null };
+  };
+
+  const detectSwiftFromIBAN = (iban) => {
+    if (!iban) return null;
+    
+    const cleanIBAN = iban.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    
+    if (!cleanIBAN.startsWith('TR') || cleanIBAN.length < 10) return null;
+    
+    const bankCode = cleanIBAN.substring(4, 8);
+    
+    return turkishBankSwiftCodes[bankCode] || null;
+  };
+
+  const formatIBAN = (value) => {
+    const cleaned = value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    const groups = cleaned.match(/.{1,4}/g) || [];
+    return groups.join(' ');
+  };
+
   const handleDeleteBank = async (bankId) => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
