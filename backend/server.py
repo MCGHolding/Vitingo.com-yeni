@@ -8638,9 +8638,9 @@ async def get_collections_new(
         logger.error(f"Error getting collections: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.post("/collections")
-async def create_collection(collection: CollectionCreate):
-    """Yeni tahsilat oluştur"""
+@api_router.post("/collections-new")
+async def create_collection_new(collection: CollectionCreate):
+    """Yeni tahsilat oluştur (Yeni Sistem)"""
     try:
         collection_data = collection.dict()
         collection_data["id"] = str(uuid.uuid4())
