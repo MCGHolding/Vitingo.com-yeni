@@ -2406,6 +2406,7 @@ function App() {
 
               {/* Tahsilatlar ve Ödemeler */}
               <Route path="tahsilatlar" element={<CollectionsPage />} />
+              <Route path="tahsilatlar/yeni" element={<NewCollectionPage />} />
 
               {/* Alış Faturaları */}
               <Route path="alis-faturalari" element={<PurchaseInvoiceListPage />} />
