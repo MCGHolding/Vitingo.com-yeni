@@ -16920,7 +16920,165 @@ async def export_all_accounts_excel():
         logger.error(f"Error exporting all accounts: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# ==================== END CARİ HESAPLAR API ====================
+# ==================== CARİ HESAP DETAY API ====================
+
+@api_router.get("/current-accounts/{account_id}")
+async def get_current_account_detail(account_id: str):
+    """Tek cari hesap detayı"""
+    try:
+        # Müşteri ara
+        customer = await db.customers.find_one({
+            "$or": [
+                {"id": account_id},
+                {"_id": ObjectId(account_id) if len(account_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if customer:
+            cust_id = customer.get("id") or str(customer.get("_id"))
+            cust_name = customer.get("companyName") or customer.get("name") or ""
+            
+            # Faturalar
+            invoices = await db.invoices.find({
+                "$or": [{"customerId": cust_id}, {"customer_id": cust_id}],
+                "status": {"$ne": "deleted"}
+            }, {"_id": 0}).to_list(None)
+            
+            total_invoiced = sum(inv.get("total", 0) or inv.get("grandTotal", 0) or 0 for inv in invoices)
+            
+            # Tahsilatlar
+            collections = await db.collections_new.find({
+                "customerId": cust_id,
+                "status": {"$ne": "deleted"}
+            }, {"_id": 0}).to_list(None)
+            
+            total_collected = sum(c.get("amount", 0) for c in collections)
+            balance = total_invoiced - total_collected
+            
+            # Hareketler listesi
+            movements = []
+            
+            for inv in invoices:
+                movements.append({
+                    "id": inv.get("id") or str(inv.get("_id")),
+                    "date": str(inv.get("date", ""))[:10],
+                    "type": "invoice",
+                    "typeLabel": "Fatura",
+                    "description": f"Fatura #{inv.get('invoice_number') or inv.get('invoiceNo') or ''}",
+                    "debit": inv.get("total", 0) or inv.get("grandTotal", 0) or 0,
+                    "credit": 0
+                })
+            
+            for col in collections:
+                movements.append({
+                    "id": col.get("id") or str(col.get("_id")),
+                    "date": str(col.get("date", ""))[:10],
+                    "type": "collection",
+                    "typeLabel": "Tahsilat",
+                    "description": f"Tahsilat #{col.get('receiptNo', '')}",
+                    "debit": 0,
+                    "credit": col.get("amount", 0)
+                })
+            
+            # Tarihe göre sırala ve bakiye hesapla
+            movements.sort(key=lambda x: x["date"])
+            running = 0
+            for m in movements:
+                running += m["debit"] - m["credit"]
+                m["balance"] = running
+            
+            movements.reverse()  # En yeni üstte
+            
+            return {
+                "success": True,
+                "account": {
+                    "id": cust_id,
+                    "name": cust_name,
+                    "type": "customer",
+                    "accountNo": customer.get("accountNo", ""),
+                    "email": customer.get("email", ""),
+                    "phone": customer.get("phone", ""),
+                    "address": customer.get("address", ""),
+                    "taxOffice": customer.get("taxOffice", ""),
+                    "taxNumber": customer.get("taxNumber", ""),
+                    "totalDebit": total_invoiced,
+                    "totalCredit": total_collected,
+                    "balance": balance
+                },
+                "movements": movements,
+                "summary": {
+                    "totalDebit": total_invoiced,
+                    "totalCredit": total_collected,
+                    "balance": balance,
+                    "transactionCount": len(movements)
+                }
+            }
+        
+        # Tedarikçi ara
+        supplier = await db.suppliers.find_one({
+            "$or": [
+                {"id": account_id},
+                {"_id": ObjectId(account_id) if len(account_id) == 24 else None}
+            ]
+        }, {"_id": 0})
+        
+        if supplier:
+            supp_id = supplier.get("id") or str(supplier.get("_id"))
+            supp_name = supplier.get("companyName") or supplier.get("name") or ""
+            
+            payments = await db.payments_new.find({
+                "supplierId": supp_id,
+                "status": {"$ne": "deleted"}
+            }, {"_id": 0}).to_list(None)
+            
+            total_paid = sum(p.get("amount", 0) for p in payments)
+            
+            movements = []
+            for p in payments:
+                movements.append({
+                    "id": p.get("id") or str(p.get("_id")),
+                    "date": str(p.get("date", ""))[:10],
+                    "type": "payment",
+                    "typeLabel": "Ödeme",
+                    "description": f"Ödeme #{p.get('receiptNo', '')}",
+                    "debit": 0,
+                    "credit": p.get("amount", 0),
+                    "balance": 0
+                })
+            
+            movements.sort(key=lambda x: x["date"], reverse=True)
+            
+            return {
+                "success": True,
+                "account": {
+                    "id": supp_id,
+                    "name": supp_name,
+                    "type": "supplier",
+                    "accountNo": supplier.get("accountNo", ""),
+                    "email": supplier.get("email", ""),
+                    "phone": supplier.get("phone", ""),
+                    "totalDebit": 0,
+                    "totalCredit": total_paid,
+                    "balance": -total_paid
+                },
+                "movements": movements,
+                "summary": {
+                    "totalDebit": 0,
+                    "totalCredit": total_paid,
+                    "balance": -total_paid,
+                    "transactionCount": len(movements)
+                }
+            }
+        
+        raise HTTPException(status_code=404, detail="Hesap bulunamadı")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting account detail: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== END CARİ HESAP DETAY API ====================
 
 # ==================== BİLDİRİM SİSTEMİ API ====================
 
