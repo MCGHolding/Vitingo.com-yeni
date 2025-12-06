@@ -8804,7 +8804,7 @@ async def get_payments(
             else:
                 query["date"] = {"$lte": end_date}
         
-        payments = await db.payments.find(query, {"_id": 0}).sort("date", -1).to_list(None)
+        payments = await db.payments_new.find(query, {"_id": 0}).sort("date", -1).to_list(None)
         
         for p in payments:
             if not p.get("id"):
