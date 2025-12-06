@@ -73,6 +73,17 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [selectedStatement, setSelectedStatement] = useState(null);
   const [showTransactionsModal, setShowTransactionsModal] = useState(false);
   
+  // Statement upload modal
+  const [showStatementUploadModal, setShowStatementUploadModal] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(null);
+  const [statementMeta, setStatementMeta] = useState({
+    startDate: '',
+    endDate: '',
+    openingBalance: '',
+    closingBalance: '',
+    currency: 'TRY',
+  });
+  
   // Transaction types & categories
   const [transactionTypes, setTransactionTypes] = useState([]);
   const [updatedTransactions, setUpdatedTransactions] = useState({});
