@@ -543,32 +543,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                 </div>
                 <div className="flex items-end space-x-2">
                   <button
-                    onClick={() => {
-                      if (!newBank.name) {
-                        alert('Banka adı gerekli');
-                        return;
-                      }
-                      
-                      if (editingBank) {
-                        setBankList(prev => prev.map(b => 
-                          b.id === editingBank.id 
-                            ? { ...b, name: newBank.name, country: newBank.country }
-                            : b
-                        ));
-                      } else {
-                        const bank = {
-                          id: `bank-${Date.now()}-${Math.random()}`,
-                          name: newBank.name,
-                          country: newBank.country,
-                          created_at: new Date().toISOString()
-                        };
-                        setBankList(prev => [...prev, bank]);
-                      }
-                      
-                      setNewBank({ name: '', country: 'TR' });
-                      setShowAddBank(false);
-                      setEditingBank(null);
-                    }}
+                    onClick={handleSaveBank}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
                     {editingBank ? 'Güncelle' : 'Kaydet'}
