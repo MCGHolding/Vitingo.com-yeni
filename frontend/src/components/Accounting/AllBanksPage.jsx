@@ -1431,15 +1431,45 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                 </div>
               </div>
               
-              {/* Hesap Listesi */}
-              <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
-                {bankAccounts
-                  .filter(acc => 
+              {/* Hesap Listesi - Şirketlere Göre Gruplandırılmış */}
+              <div className="max-h-[500px] overflow-y-auto">
+                {(() => {
+                  // Hesapları filtrele
+                  const filteredAccounts = bankAccounts.filter(acc => 
                     !accountSearchTerm || 
                     acc.bankName?.toLowerCase().includes(accountSearchTerm.toLowerCase()) ||
-                    acc.iban?.toLowerCase().includes(accountSearchTerm.toLowerCase())
-                  )
-                  .map(account => (
+                    acc.iban?.toLowerCase().includes(accountSearchTerm.toLowerCase()) ||
+                    acc.accountHolder?.toLowerCase().includes(accountSearchTerm.toLowerCase())
+                  );
+                  
+                  // Şirketlere göre grupla
+                  const groupedAccounts = filteredAccounts.reduce((groups, account) => {
+                    const companyName = account.accountHolder || 'Diğer';
+                    if (!groups[companyName]) {
+                      groups[companyName] = [];
+                    }
+                    groups[companyName].push(account);
+                    return groups;
+                  }, {});
+                  
+                  return Object.entries(groupedAccounts).map(([companyName, accounts]) => (
+                    <div key={companyName} className="mb-4">
+                      {/* Şirket Başlığı */}
+                      <div className="px-4 py-2 bg-gray-100 border-b border-gray-200 sticky top-0 z-10">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm">🏢</span>
+                            <span className="font-semibold text-gray-800 text-sm">{companyName}</span>
+                          </div>
+                          <span className="text-xs bg-white px-2 py-0.5 rounded text-gray-600">
+                            {accounts.length} hesap
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Şirketin Hesapları */}
+                      <div className="divide-y divide-gray-100">
+                        {accounts.map(account => (
                     <div 
                       key={account.id}
                       onClick={() => {
