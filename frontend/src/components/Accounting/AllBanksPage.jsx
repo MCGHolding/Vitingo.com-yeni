@@ -1424,125 +1424,90 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                           <div className="p-4">
                             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                               {bankStatements.map(statement => (
-                                <div key={statement.id} className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
-                                  {/* Statement Header */}
-                                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
-                                    <div className="flex items-center space-x-3">
-                                      <span className="text-2xl">📄</span>
-                                      <div>
-                                        <p className="font-semibold text-white text-sm">{statement.filename}</p>
-                                        <p className="text-blue-100 text-xs">Yüklenme: {statement.uploadDate}</p>
-                                      </div>
+                                <div key={statement.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition group">
+                                  
+                                  {/* Header - Para birimine göre renk */}
+                                  <div className={`px-4 py-2.5 flex items-center justify-between ${
+                                    statement.currency === 'USD' ? 'bg-gradient-to-r from-blue-600 to-indigo-600' :
+                                    statement.currency === 'EUR' ? 'bg-gradient-to-r from-purple-600 to-violet-600' :
+                                    statement.currency === 'GBP' ? 'bg-gradient-to-r from-gray-700 to-gray-800' :
+                                    statement.currency === 'TRY' ? 'bg-gradient-to-r from-red-600 to-rose-600' :
+                                    statement.currency === 'AED' ? 'bg-gradient-to-r from-emerald-600 to-teal-600' :
+                                    statement.currency === 'SAR' ? 'bg-gradient-to-r from-green-700 to-emerald-700' :
+                                    'bg-gradient-to-r from-gray-600 to-gray-700'
+                                  }`}>
+                                    <div className="flex items-center space-x-2">
+                                      <span>📄</span>
+                                      <span className="text-white font-medium text-sm truncate max-w-[200px]">{statement.filename}</span>
                                     </div>
-                                    <div className="flex items-center space-x-1">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="px-2 py-0.5 bg-white/20 text-white text-xs rounded">{statement.currency || 'TRY'}</span>
                                       <button
                                         onClick={() => downloadStatement(statement)}
-                                        className="p-1.5 hover:bg-white/20 rounded-lg transition"
+                                        className="p-1 hover:bg-white/20 rounded transition opacity-0 group-hover:opacity-100"
                                         title="İndir"
                                       >
-                                        <span className="text-white">⬇️</span>
+                                        <span className="text-white text-sm">⬇️</span>
                                       </button>
                                       <button
                                         onClick={() => deleteStatement(statement.id)}
-                                        className="p-1.5 hover:bg-white/20 rounded-lg transition"
+                                        className="p-1 hover:bg-white/20 rounded transition opacity-0 group-hover:opacity-100"
                                         title="Sil"
                                       >
-                                        <span className="text-white">🗑️</span>
+                                        <span className="text-white text-sm">🗑️</span>
                                       </button>
                                     </div>
                                   </div>
                                   
-                                  {/* Statement Body */}
-                                  <div className="p-4 space-y-3">
+                                  {/* Body */}
+                                  <div className="p-3">
                                     {/* Tarih Aralığı */}
-                                    {statement.periodStart && statement.periodEnd && (
-                                      <div className="flex items-center justify-between text-sm">
-                                        <div>
-                                          <p className="text-gray-500 text-xs">Başlangıç</p>
-                                          <p className="font-semibold text-gray-900">
-                                            {statement.periodStart}
-                                          </p>
-                                        </div>
-                                        <div className="text-gray-300 text-xl">→</div>
-                                        <div className="text-right">
-                                          <p className="text-gray-500 text-xs">Bitiş</p>
-                                          <p className="font-semibold text-gray-900">
-                                            {statement.periodEnd}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    )}
+                                    <div className="flex items-center justify-between text-sm mb-3">
+                                      <span className="text-gray-500">
+                                        {statement.periodStart || '-'} → {statement.periodEnd || '-'}
+                                      </span>
+                                    </div>
                                     
-                                    {/* Bakiye Bilgileri */}
-                                    {statement.openingBalance !== undefined && statement.closingBalance !== undefined && (
-                                      <div className="bg-gray-100 rounded-lg p-3 space-y-2">
-                                        <div className="flex items-center justify-between text-sm">
-                                          <span className="text-gray-600">Açılış Bakiyesi</span>
-                                          <span className="font-semibold text-gray-900">
-                                            {statement.openingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
-                                          </span>
-                                        </div>
-                                        <div className="flex items-center justify-between text-sm">
-                                          <span className="text-gray-600">Kapanış Bakiyesi</span>
-                                          <span className="font-semibold text-green-600">
-                                            {statement.closingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
-                                          </span>
-                                        </div>
-                                        <div className="border-t border-gray-300 pt-2 mt-2">
-                                          <div className="flex items-center justify-between text-sm">
-                                            <span className="text-gray-700 font-medium">Net Değişim</span>
-                                            <span className={`font-bold ${statement.netChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                              {statement.netChange >= 0 ? '+' : ''}
-                                              {statement.netChange?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
-                                            </span>
-                                          </div>
-                                        </div>
+                                    {/* Açılış ve Kapanış Bakiyesi */}
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                      <div className="bg-gray-50 rounded-lg px-3 py-2">
+                                        <p className="text-xs text-gray-500">Açılış</p>
+                                        <p className="font-semibold text-gray-900 text-sm">
+                                          {new Intl.NumberFormat('tr-TR', { 
+                                            style: 'currency', 
+                                            currency: statement.currency || 'TRY',
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0
+                                          }).format(statement.openingBalance || 0)}
+                                        </p>
                                       </div>
-                                    )}
-                                    
-                                    {/* Gelen/Giden Özeti */}
-                                    {statement.totalIncoming !== undefined && statement.totalOutgoing !== undefined && (
-                                      <div className="grid grid-cols-2 gap-2 text-xs">
-                                        <div className="bg-green-50 rounded-lg p-2 text-center">
-                                          <p className="text-green-600 font-medium">Toplam Gelen</p>
-                                          <p className="text-green-700 font-bold text-sm">
-                                            +{statement.totalIncoming?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                                          </p>
-                                        </div>
-                                        <div className="bg-red-50 rounded-lg p-2 text-center">
-                                          <p className="text-red-600 font-medium">Toplam Giden</p>
-                                          <p className="text-red-700 font-bold text-sm">
-                                            -{statement.totalOutgoing?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    )}
-                                    
-                                    {/* İşlem İstatistikleri */}
-                                    <div className="flex items-center justify-between text-xs">
-                                      <div className="flex items-center space-x-3">
-                                        <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
-                                          📊 {statement.statistics?.transactionCount || 0} işlem
-                                        </span>
-                                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
-                                          ✓ {statement.statistics?.categorizedCount || 0}
-                                        </span>
-                                        {(statement.statistics?.pendingCount || 0) > 0 && (
-                                          <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">
-                                            ⚠ {statement.statistics.pendingCount}
-                                          </span>
-                                        )}
+                                      <div className="bg-green-50 rounded-lg px-3 py-2">
+                                        <p className="text-xs text-gray-500">Kapanış</p>
+                                        <p className="font-semibold text-green-700 text-sm">
+                                          {new Intl.NumberFormat('tr-TR', { 
+                                            style: 'currency', 
+                                            currency: statement.currency || 'TRY',
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0
+                                          }).format(statement.closingBalance || 0)}
+                                        </p>
                                       </div>
                                     </div>
                                     
-                                    {/* Görüntüle Butonu */}
-                                    <button
-                                      onClick={() => viewStatement(statement)}
-                                      className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition font-medium flex items-center justify-center space-x-2"
-                                    >
-                                      <span>📊</span>
-                                      <span>İşlemleri Görüntüle</span>
-                                    </button>
+                                    {/* İşlem Özeti ve Buton */}
+                                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                                      <div className="flex items-center space-x-3 text-xs text-gray-500">
+                                        <span>📊 {statement.transactionCount || statement.statistics?.transactionCount || 0}</span>
+                                        <span className="text-green-600">↓ {new Intl.NumberFormat('tr-TR', { notation: 'compact' }).format(statement.totalIncoming || 0)}</span>
+                                        <span className="text-red-500">↑ {new Intl.NumberFormat('tr-TR', { notation: 'compact' }).format(statement.totalOutgoing || 0)}</span>
+                                      </div>
+                                      <button
+                                        onClick={() => viewStatement(statement)}
+                                        className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition"
+                                      >
+                                        Görüntüle
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               ))}
