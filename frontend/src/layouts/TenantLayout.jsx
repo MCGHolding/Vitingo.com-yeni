@@ -120,6 +120,8 @@ const TenantLayoutInner = () => {
     onPaidInvoices: () => handleNavigate('/faturalar/odenmis'),
     onOverdueInvoices: () => handleNavigate('/faturalar/vadesi-gecmis'),
     onCurrentAccounts: () => handleNavigate('/cari-hesaplar'),
+    onCollections: () => handleNavigate('/tahsilatlar'),
+    onPayments: () => handleNavigate('/odemeler'),
     onCollectionReceipt: () => handleNavigate('/tahsilat-makbuzu'),
     onNewCollection: () => handleNavigate('/tahsilat/yeni'),
     onPendingApproval: () => handleNavigate('/faturalar/onay-bekleyen'),
