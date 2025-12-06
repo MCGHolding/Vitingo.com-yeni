@@ -223,6 +223,7 @@ import {
   BriefNewPage
 } from './pages/briefs';
 import { SurveyPage } from './pages/surveys';
+import ReportsPage from './pages/reports/ReportsPage';
 
 // Avanslar pages
 import {
