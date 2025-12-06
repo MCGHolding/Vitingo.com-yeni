@@ -9210,27 +9210,29 @@ async def get_dashboard_stats():
         recent_activities = []
         
         # Son faturalar
-        recent_invoices = sorted(invoices, key=lambda x: x.get("created_at", x.get("date", "")), reverse=True)[:5]
+        recent_invoices = sorted(invoices, key=lambda x: str(x.get("created_at") or x.get("date") or ""), reverse=True)[:5]
         for inv in recent_invoices:
+            date_str = str(inv.get("created_at") or inv.get("date") or "")[:10]
             recent_activities.append({
                 "type": "invoice",
                 "icon": "🧾",
                 "title": f"Fatura #{inv.get('invoice_number') or inv.get('invoiceNo', '')}",
                 "subtitle": inv.get("customerName") or inv.get("customer_name", ""),
                 "amount": inv.get("total", 0) or inv.get("grandTotal", 0) or 0,
-                "date": (inv.get("created_at") or inv.get("date", ""))[:10]
+                "date": date_str
             })
         
         # Son tahsilatlar
-        recent_collections = sorted(collections, key=lambda x: x.get("created_at", x.get("date", "")), reverse=True)[:5]
+        recent_collections = sorted(collections, key=lambda x: str(x.get("created_at") or x.get("date") or ""), reverse=True)[:5]
         for col in recent_collections:
+            date_str = str(col.get("created_at") or col.get("date") or "")[:10]
             recent_activities.append({
                 "type": "collection",
                 "icon": "💰",
                 "title": f"Tahsilat #{col.get('receiptNo', '')}",
                 "subtitle": col.get("customerName", ""),
                 "amount": col.get("amount", 0),
-                "date": (col.get("created_at") or col.get("date", ""))[:10]
+                "date": date_str
             })
         
         # Tarihe göre sırala
