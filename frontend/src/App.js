@@ -2310,6 +2310,12 @@ function App() {
               element={<LoginPage />} 
             />
             
+            {/* Public Handover Sign */}
+            <Route 
+              path="/handover/:token" 
+              element={<PublicHandoverSign />} 
+            />
+            
             {/* === YENİ TENANT-BASED ROUTES === */}
             {/* Bu route'lar önce kontrol edilir */}
             <Route path="/:tenantSlug" element={<ProtectedRoute><TenantLayout /></ProtectedRoute>}>
