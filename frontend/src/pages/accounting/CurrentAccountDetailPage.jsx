@@ -87,17 +87,7 @@ const CurrentAccountDetailPage = () => {
   };
 
   const handleExportPDF = async () => {
-    try {
-      const response = await fetch(`${backendUrl}/api/current-accounts/${accountId}/export/pdf`);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `cari_hesap_${account?.accountNo}_ekstre.pdf`;
-      a.click();
-    } catch (error) {
-      console.error('Export error:', error);
-    }
+    await downloadPDF(`/api/export/statement/${accountId}/pdf`);
   };
 
   const handleSendEmail = async () => {
