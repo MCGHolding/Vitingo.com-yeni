@@ -82,10 +82,14 @@ export const validateIBAN = (iban, selectedCountry = null) => {
   if (selectedCountry && !NON_IBAN_COUNTRIES.includes(selectedCountry)) {
     const expectedPrefix = selectedCountry;
     if (countryCode !== expectedPrefix) {
+      // Get country name if exists in IBAN_SPECS
+      const selectedCountryName = IBAN_SPECS[selectedCountry]?.name || selectedCountry;
+      const detectedCountryName = IBAN_SPECS[countryCode]?.name || countryCode;
+      
       return { 
         valid: false, 
         error: 'mismatch', 
-        message: `Seçili ülke ${selectedCountry}, IBAN "${countryCode}" ile başlıyor`,
+        message: `Ülke uyuşmazlığı: Seçili ülke "${selectedCountryName}" (${selectedCountry}), IBAN "${detectedCountryName}" (${countryCode}) ile başlıyor`,
         detectedCountry: countryCode
       };
     }
