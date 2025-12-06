@@ -352,12 +352,58 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       if (response.ok) {
         const fullStatement = await response.json();
         setSelectedStatement(fullStatement);
+        setUpdatedTransactions({});
         setShowTransactionsModal(true);
       } else {
         alert('Ekstre detayları yüklenemedi');
       }
     } catch (error) {
       console.error('Error loading statement:', error);
+      alert('Hata: ' + error.message);
+    }
+  };
+
+  const handleTransactionUpdate = (txnId, field, value) => {
+    setUpdatedTransactions(prev => ({
+      ...prev,
+      [txnId]: {
+        ...prev[txnId],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSaveTransactions = async () => {
+    if (Object.keys(updatedTransactions).length === 0) {
+      alert('Değişiklik yapılmadı');
+      return;
+    }
+
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(
+        `${backendUrl}/api/banks/${selectedStatement.bankId}/statements/${selectedStatement.id}/transactions/bulk`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            transactionIds: Object.keys(updatedTransactions),
+            updateData: updatedTransactions,
+            shouldLearn: true
+          })
+        }
+      );
+
+      if (response.ok) {
+        alert(`✅ ${Object.keys(updatedTransactions).length} işlem kaydedildi ve akıllı öğrenme aktif edildi!`);
+        setUpdatedTransactions({});
+        setShowTransactionsModal(false);
+        setSelectedStatement(null);
+      } else {
+        alert('Kaydetme hatası');
+      }
+    } catch (error) {
+      console.error('Save error:', error);
       alert('Hata: ' + error.message);
     }
   };
