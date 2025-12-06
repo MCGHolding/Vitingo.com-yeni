@@ -531,7 +531,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
           {bankList.length === 0 ? (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
               <span className="text-3xl">⚠️</span>
-              <p className="mt-2 text-yellow-800 font-medium">Önce "Bankalar" sekmesinden banka eklemelisiniz</p>
+              <p className="mt-2 text-yellow-800 font-medium">Önce &quot;Bankalar&quot; sekmesinden banka eklemelisiniz</p>
               <button
                 onClick={() => setActiveMainTab('banks')}
                 className="mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
