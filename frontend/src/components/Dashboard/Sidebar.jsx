@@ -933,14 +933,7 @@ export default function Sidebar({
     }
 
     // Handle Bank menu actions
-    if (subItem && subItem.name === 'Yeni Banka') {
-      if (onNewBank) {
-        onNewBank();
-      }
-      return;
-    }
-
-    if (subItem && subItem.name === 'Tüm Bankalar') {
+    if (subItem && subItem.name === 'Bankalar') {
       if (onAllBanks) {
         onAllBanks();
       }
