@@ -8649,10 +8649,10 @@ async def create_collection_new(collection: CollectionCreate):
         
         # Makbuz numarası oluştur
         if not collection_data.get("receiptNo"):
-            count = await db.collections.count_documents({})
+            count = await db.collections_new.count_documents({})
             collection_data["receiptNo"] = f"TAH-{datetime.now().year}-{str(count + 1).zfill(5)}"
         
-        await db.collections.insert_one(collection_data)
+        await db.collections_new.insert_one(collection_data)
         
         # Eğer faturaya bağlıysa, faturanın ödenen tutarını güncelle
         if collection_data.get("invoiceId"):
