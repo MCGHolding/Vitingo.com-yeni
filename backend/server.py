@@ -4971,18 +4971,26 @@ async def update_bank(bank_id: str, bank_update: BankUpdate):
         update_data = {k: v for k, v in bank_update.dict().items() if v is not None}
         update_data["updated_at"] = datetime.utcnow()
         
-        # Validate updated data based on country
+        # Validate updated data based on country (only if account details exist)
         country = update_data.get("country", existing_bank.get("country"))
-        if country in ["Turkey", "UAE"]:
-            swift_code = update_data.get("swift_code", existing_bank.get("swift_code"))
-            iban = update_data.get("iban", existing_bank.get("iban"))
-            if not swift_code or not iban:
-                raise HTTPException(status_code=400, detail="SWIFT code and IBAN are required for Turkey/UAE banks")
-        elif country == "USA":
-            routing_number = update_data.get("routing_number", existing_bank.get("routing_number"))
-            us_account_number = update_data.get("us_account_number", existing_bank.get("us_account_number"))
-            if not routing_number or not us_account_number:
-                raise HTTPException(status_code=400, detail="Routing number and account number are required for USA banks")
+        has_account_details = (
+            existing_bank.get("swift_code") or existing_bank.get("iban") or 
+            existing_bank.get("routing_number") or 
+            update_data.get("swift_code") or update_data.get("iban") or 
+            update_data.get("routing_number")
+        )
+        
+        if has_account_details:
+            if country in ["Turkey", "UAE"]:
+                swift_code = update_data.get("swift_code", existing_bank.get("swift_code"))
+                iban = update_data.get("iban", existing_bank.get("iban"))
+                if not swift_code or not iban:
+                    raise HTTPException(status_code=400, detail="SWIFT code and IBAN are required for Turkey/UAE banks")
+            elif country == "USA":
+                routing_number = update_data.get("routing_number", existing_bank.get("routing_number"))
+                us_account_number = update_data.get("us_account_number", existing_bank.get("us_account_number"))
+                if not routing_number or not us_account_number:
+                    raise HTTPException(status_code=400, detail="Routing number and account number are required for USA banks")
         
         # Update in database
         result = await db.banks.update_one(
