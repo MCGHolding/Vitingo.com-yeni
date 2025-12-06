@@ -1622,9 +1622,8 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       </label>
                       <select 
                         value={accountForm.country}
-                        onChange={(e) => setAccountForm(prev => ({...prev, country: e.target.value}))}
-                        disabled={selectedAccount && !isEditing && !showAccountForm}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white disabled:bg-gray-100"
+                        disabled={true}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
                       >
                         <option value="">Ülke seçin...</option>
                         <option value="AE">🇦🇪 BAE (Birleşik Arap Emirlikleri)</option>
