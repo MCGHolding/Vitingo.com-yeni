@@ -1648,14 +1648,17 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       {/* Banka Adı */}
                       <div className="col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Banka Adı *</label>
-                        <input 
-                          type="text" 
+                        <select 
                           value={accountForm.bankName}
                           onChange={(e) => setAccountForm(prev => ({...prev, bankName: e.target.value}))}
                           disabled={selectedAccount && !isEditing && !showAccountForm}
-                          placeholder="Örn: Garanti BBVA"
-                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100"
-                        />
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white disabled:bg-gray-100"
+                        >
+                          <option value="">Banka seçiniz...</option>
+                          {bankList.map(bank => (
+                            <option key={bank.id} value={bank.name}>{bank.name}</option>
+                          ))}
+                        </select>
                       </div>
                       
                       {/* SWIFT Kodu */}
