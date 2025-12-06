@@ -385,6 +385,8 @@ export default function Sidebar({
   onCurrentAccounts,
   onCollectionReceipt,
   onNewCollection,
+  onCollections,
+  onPayments,
   onPaymentRequests,
   // Expense Receipt handlers
   onNewExpenseReceipt,
