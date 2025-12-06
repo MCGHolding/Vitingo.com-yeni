@@ -9123,6 +9123,166 @@ async def get_collection_statistics():
             average_days=0.0
         )
 
+
+# ==================== DASHBOARD API ====================
+
+@api_router.get("/dashboard/stats")
+async def get_dashboard_stats():
+    """Ana dashboard için tüm istatistikleri getir"""
+    try:
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        this_month_start = datetime.now(timezone.utc).replace(day=1).strftime("%Y-%m-%d")
+        
+        # Müşteri sayısı
+        total_customers = await db.customers.count_documents({"status": {"$ne": "deleted"}})
+        
+        # Proje sayıları
+        total_projects = await db.projects.count_documents({"status": {"$ne": "deleted"}})
+        active_projects = await db.projects.count_documents({"status": "active"})
+        
+        # Fatura istatistikleri
+        invoices = await db.invoices.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        total_invoice_amount = sum(inv.get("total", 0) or inv.get("grandTotal", 0) or 0 for inv in invoices)
+        total_paid = sum(inv.get("paidAmount", 0) or 0 for inv in invoices)
+        total_remaining = total_invoice_amount - total_paid
+        
+        # Bu ay kesilen faturalar
+        this_month_invoices = [inv for inv in invoices if inv.get("date", "")[:7] == datetime.now().strftime("%Y-%m")]
+        this_month_amount = sum(inv.get("total", 0) or inv.get("grandTotal", 0) or 0 for inv in this_month_invoices)
+        
+        # Vadesi geçen faturalar
+        overdue_invoices = []
+        for inv in invoices:
+            due_date = inv.get("dueDate") or inv.get("due_date")
+            paid = inv.get("paidAmount", 0) or 0
+            total = inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+            if due_date and due_date < today and paid < total:
+                days_overdue = (datetime.now(timezone.utc) - datetime.strptime(due_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)).days
+                overdue_invoices.append({
+                    "id": inv.get("id", ""),
+                    "invoiceNo": inv.get("invoice_number") or inv.get("invoiceNo") or "",
+                    "customerName": inv.get("customerName") or inv.get("customer_name") or "",
+                    "dueDate": due_date,
+                    "total": total,
+                    "paid": paid,
+                    "remaining": total - paid,
+                    "daysOverdue": days_overdue
+                })
+        
+        overdue_amount = sum(inv["remaining"] for inv in overdue_invoices)
+        
+        # Tahsilatlar
+        collections = await db.collections_new.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        total_collections = sum(c.get("amount", 0) for c in collections)
+        this_month_collections = sum(
+            c.get("amount", 0) for c in collections 
+            if c.get("date", "")[:7] == datetime.now().strftime("%Y-%m")
+        )
+        
+        # Ödemeler
+        payments = await db.payments_new.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        total_payments = sum(p.get("amount", 0) for p in payments)
+        this_month_payments = sum(
+            p.get("amount", 0) for p in payments 
+            if p.get("date", "")[:7] == datetime.now().strftime("%Y-%m")
+        )
+        
+        # Yaklaşan vadeler (7 gün içinde)
+        upcoming_due_date = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%Y-%m-%d")
+        upcoming_dues = []
+        for inv in invoices:
+            due_date = inv.get("dueDate") or inv.get("due_date")
+            paid = inv.get("paidAmount", 0) or 0
+            total = inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+            if due_date and today <= due_date <= upcoming_due_date and paid < total:
+                days_left = (datetime.strptime(due_date, "%Y-%m-%d").replace(tzinfo=timezone.utc) - datetime.now(timezone.utc)).days
+                upcoming_dues.append({
+                    "id": inv.get("id", ""),
+                    "invoiceNo": inv.get("invoice_number") or inv.get("invoiceNo") or "",
+                    "customerName": inv.get("customerName") or inv.get("customer_name") or "",
+                    "dueDate": due_date,
+                    "remaining": total - paid,
+                    "daysLeft": days_left
+                })
+        
+        # Son aktiviteler
+        recent_activities = []
+        
+        # Son faturalar
+        recent_invoices = sorted(invoices, key=lambda x: x.get("created_at", x.get("date", "")), reverse=True)[:5]
+        for inv in recent_invoices:
+            recent_activities.append({
+                "type": "invoice",
+                "icon": "🧾",
+                "title": f"Fatura #{inv.get('invoice_number') or inv.get('invoiceNo', '')}",
+                "subtitle": inv.get("customerName") or inv.get("customer_name", ""),
+                "amount": inv.get("total", 0) or inv.get("grandTotal", 0) or 0,
+                "date": (inv.get("created_at") or inv.get("date", ""))[:10]
+            })
+        
+        # Son tahsilatlar
+        recent_collections = sorted(collections, key=lambda x: x.get("created_at", x.get("date", "")), reverse=True)[:5]
+        for col in recent_collections:
+            recent_activities.append({
+                "type": "collection",
+                "icon": "💰",
+                "title": f"Tahsilat #{col.get('receiptNo', '')}",
+                "subtitle": col.get("customerName", ""),
+                "amount": col.get("amount", 0),
+                "date": (col.get("created_at") or col.get("date", ""))[:10]
+            })
+        
+        # Tarihe göre sırala
+        recent_activities.sort(key=lambda x: x["date"], reverse=True)
+        recent_activities = recent_activities[:10]
+        
+        # Aylık trend (son 6 ay)
+        monthly_trend = []
+        for i in range(5, -1, -1):
+            month_date = datetime.now(timezone.utc) - timedelta(days=i*30)
+            month_str = month_date.strftime("%Y-%m")
+            month_label = month_date.strftime("%b")
+            
+            month_invoices = sum(
+                inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+                for inv in invoices if inv.get("date", "")[:7] == month_str
+            )
+            month_collections = sum(
+                c.get("amount", 0) for c in collections if c.get("date", "")[:7] == month_str
+            )
+            
+            monthly_trend.append({
+                "month": month_label,
+                "invoices": month_invoices,
+                "collections": month_collections
+            })
+        
+        return {
+            "overview": {
+                "totalCustomers": total_customers,
+                "totalProjects": total_projects,
+                "activeProjects": active_projects,
+                "totalInvoiceAmount": total_invoice_amount,
+                "totalPaid": total_paid,
+                "totalRemaining": total_remaining,
+                "overdueAmount": overdue_amount,
+                "overdueCount": len(overdue_invoices),
+                "thisMonthInvoices": this_month_amount,
+                "thisMonthCollections": this_month_collections,
+                "thisMonthPayments": this_month_payments,
+                "collectionRate": round((total_paid / total_invoice_amount * 100) if total_invoice_amount > 0 else 0, 1)
+            },
+            "overdueInvoices": sorted(overdue_invoices, key=lambda x: x["daysOverdue"], reverse=True)[:10],
+            "upcomingDues": sorted(upcoming_dues, key=lambda x: x["daysLeft"])[:10],
+            "recentActivities": recent_activities,
+            "monthlyTrend": monthly_trend
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting dashboard stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ===================== COUNTRY PROFILE ENDPOINTS =====================
 
 @api_router.get("/country-profiles", response_model=List[CountryProfile])
