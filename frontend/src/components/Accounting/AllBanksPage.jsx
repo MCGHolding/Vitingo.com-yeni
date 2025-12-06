@@ -1394,136 +1394,163 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                 <div className="space-y-6">
                   {banks
                     .filter(bank => statements.some(s => s.bankId === bank.id))
-                    .map(bank => (
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        {statements
-                          .filter(s => s.bankId === selectedBankForStatement)
-                          .map(statement => (
-                            <div key={statement.id} className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
-                              {/* Header */}
-                              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
-                                <div className="flex items-center space-x-3">
-                                  <span className="text-2xl">📄</span>
-                                  <div>
-                                    <p className="font-semibold text-white text-sm">{statement.filename}</p>
-                                    <p className="text-blue-100 text-xs">Yüklenme: {statement.uploadDate}</p>
-                                  </div>
-                                </div>
-                                <div className="flex items-center space-x-1">
-                                  <button
-                                    onClick={() => downloadStatement(statement)}
-                                    className="p-1.5 hover:bg-white/20 rounded-lg transition"
-                                    title="İndir"
-                                  >
-                                    <span className="text-white">⬇️</span>
-                                  </button>
-                                  <button
-                                    onClick={() => deleteStatement(statement.id)}
-                                    className="p-1.5 hover:bg-white/20 rounded-lg transition"
-                                    title="Sil"
-                                  >
-                                    <span className="text-white">🗑️</span>
-                                  </button>
+                    .map(bank => {
+                      const bankStatements = statements.filter(s => s.bankId === bank.id);
+                      return (
+                        <div key={bank.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                          {/* Bank Header */}
+                          <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <span className="text-2xl">🏦</span>
+                                <div>
+                                  <h4 className="font-semibold text-gray-900">{bank.bank_name}</h4>
+                                  <p className="text-sm text-gray-500">{bankStatements.length} ekstre</p>
                                 </div>
                               </div>
-                              
-                              {/* Body */}
-                              <div className="p-4 space-y-3">
-                                {/* Tarih Aralığı */}
-                                {statement.periodStart && statement.periodEnd && (
-                                  <div className="flex items-center justify-between text-sm">
-                                    <div>
-                                      <p className="text-gray-500 text-xs">Başlangıç</p>
-                                      <p className="font-semibold text-gray-900">
-                                        {statement.periodStart}
-                                      </p>
-                                    </div>
-                                    <div className="text-gray-300 text-xl">→</div>
-                                    <div className="text-right">
-                                      <p className="text-gray-500 text-xs">Bitiş</p>
-                                      <p className="font-semibold text-gray-900">
-                                        {statement.periodEnd}
-                                      </p>
-                                    </div>
-                                  </div>
-                                )}
-                                
-                                {/* Bakiye Bilgileri */}
-                                {statement.openingBalance !== undefined && statement.closingBalance !== undefined && (
-                                  <div className="bg-gray-100 rounded-lg p-3 space-y-2">
-                                    <div className="flex items-center justify-between text-sm">
-                                      <span className="text-gray-600">Açılış Bakiyesi</span>
-                                      <span className="font-semibold text-gray-900">
-                                        {statement.openingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
-                                      </span>
-                                    </div>
-                                    <div className="flex items-center justify-between text-sm">
-                                      <span className="text-gray-600">Kapanış Bakiyesi</span>
-                                      <span className="font-semibold text-green-600">
-                                        {statement.closingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
-                                      </span>
-                                    </div>
-                                    <div className="border-t border-gray-300 pt-2 mt-2">
-                                      <div className="flex items-center justify-between text-sm">
-                                        <span className="text-gray-700 font-medium">Net Değişim</span>
-                                        <span className={`font-bold ${statement.netChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                          {statement.netChange >= 0 ? '+' : ''}
-                                          {statement.netChange?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
-                                        </span>
+                              <button
+                                onClick={() => {
+                                  setSelectedBankForUpload(bank.id);
+                                  setShowNewUploadModal(true);
+                                }}
+                                className="px-3 py-1.5 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition"
+                              >
+                                + Yeni Ekstre
+                              </button>
+                            </div>
+                          </div>
+                          
+                          {/* Statements Grid */}
+                          <div className="p-4">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                              {bankStatements.map(statement => (
+                                <div key={statement.id} className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden">
+                                  {/* Statement Header */}
+                                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
+                                    <div className="flex items-center space-x-3">
+                                      <span className="text-2xl">📄</span>
+                                      <div>
+                                        <p className="font-semibold text-white text-sm">{statement.filename}</p>
+                                        <p className="text-blue-100 text-xs">Yüklenme: {statement.uploadDate}</p>
                                       </div>
                                     </div>
-                                  </div>
-                                )}
-                                
-                                {/* Gelen/Giden Özeti */}
-                                {statement.totalIncoming !== undefined && statement.totalOutgoing !== undefined && (
-                                  <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div className="bg-green-50 rounded-lg p-2 text-center">
-                                      <p className="text-green-600 font-medium">Toplam Gelen</p>
-                                      <p className="text-green-700 font-bold text-sm">
-                                        +{statement.totalIncoming?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                                      </p>
-                                    </div>
-                                    <div className="bg-red-50 rounded-lg p-2 text-center">
-                                      <p className="text-red-600 font-medium">Toplam Giden</p>
-                                      <p className="text-red-700 font-bold text-sm">
-                                        -{statement.totalOutgoing?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
-                                      </p>
+                                    <div className="flex items-center space-x-1">
+                                      <button
+                                        onClick={() => downloadStatement(statement)}
+                                        className="p-1.5 hover:bg-white/20 rounded-lg transition"
+                                        title="İndir"
+                                      >
+                                        <span className="text-white">⬇️</span>
+                                      </button>
+                                      <button
+                                        onClick={() => deleteStatement(statement.id)}
+                                        className="p-1.5 hover:bg-white/20 rounded-lg transition"
+                                        title="Sil"
+                                      >
+                                        <span className="text-white">🗑️</span>
+                                      </button>
                                     </div>
                                   </div>
-                                )}
-                                
-                                {/* İşlem İstatistikleri */}
-                                <div className="flex items-center justify-between text-xs">
-                                  <div className="flex items-center space-x-3">
-                                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
-                                      📊 {statement.statistics?.transactionCount || 0} işlem
-                                    </span>
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
-                                      ✓ {statement.statistics?.categorizedCount || 0}
-                                    </span>
-                                    {(statement.statistics?.pendingCount || 0) > 0 && (
-                                      <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">
-                                        ⚠ {statement.statistics.pendingCount}
-                                      </span>
+                                  
+                                  {/* Statement Body */}
+                                  <div className="p-4 space-y-3">
+                                    {/* Tarih Aralığı */}
+                                    {statement.periodStart && statement.periodEnd && (
+                                      <div className="flex items-center justify-between text-sm">
+                                        <div>
+                                          <p className="text-gray-500 text-xs">Başlangıç</p>
+                                          <p className="font-semibold text-gray-900">
+                                            {statement.periodStart}
+                                          </p>
+                                        </div>
+                                        <div className="text-gray-300 text-xl">→</div>
+                                        <div className="text-right">
+                                          <p className="text-gray-500 text-xs">Bitiş</p>
+                                          <p className="font-semibold text-gray-900">
+                                            {statement.periodEnd}
+                                          </p>
+                                        </div>
+                                      </div>
                                     )}
+                                    
+                                    {/* Bakiye Bilgileri */}
+                                    {statement.openingBalance !== undefined && statement.closingBalance !== undefined && (
+                                      <div className="bg-gray-100 rounded-lg p-3 space-y-2">
+                                        <div className="flex items-center justify-between text-sm">
+                                          <span className="text-gray-600">Açılış Bakiyesi</span>
+                                          <span className="font-semibold text-gray-900">
+                                            {statement.openingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center justify-between text-sm">
+                                          <span className="text-gray-600">Kapanış Bakiyesi</span>
+                                          <span className="font-semibold text-green-600">
+                                            {statement.closingBalance?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
+                                          </span>
+                                        </div>
+                                        <div className="border-t border-gray-300 pt-2 mt-2">
+                                          <div className="flex items-center justify-between text-sm">
+                                            <span className="text-gray-700 font-medium">Net Değişim</span>
+                                            <span className={`font-bold ${statement.netChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                              {statement.netChange >= 0 ? '+' : ''}
+                                              {statement.netChange?.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {statement.currency || 'AED'}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                    
+                                    {/* Gelen/Giden Özeti */}
+                                    {statement.totalIncoming !== undefined && statement.totalOutgoing !== undefined && (
+                                      <div className="grid grid-cols-2 gap-2 text-xs">
+                                        <div className="bg-green-50 rounded-lg p-2 text-center">
+                                          <p className="text-green-600 font-medium">Toplam Gelen</p>
+                                          <p className="text-green-700 font-bold text-sm">
+                                            +{statement.totalIncoming?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                                          </p>
+                                        </div>
+                                        <div className="bg-red-50 rounded-lg p-2 text-center">
+                                          <p className="text-red-600 font-medium">Toplam Giden</p>
+                                          <p className="text-red-700 font-bold text-sm">
+                                            -{statement.totalOutgoing?.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    )}
+                                    
+                                    {/* İşlem İstatistikleri */}
+                                    <div className="flex items-center justify-between text-xs">
+                                      <div className="flex items-center space-x-3">
+                                        <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                                          📊 {statement.statistics?.transactionCount || 0} işlem
+                                        </span>
+                                        <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
+                                          ✓ {statement.statistics?.categorizedCount || 0}
+                                        </span>
+                                        {(statement.statistics?.pendingCount || 0) > 0 && (
+                                          <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full font-medium">
+                                            ⚠ {statement.statistics.pendingCount}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Görüntüle Butonu */}
+                                    <button
+                                      onClick={() => viewStatement(statement)}
+                                      className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition font-medium flex items-center justify-center space-x-2"
+                                    >
+                                      <span>📊</span>
+                                      <span>İşlemleri Görüntüle</span>
+                                    </button>
                                   </div>
                                 </div>
-                                
-                                {/* Görüntüle Butonu */}
-                                <button
-                                  onClick={() => viewStatement(statement)}
-                                  className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition font-medium flex items-center justify-center space-x-2"
-                                >
-                                  <span>📊</span>
-                                  <span>İşlemleri Görüntüle</span>
-                                </button>
-                              </div>
+                              ))}
                             </div>
-                          ))}
-                      </div>
-                    )}
-                  </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                 </div>
               )}
             </>
