@@ -131,6 +131,14 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     accountType: 'current'
   });
   
+  // IBAN Validation state
+  const [ibanValidation, setIbanValidation] = useState({
+    valid: false,
+    error: null,
+    message: '',
+    touched: false
+  });
+  
   // Countries list
   const countries = [
     { code: 'TR', name: 'Türkiye', flag: '🇹🇷' },
