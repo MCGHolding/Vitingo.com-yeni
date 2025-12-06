@@ -163,11 +163,63 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
+  // Load statements from backend
+  const loadStatements = async () => {
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      
+      // Her banka için statements çek
+      const allStatements = [];
+      for (const bank of banks) {
+        try {
+          const response = await fetch(`${backendUrl}/api/banks/${bank.id}/statements`);
+          if (response.ok) {
+            const bankStatements = await response.json();
+            // Her statement'a bankId ekle
+            bankStatements.forEach(stmt => {
+              allStatements.push({
+                ...stmt,
+                id: stmt.statementId || stmt.id,
+                bankId: bank.id,
+                filename: stmt.fileName,
+                uploadDate: stmt.createdAt ? new Date(stmt.createdAt).toLocaleDateString('tr-TR') : '',
+                startDate: stmt.periodStart,
+                endDate: stmt.periodEnd,
+                periodStart: stmt.periodStart,
+                periodEnd: stmt.periodEnd,
+                totalTransactions: stmt.transactionCount,
+                statistics: {
+                  transactionCount: stmt.transactionCount,
+                  categorizedCount: stmt.categorizedCount,
+                  pendingCount: stmt.pendingCount
+                }
+              });
+            });
+          }
+        } catch (err) {
+          console.error(`Error loading statements for bank ${bank.id}:`, err);
+        }
+      }
+      
+      console.log('✅ Loaded statements from backend:', allStatements.length);
+      setStatements(allStatements);
+    } catch (error) {
+      console.error('Error loading statements:', error);
+    }
+  };
+
   // Load banks and companies on component mount
   useEffect(() => {
     loadGroupCompanies();
     loadBanks();
   }, []);
+  
+  // Load statements when banks are loaded
+  useEffect(() => {
+    if (banks.length > 0) {
+      loadStatements();
+    }
+  }, [banks]);
 
   // Mevcut bankalardan benzersiz banka isimlerini çıkar ve bankList'e aktar
   useEffect(() => {
