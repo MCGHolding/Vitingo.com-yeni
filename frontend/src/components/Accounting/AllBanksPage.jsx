@@ -287,22 +287,36 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const handleDeleteBank = async (bankId) => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const bankToDelete = bankList.find(b => b.id === bankId);
       
-      // Backend'e silme isteği gönder
-      const response = await fetch(`${backendUrl}/api/banks/${bankId}`, {
-        method: 'DELETE',
-      });
+      if (bankToDelete) {
+        // Bu bankaya ait tüm hesapları bul ve sil
+        const accountsToDelete = banks.filter(account => 
+          account.bank_name?.toLowerCase() === bankToDelete.name.toLowerCase()
+        );
+        
+        // Her hesabı backend'den sil
+        for (const account of accountsToDelete) {
+          try {
+            await fetch(`${backendUrl}/api/banks/${account.id}`, {
+              method: 'DELETE',
+            });
+          } catch (err) {
+            console.error('Error deleting account:', err);
+          }
+        }
+        
+        // Local state'den tüm hesapları sil
+        setBanks(prev => prev.filter(account => 
+          account.bank_name?.toLowerCase() !== bankToDelete.name.toLowerCase()
+        ));
+      }
       
-      // Backend başarılı veya başarısız olsa da local'den sil
-      // (Çünkü yeni eklenen bankalar henüz backend'e kaydedilmemiş olabilir)
+      // BankList'den sil
       setBankList(prev => prev.filter(b => b.id !== bankId));
       
       if (selectedBankId === bankId) {
         setSelectedBankId('');
-      }
-      
-      if (!response.ok) {
-        console.log('Backend silme başarısız oldu, ama local state güncellendi');
       }
     } catch (error) {
       console.error('Delete error:', error);
