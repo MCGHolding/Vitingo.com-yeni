@@ -556,6 +556,120 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         </div>
       )}
 
+      {/* Tab Content: Ekstreler */}
+      {activeMainTab === 'statements' && (
+        <div className="p-6">
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Banka Ekstreleri</h3>
+            <p className="text-gray-500 text-sm">Banka ekstrelerinizi yükleyin ve görüntüleyin</p>
+          </div>
+          
+          {/* Banka Seçimi */}
+          {banks.length > 0 ? (
+            <>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Banka Seçin</label>
+                <div className="flex flex-wrap gap-2">
+                  {banks.map(bank => (
+                    <button
+                      key={bank.id}
+                      onClick={() => setSelectedBankForStatement(bank.id)}
+                      className={`px-4 py-2 rounded-lg border transition ${
+                        selectedBankForStatement === bank.id
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      {bank.bank_name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Ekstre Yükleme Alanı */}
+              {selectedBankForStatement && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Yükleme Kutusu */}
+                  <div 
+                    className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition cursor-pointer"
+                    onClick={() => document.getElementById('statement-upload').click()}
+                  >
+                    <input
+                      type="file"
+                      id="statement-upload"
+                      accept=".pdf"
+                      className="hidden"
+                      onChange={(e) => handleStatementUpload(e, selectedBankForStatement)}
+                    />
+                    <div className="text-4xl mb-3">📄</div>
+                    <p className="font-medium text-gray-900">PDF Ekstre Yükle</p>
+                    <p className="text-sm text-gray-500 mt-1">Sürükle & Bırak veya tıklayın</p>
+                    <p className="text-xs text-gray-400 mt-2">Desteklenen format: PDF</p>
+                  </div>
+                  
+                  {/* Yüklenen Ekstreler Listesi */}
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <h4 className="font-medium text-gray-900 mb-3">Yüklenen Ekstreler</h4>
+                    {statements.filter(s => s.bankId === selectedBankForStatement).length === 0 ? (
+                      <p className="text-gray-500 text-sm">Henüz ekstre yüklenmemiş</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {statements
+                          .filter(s => s.bankId === selectedBankForStatement)
+                          .map(statement => (
+                            <div key={statement.id} className="flex items-center justify-between bg-white p-3 rounded-lg border">
+                              <div className="flex items-center space-x-3">
+                                <span className="text-xl">📄</span>
+                                <div>
+                                  <p className="font-medium text-gray-900 text-sm">{statement.filename}</p>
+                                  <p className="text-xs text-gray-500">{statement.period} • {statement.uploadDate}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={() => viewStatement(statement)}
+                                  className="p-2 hover:bg-gray-100 rounded-lg"
+                                  title="Görüntüle"
+                                >
+                                  👁️
+                                </button>
+                                <button
+                                  onClick={() => downloadStatement(statement)}
+                                  className="p-2 hover:bg-gray-100 rounded-lg"
+                                  title="İndir"
+                                >
+                                  ⬇️
+                                </button>
+                                <button
+                                  onClick={() => deleteStatement(statement.id)}
+                                  className="p-2 hover:bg-red-100 rounded-lg text-red-500"
+                                  title="Sil"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed">
+              <Building2 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz banka eklenmemiş</h3>
+              <p className="text-gray-500 mb-4">Ekstre yüklemek için önce banka eklemelisiniz</p>
+              <Button onClick={onNewBank} className="bg-green-600 hover:bg-green-700">
+                <Building2 className="h-4 w-4 mr-2" />
+                Yeni Banka Ekle
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999]">
