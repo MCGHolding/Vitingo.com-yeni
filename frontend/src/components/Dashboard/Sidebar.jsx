@@ -187,8 +187,7 @@ const getNavigation = (userDepartment) => {
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
       { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
-      { name: 'Yeni Banka', href: '/accounting/banks/new', icon: Building2 },
-      { name: 'Tüm Bankalar', href: '/accounting/banks/all', icon: Building }
+      { name: 'Bankalar', href: '/accounting/banks/all', icon: Building }
     ]
   };
 
@@ -223,8 +222,7 @@ const getNavigation = (userDepartment) => {
       { name: 'Ödeme Talepleri', href: '/accounting/payment-requests', icon: FileCheck },
       { name: 'Alış Faturaları', href: '/accounting/purchase-invoices', icon: ShoppingCart },
       { name: 'Alış Fatura Onayları', href: '/accounting/purchase-approvals', icon: FileX },
-      { name: 'Yeni Banka', href: '/accounting/banks/new', icon: Building2 },
-      { name: 'Tüm Bankalar', href: '/accounting/banks/all', icon: Building }
+      { name: 'Bankalar', href: '/accounting/banks/all', icon: Building }
     ]
   };
 
