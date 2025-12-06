@@ -224,6 +224,9 @@ import {
 } from './pages/briefs';
 import { SurveyPage } from './pages/surveys';
 import ReportsPage from './pages/reports/ReportsPage';
+import HandoverReceipts from './pages/HandoverReceipts';
+import PublicHandoverSign from './pages/PublicHandoverSign';
+
 
 // Avanslar pages
 import {
