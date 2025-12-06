@@ -1337,44 +1337,30 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         </div>
       )}
 
-      {/* Yeni Hesap Ekleme Modal */}
+      {/* Yeni Hesap Ekleme Modal - Profesyonel */}
       {showAddAccount && selectedBankId && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
             
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-white font-semibold text-lg">
-                    {editingAccount ? 'Hesap Düzenle' : 'Yeni Banka Hesabı'}
+                    {editingAccount ? 'Banka Hesabı Düzenle' : 'Yeni Banka Hesabı'}
                   </h3>
                   <p className="text-blue-100 text-sm">
                     {bankList.find(b => b.id === selectedBankId)?.name}
                   </p>
                 </div>
-                <button
-                  onClick={() => {
-                    setShowAddAccount(false);
-                    setEditingAccount(null);
-                    setNewAccount({
-                      currency: 'TRY',
-                      iban: '',
-                      swift: '',
-                      accountNo: '',
-                      branchName: '',
-                      accountHolder: '',
-                    });
-                  }}
-                  className="text-white hover:bg-white/20 p-2 rounded-lg transition"
-                >
+                <button onClick={closeModal} className="text-white hover:bg-white/20 p-2 rounded-lg transition">
                   ✕
                 </button>
               </div>
             </div>
             
-            {/* Modal Body */}
-            <div className="p-6 space-y-4">
+            {/* Modal Body - Scrollable */}
+            <div className="p-6 space-y-5 overflow-y-auto flex-1">
               
               {/* Para Birimi */}
               <div>
@@ -1384,15 +1370,15 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                     <button
                       key={curr.code}
                       type="button"
-                      onClick={() => setNewAccount({ ...newAccount, currency: curr.code })}
+                      onClick={() => handleCurrencyChange(curr.code)}
                       className={`px-3 py-2 rounded-lg border transition flex items-center space-x-2 ${
                         newAccount.currency === curr.code
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          ? 'border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-200'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
                       <span>{curr.flag}</span>
-                      <span>{curr.code}</span>
+                      <span className="font-medium">{curr.code}</span>
                     </button>
                   ))}
                 </div>
@@ -1400,162 +1386,192 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
               
               {/* IBAN */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">IBAN</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  IBAN *
+                  {newAccount.currency === 'TRY' && (
+                    <span className="text-gray-400 font-normal ml-2">TR ile başlamalı, 26 karakter</span>
+                  )}
+                </label>
                 <input
                   type="text"
                   value={newAccount.iban}
-                  onChange={(e) => setNewAccount({ ...newAccount, iban: e.target.value.toUpperCase() })}
-                  placeholder="TR00 0000 0000 0000 0000 0000 00"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono"
+                  onChange={handleIBANChange}
+                  onBlur={() => handleBlur('iban')}
+                  placeholder={newAccount.currency === 'TRY' ? 'TR00 0000 0000 0000 0000 0000 00' : 'IBAN numaranızı girin'}
+                  className={`w-full px-4 py-3 border rounded-lg font-mono text-lg tracking-wider transition ${
+                    touched.iban && errors.iban
+                      ? 'border-red-500 bg-red-50 focus:ring-red-200'
+                      : 'border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500'
+                  }`}
                 />
+                {touched.iban && errors.iban && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span> {errors.iban}
+                  </p>
+                )}
+                {touched.iban && !errors.iban && newAccount.iban && (
+                  <p className="mt-1 text-sm text-green-600 flex items-center">
+                    <span className="mr-1">✓</span> Geçerli IBAN
+                  </p>
+                )}
               </div>
               
               {/* SWIFT */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">SWIFT Kodu</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  SWIFT Kodu *
+                  <span className="text-gray-400 font-normal ml-2">8 veya 11 karakter</span>
+                </label>
                 <input
                   type="text"
                   value={newAccount.swift}
-                  onChange={(e) => setNewAccount({ ...newAccount, swift: e.target.value.toUpperCase() })}
-                  placeholder="ABCDTRIS"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono"
+                  onChange={handleSWIFTChange}
+                  onBlur={() => handleBlur('swift')}
+                  placeholder="TGBATRIS"
+                  className={`w-full px-4 py-3 border rounded-lg font-mono text-lg tracking-wider transition ${
+                    touched.swift && errors.swift
+                      ? 'border-red-500 bg-red-50 focus:ring-red-200'
+                      : 'border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500'
+                  }`}
                 />
+                {touched.swift && errors.swift && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span> {errors.swift}
+                  </p>
+                )}
+                {touched.swift && !errors.swift && newAccount.swift && (
+                  <p className="mt-1 text-sm text-green-600 flex items-center">
+                    <span className="mr-1">✓</span> Geçerli SWIFT kodu
+                  </p>
+                )}
+                {newAccount.swift && detectSwiftFromIBAN(newAccount.iban) === newAccount.swift && (
+                  <p className="mt-1 text-sm text-blue-600 flex items-center">
+                    <span className="mr-1">🔍</span> IBAN&apos;dan otomatik tespit edildi
+                  </p>
+                )}
               </div>
               
-              {/* Hesap No ve Şube - Yan Yana */}
+              {/* Şube ve Hesap No - Yan Yana */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Hesap No</label>
-                  <input
-                    type="text"
-                    value={newAccount.accountNo}
-                    onChange={(e) => setNewAccount({ ...newAccount, accountNo: e.target.value })}
-                    placeholder="1234567-001"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Şube</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Şube Adı</label>
                   <input
                     type="text"
                     value={newAccount.branchName}
-                    onChange={(e) => setNewAccount({ ...newAccount, branchName: e.target.value })}
+                    onChange={(e) => setNewAccount(prev => ({ ...prev, branchName: e.target.value }))}
                     placeholder="Levent Şubesi"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Hesap No
+                    <span className="text-gray-400 font-normal ml-1">(Opsiyonel)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newAccount.accountNo}
+                    onChange={(e) => setNewAccount(prev => ({ ...prev, accountNo: e.target.value }))}
+                    placeholder="1234567-001"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
                   />
                 </div>
               </div>
               
-              {/* Hesap Sahibi */}
+              {/* Firma Ünvanı - Dropdown */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hesap Sahibi</label>
-                <input
-                  type="text"
-                  value={newAccount.accountHolder}
-                  onChange={(e) => setNewAccount({ ...newAccount, accountHolder: e.target.value })}
-                  placeholder="Şirket veya kişi adı"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                <label className="block text-sm font-medium text-gray-700 mb-1">Firma Ünvanı *</label>
+                <select
+                  value={newAccount.companyId}
+                  onChange={(e) => {
+                    const company = companies.find(c => c.id === e.target.value);
+                    setNewAccount(prev => ({
+                      ...prev,
+                      companyId: e.target.value,
+                      companyName: company?.name || ''
+                    }));
+                    if (e.target.value) {
+                      setErrors(prev => ({ ...prev, companyId: null }));
+                    }
+                  }}
+                  onBlur={() => handleBlur('companyId')}
+                  className={`w-full px-4 py-3 border rounded-lg transition ${
+                    touched.companyId && errors.companyId
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500'
+                  }`}
+                >
+                  <option value="">-- Firma Seçin --</option>
+                  {companies.map(company => (
+                    <option key={company.id} value={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
+                {touched.companyId && errors.companyId && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span> {errors.companyId}
+                  </p>
+                )}
+                {companies.length === 0 && (
+                  <p className="mt-1 text-sm text-yellow-600">
+                    ⚠️ Ayarlar → Grup Şirketleri&apos;nden şirket eklemelisiniz
+                  </p>
+                )}
+              </div>
+              
+              {/* Adres */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Adres *</label>
+                <textarea
+                  value={newAccount.address}
+                  onChange={(e) => {
+                    setNewAccount(prev => ({ ...prev, address: e.target.value }));
+                    if (e.target.value.trim()) {
+                      setErrors(prev => ({ ...prev, address: null }));
+                    }
+                  }}
+                  onBlur={() => handleBlur('address')}
+                  placeholder="Banka şubesinin veya hesap sahibinin adresi"
+                  rows={3}
+                  className={`w-full px-4 py-3 border rounded-lg transition resize-none ${
+                    touched.address && errors.address
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500'
+                  }`}
                 />
+                {touched.address && errors.address && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span> {errors.address}
+                  </p>
+                )}
               </div>
             </div>
             
             {/* Modal Footer */}
-            <div className="px-6 py-4 bg-gray-50 border-t flex items-center justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowAddAccount(false);
-                  setEditingAccount(null);
-                  setNewAccount({
-                    currency: 'TRY',
-                    iban: '',
-                    swift: '',
-                    accountNo: '',
-                    branchName: '',
-                    accountHolder: '',
-                  });
-                }}
-                className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition"
-              >
-                İptal
-              </button>
-              <button
-                onClick={async () => {
-                  if (!newAccount.iban && !newAccount.accountNo) {
-                    alert('IBAN veya Hesap No gerekli');
-                    return;
-                  }
-                  
-                  const selectedBank = bankList.find(b => b.id === selectedBankId);
-                  const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-                  
-                  const accountData = {
-                    bank_name: selectedBank?.name || '',
-                    country: selectedBank?.country || 'TR',
-                    currency: newAccount.currency,
-                    iban: newAccount.iban,
-                    swift_code: newAccount.swift,
-                    account_number: newAccount.accountNo,
-                    branch_name: newAccount.branchName,
-                    account_holder: newAccount.accountHolder,
-                  };
-                  
-                  try {
-                    let response;
-                    
-                    if (editingAccount) {
-                      response = await fetch(`${backendUrl}/api/banks/${editingAccount.id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(accountData)
-                      });
-                    } else {
-                      response = await fetch(`${backendUrl}/api/banks`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(accountData)
-                      });
-                    }
-                    
-                    if (response.ok) {
-                      const savedAccount = await response.json();
-                      
-                      if (editingAccount) {
-                        // Güncelleme: mevcut hesabı değiştir
-                        setBanks(prev => prev.map(b => 
-                          b.id === editingAccount.id ? savedAccount : b
-                        ));
-                      } else {
-                        // Yeni ekleme: listeye ekle
-                        setBanks(prev => [...prev, savedAccount]);
-                      }
-                      
-                      setShowAddAccount(false);
-                      setEditingAccount(null);
-                      setNewAccount({
-                        currency: 'TRY',
-                        iban: '',
-                        swift: '',
-                        accountNo: '',
-                        branchName: '',
-                        accountHolder: '',
-                      });
-                    } else {
-                      alert('İşlem başarısız');
-                    }
-                  } catch (error) {
-                    console.error('Save error:', error);
-                    alert('Hata: ' + error.message);
-                  }
-                }}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                {editingAccount ? 'Güncelle' : 'Kaydet'}
-              </button>
+            <div className="px-6 py-4 bg-gray-50 border-t flex items-center justify-between flex-shrink-0">
+              <div className="text-sm text-gray-500">
+                <span className="text-red-500">*</span> Zorunlu alanlar
+              </div>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={closeModal}
+                  className="px-5 py-2.5 text-gray-700 hover:bg-gray-200 rounded-lg transition font-medium"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={handleSubmitAccount}
+                  className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center"
+                >
+                  <span className="mr-2">{editingAccount ? '✓' : '+'}</span>
+                  {editingAccount ? 'Güncelle' : 'Hesap Ekle'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-
       {/* Email Modal */}
       {showEmailModal && (
         <BankEmailModal
