@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Building2, Edit, Trash2, Search, Globe, Share2, Mail } from 'lucide-react';
+import { ArrowLeft, Building2, Edit, Trash2, Search, Globe, Share2, Mail, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import BankEmailModal from './BankEmailModal';
 import BankStatementAnalyzer from '../BankStatement/BankStatementAnalyzer';
+import { validateIBAN as validateIBANUtil, formatIBAN as formatIBANUtil, getIBANPlaceholder, IBAN_SPECS } from '../../utils/ibanValidator';
 
 const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   const [banks, setBanks] = useState([]);
