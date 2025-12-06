@@ -17169,6 +17169,272 @@ async def check_due_invoices():
 
 # ==================== END BİLDİRİM SİSTEMİ API ====================
 
+# ==================== RAPORLAMA API ====================
+
+@api_router.get("/reports/aging")
+async def get_aging_report():
+    """Alacak Yaşlandırma Raporu"""
+    try:
+        today = datetime.now()
+        today_str = today.strftime("%Y-%m-%d")
+        
+        invoices = await db.invoices.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        
+        aging_buckets = {
+            "current": {"label": "Güncel (0-30)", "count": 0, "amount": 0, "invoices": []},
+            "days_31_60": {"label": "31-60 Gün", "count": 0, "amount": 0, "invoices": []},
+            "days_61_90": {"label": "61-90 Gün", "count": 0, "amount": 0, "invoices": []},
+            "days_91_120": {"label": "91-120 Gün", "count": 0, "amount": 0, "invoices": []},
+            "over_120": {"label": "120+ Gün", "count": 0, "amount": 0, "invoices": []}
+        }
+        
+        total_receivables = 0
+        
+        for inv in invoices:
+            due_date = inv.get("dueDate") or inv.get("due_date")
+            if not due_date:
+                continue
+            
+            paid = inv.get("paidAmount", 0) or 0
+            total = inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+            remaining = total - paid
+            
+            if remaining <= 0:
+                continue
+            
+            total_receivables += remaining
+            
+            try:
+                due_dt = datetime.strptime(str(due_date)[:10], "%Y-%m-%d")
+                days_overdue = (today - due_dt).days
+            except:
+                days_overdue = 0
+            
+            invoice_data = {
+                "id": inv.get("id") or str(inv.get("_id")),
+                "invoiceNo": inv.get("invoice_number") or inv.get("invoiceNo") or "",
+                "customerName": inv.get("customerName") or inv.get("customer_name") or "",
+                "dueDate": str(due_date)[:10],
+                "total": total,
+                "paid": paid,
+                "remaining": remaining,
+                "daysOverdue": max(0, days_overdue)
+            }
+            
+            if days_overdue <= 30:
+                aging_buckets["current"]["count"] += 1
+                aging_buckets["current"]["amount"] += remaining
+                aging_buckets["current"]["invoices"].append(invoice_data)
+            elif days_overdue <= 60:
+                aging_buckets["days_31_60"]["count"] += 1
+                aging_buckets["days_31_60"]["amount"] += remaining
+                aging_buckets["days_31_60"]["invoices"].append(invoice_data)
+            elif days_overdue <= 90:
+                aging_buckets["days_61_90"]["count"] += 1
+                aging_buckets["days_61_90"]["amount"] += remaining
+                aging_buckets["days_61_90"]["invoices"].append(invoice_data)
+            elif days_overdue <= 120:
+                aging_buckets["days_91_120"]["count"] += 1
+                aging_buckets["days_91_120"]["amount"] += remaining
+                aging_buckets["days_91_120"]["invoices"].append(invoice_data)
+            else:
+                aging_buckets["over_120"]["count"] += 1
+                aging_buckets["over_120"]["amount"] += remaining
+                aging_buckets["over_120"]["invoices"].append(invoice_data)
+        
+        # Her bucket'taki faturaları tutara göre sırala
+        for bucket in aging_buckets.values():
+            bucket["invoices"] = sorted(bucket["invoices"], key=lambda x: x["remaining"], reverse=True)[:20]
+        
+        return {
+            "generatedAt": datetime.now().isoformat(),
+            "totalReceivables": total_receivables,
+            "buckets": aging_buckets
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating aging report: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/reports/income-expense")
+async def get_income_expense_report(months: int = 12):
+    """Gelir/Gider Analizi Raporu"""
+    try:
+        result = []
+        
+        for i in range(months - 1, -1, -1):
+            month_date = datetime.now() - timedelta(days=i * 30)
+            month_str = month_date.strftime("%Y-%m")
+            month_label = month_date.strftime("%b %Y")
+            
+            # Faturalar (Gelir)
+            invoices = await db.invoices.find({
+                "status": {"$ne": "deleted"},
+                "date": {"$regex": f"^{month_str}"}
+            }, {"_id": 0}).to_list(None)
+            
+            income = sum(inv.get("total", 0) or inv.get("grandTotal", 0) or 0 for inv in invoices)
+            
+            # Tahsilatlar
+            collections = await db.collections_new.find({
+                "status": {"$ne": "deleted"},
+                "date": {"$regex": f"^{month_str}"}
+            }, {"_id": 0}).to_list(None)
+            
+            collected = sum(c.get("amount", 0) for c in collections)
+            
+            # Ödemeler (Gider)
+            payments = await db.payments_new.find({
+                "status": {"$ne": "deleted"},
+                "date": {"$regex": f"^{month_str}"}
+            }, {"_id": 0}).to_list(None)
+            
+            expense = sum(p.get("amount", 0) for p in payments)
+            
+            # Gider makbuzları
+            expenses = await db.expense_receipts.find({
+                "status": {"$ne": "deleted"},
+                "date": {"$regex": f"^{month_str}"}
+            }, {"_id": 0}).to_list(None)
+            
+            other_expenses = sum(e.get("amount", 0) or e.get("total", 0) or 0 for e in expenses)
+            
+            result.append({
+                "month": month_label,
+                "monthKey": month_str,
+                "income": income,
+                "collected": collected,
+                "expense": expense + other_expenses,
+                "profit": income - expense - other_expenses,
+                "invoiceCount": len(invoices),
+                "collectionCount": len(collections),
+                "paymentCount": len(payments)
+            })
+        
+        # Toplamlar
+        totals = {
+            "totalIncome": sum(m["income"] for m in result),
+            "totalCollected": sum(m["collected"] for m in result),
+            "totalExpense": sum(m["expense"] for m in result),
+            "totalProfit": sum(m["profit"] for m in result),
+            "avgMonthlyIncome": sum(m["income"] for m in result) / max(1, len(result)),
+            "avgMonthlyExpense": sum(m["expense"] for m in result) / max(1, len(result))
+        }
+        
+        return {
+            "generatedAt": datetime.now().isoformat(),
+            "period": f"Son {months} ay",
+            "months": result,
+            "totals": totals
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating income/expense report: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/reports/customer-performance")
+async def get_customer_performance_report(limit: int = 20):
+    """Müşteri Performans Raporu"""
+    try:
+        customers = await db.customers.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        
+        customer_stats = []
+        
+        for customer in customers:
+            customer_id = customer.get("id") or str(customer.get("_id"))
+            customer_name = customer.get("companyName") or customer.get("name") or "İsimsiz"
+            
+            # Faturalar
+            invoices = await db.invoices.find({
+                "$or": [
+                    {"customerId": customer_id},
+                    {"customer_id": customer_id}
+                ],
+                "status": {"$ne": "deleted"}
+            }, {"_id": 0}).to_list(None)
+            
+            total_invoiced = sum(inv.get("total", 0) or inv.get("grandTotal", 0) or 0 for inv in invoices)
+            total_paid = sum(inv.get("paidAmount", 0) or 0 for inv in invoices)
+            total_remaining = total_invoiced - total_paid
+            
+            # Tahsilatlar
+            collections = await db.collections_new.find({
+                "customerId": customer_id,
+                "status": {"$ne": "deleted"}
+            }, {"_id": 0}).to_list(None)
+            
+            total_collected = sum(c.get("amount", 0) for c in collections)
+            
+            # Gecikmiş ödemeler
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            overdue_amount = 0
+            overdue_count = 0
+            
+            for inv in invoices:
+                due_date = inv.get("dueDate") or inv.get("due_date")
+                if due_date and str(due_date)[:10] < today_str:
+                    paid = inv.get("paidAmount", 0) or 0
+                    total = inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+                    remaining = total - paid
+                    if remaining > 0:
+                        overdue_amount += remaining
+                        overdue_count += 1
+            
+            # Ödeme performansı (0-100)
+            payment_score = 100
+            if total_invoiced > 0:
+                payment_ratio = total_paid / total_invoiced * 100
+                payment_score = min(100, payment_ratio)
+            
+            if overdue_amount > 0:
+                payment_score = max(0, payment_score - (overdue_count * 10))
+            
+            if total_invoiced > 0 or total_remaining > 0:
+                customer_stats.append({
+                    "id": customer_id,
+                    "name": customer_name,
+                    "email": customer.get("email", ""),
+                    "phone": customer.get("phone", ""),
+                    "totalInvoiced": total_invoiced,
+                    "totalPaid": total_paid,
+                    "totalRemaining": total_remaining,
+                    "totalCollected": total_collected,
+                    "overdueAmount": overdue_amount,
+                    "overdueCount": overdue_count,
+                    "invoiceCount": len(invoices),
+                    "paymentScore": round(payment_score, 1),
+                    "status": "good" if payment_score >= 80 else "warning" if payment_score >= 50 else "risk"
+                })
+        
+        # Toplam ciro'ya göre sırala
+        customer_stats.sort(key=lambda x: x["totalInvoiced"], reverse=True)
+        
+        # Özet
+        summary = {
+            "totalCustomers": len(customer_stats),
+            "totalInvoiced": sum(c["totalInvoiced"] for c in customer_stats),
+            "totalCollected": sum(c["totalCollected"] for c in customer_stats),
+            "totalRemaining": sum(c["totalRemaining"] for c in customer_stats),
+            "totalOverdue": sum(c["overdueAmount"] for c in customer_stats),
+            "goodCustomers": len([c for c in customer_stats if c["status"] == "good"]),
+            "warningCustomers": len([c for c in customer_stats if c["status"] == "warning"]),
+            "riskCustomers": len([c for c in customer_stats if c["status"] == "risk"])
+        }
+        
+        return {
+            "generatedAt": datetime.now().isoformat(),
+            "summary": summary,
+            "customers": customer_stats[:limit]
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating customer performance report: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== END RAPORLAMA API ====================
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
