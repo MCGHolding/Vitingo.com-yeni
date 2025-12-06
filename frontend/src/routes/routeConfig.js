@@ -96,6 +96,10 @@ export const ROUTES = {
   CONTRACTS: '/:tenantSlug/sozlesmeler',
   CONTRACT_NEW: '/:tenantSlug/sozlesmeler/yeni',
   CONTRACT_EDIT: '/:tenantSlug/sozlesmeler/:contractId/duzenle',
+  
+  // Teslim Belgeleri
+  HANDOVER_RECEIPTS: '/:tenantSlug/raporlar/teslim',
+  HANDOVER_PUBLIC: '/handover/:token',
 };
 
 // URL oluşturma yardımcı fonksiyonu
