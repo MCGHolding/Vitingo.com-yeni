@@ -1735,8 +1735,6 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {selectedStatement.transactions?.map((txn, idx) => (
-                    <tbody className="bg-white divide-y divide-gray-200">
                       {selectedStatement.transactions?.map((txn, idx) => {
                         const txnId = txn.id || `txn-${idx}`;
                         const updated = updatedTransactions[txnId] || {};
