@@ -1043,6 +1043,214 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         </div>
       )}
 
+      {/* Yeni Hesap Ekleme Modal */}
+      {showAddAccount && selectedBankId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+            
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-white font-semibold text-lg">
+                    {editingAccount ? 'Hesap Düzenle' : 'Yeni Banka Hesabı'}
+                  </h3>
+                  <p className="text-blue-100 text-sm">
+                    {bankList.find(b => b.id === selectedBankId)?.name}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowAddAccount(false);
+                    setEditingAccount(null);
+                    setNewAccount({
+                      currency: 'TRY',
+                      iban: '',
+                      swift: '',
+                      accountNo: '',
+                      branchName: '',
+                      accountHolder: '',
+                    });
+                  }}
+                  className="text-white hover:bg-white/20 p-2 rounded-lg transition"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              
+              {/* Para Birimi */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Para Birimi *</label>
+                <div className="flex flex-wrap gap-2">
+                  {currencies.map(curr => (
+                    <button
+                      key={curr.code}
+                      type="button"
+                      onClick={() => setNewAccount({ ...newAccount, currency: curr.code })}
+                      className={`px-3 py-2 rounded-lg border transition flex items-center space-x-2 ${
+                        newAccount.currency === curr.code
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span>{curr.flag}</span>
+                      <span>{curr.code}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* IBAN */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">IBAN</label>
+                <input
+                  type="text"
+                  value={newAccount.iban}
+                  onChange={(e) => setNewAccount({ ...newAccount, iban: e.target.value.toUpperCase() })}
+                  placeholder="TR00 0000 0000 0000 0000 0000 00"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+              
+              {/* SWIFT */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">SWIFT Kodu</label>
+                <input
+                  type="text"
+                  value={newAccount.swift}
+                  onChange={(e) => setNewAccount({ ...newAccount, swift: e.target.value.toUpperCase() })}
+                  placeholder="ABCDTRIS"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+              </div>
+              
+              {/* Hesap No ve Şube - Yan Yana */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Hesap No</label>
+                  <input
+                    type="text"
+                    value={newAccount.accountNo}
+                    onChange={(e) => setNewAccount({ ...newAccount, accountNo: e.target.value })}
+                    placeholder="1234567-001"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Şube</label>
+                  <input
+                    type="text"
+                    value={newAccount.branchName}
+                    onChange={(e) => setNewAccount({ ...newAccount, branchName: e.target.value })}
+                    placeholder="Levent Şubesi"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              
+              {/* Hesap Sahibi */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Hesap Sahibi</label>
+                <input
+                  type="text"
+                  value={newAccount.accountHolder}
+                  onChange={(e) => setNewAccount({ ...newAccount, accountHolder: e.target.value })}
+                  placeholder="Şirket veya kişi adı"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="px-6 py-4 bg-gray-50 border-t flex items-center justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowAddAccount(false);
+                  setEditingAccount(null);
+                  setNewAccount({
+                    currency: 'TRY',
+                    iban: '',
+                    swift: '',
+                    accountNo: '',
+                    branchName: '',
+                    accountHolder: '',
+                  });
+                }}
+                className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition"
+              >
+                İptal
+              </button>
+              <button
+                onClick={async () => {
+                  if (!newAccount.iban && !newAccount.accountNo) {
+                    alert('IBAN veya Hesap No gerekli');
+                    return;
+                  }
+                  
+                  const selectedBank = bankList.find(b => b.id === selectedBankId);
+                  const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+                  
+                  const accountData = {
+                    bank_name: selectedBank?.name || '',
+                    country: selectedBank?.country || 'TR',
+                    currency: newAccount.currency,
+                    iban: newAccount.iban,
+                    swift_code: newAccount.swift,
+                    account_number: newAccount.accountNo,
+                    branch_name: newAccount.branchName,
+                    account_holder: newAccount.accountHolder,
+                  };
+                  
+                  try {
+                    let response;
+                    
+                    if (editingAccount) {
+                      response = await fetch(`${backendUrl}/api/banks/${editingAccount.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(accountData)
+                      });
+                    } else {
+                      response = await fetch(`${backendUrl}/api/banks`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(accountData)
+                      });
+                    }
+                    
+                    if (response.ok) {
+                      loadBanks();
+                      setShowAddAccount(false);
+                      setEditingAccount(null);
+                      setNewAccount({
+                        currency: 'TRY',
+                        iban: '',
+                        swift: '',
+                        accountNo: '',
+                        branchName: '',
+                        accountHolder: '',
+                      });
+                    } else {
+                      alert('İşlem başarısız');
+                    }
+                  } catch (error) {
+                    console.error('Save error:', error);
+                    alert('Hata: ' + error.message);
+                  }
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                {editingAccount ? 'Güncelle' : 'Kaydet'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Email Modal */}
       {showEmailModal && (
         <BankEmailModal
