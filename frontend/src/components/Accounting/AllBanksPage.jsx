@@ -170,6 +170,23 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   }, [banks, bankList.length]);
 
+  // Grup şirketlerini yükle
+  useEffect(() => {
+    const loadCompanies = async () => {
+      try {
+        const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/group-companies`);
+        if (response.ok) {
+          const data = await response.json();
+          setCompanies(Array.isArray(data) ? data : data.companies || []);
+        }
+      } catch (error) {
+        console.error('Error loading companies:', error);
+      }
+    };
+    loadCompanies();
+  }, []);
+
   // Filter banks based on search and company
   useEffect(() => {
     let filtered = [...banks];
