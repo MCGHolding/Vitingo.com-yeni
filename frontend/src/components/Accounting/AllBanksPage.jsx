@@ -284,17 +284,41 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       return;
     }
     
-    const newStatement = {
-      id: Date.now().toString(),
-      bankId: bankId,
-      filename: file.name,
-      period: new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' }),
-      uploadDate: new Date().toLocaleDateString('tr-TR'),
-      file: file
-    };
-    
-    setStatements(prev => [...prev, newStatement]);
-    alert('Ekstre başarıyla yüklendi: ' + file.name);
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch(`${backendUrl}/api/banks/${bankId}/statements/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        
+        const newStatement = {
+          id: result.statementId,
+          bankId: bankId,
+          filename: file.name,
+          period: new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' }),
+          uploadDate: new Date().toLocaleDateString('tr-TR'),
+          file: file,
+          parsed: result,
+          transactions: result.transactions || [],
+          statistics: result.statistics || {}
+        };
+        
+        setStatements(prev => [...prev, newStatement]);
+        alert(`✅ Ekstre parse edildi!\n📊 ${result.statistics?.transactionCount || 0} işlem bulundu\n✓ ${result.autoMatchedCount || 0} işlem otomatik eşleşti`);
+      } else {
+        const error = await response.json();
+        alert('❌ Yükleme hatası: ' + (error.detail || 'Bilinmeyen hata'));
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('❌ Yükleme hatası: ' + error.message);
+    }
   };
 
   const viewStatement = (statement) => {
