@@ -181,6 +181,52 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     setSelectedShareCountry('');
   };
   
+  // Ekstre fonksiyonları
+  const handleStatementUpload = async (e, bankId) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    if (file.type !== 'application/pdf') {
+      alert('Sadece PDF dosyaları yükleyebilirsiniz');
+      return;
+    }
+    
+    const newStatement = {
+      id: Date.now().toString(),
+      bankId: bankId,
+      filename: file.name,
+      period: new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' }),
+      uploadDate: new Date().toLocaleDateString('tr-TR'),
+      file: file
+    };
+    
+    setStatements(prev => [...prev, newStatement]);
+    alert('Ekstre başarıyla yüklendi: ' + file.name);
+  };
+
+  const viewStatement = (statement) => {
+    if (statement.file) {
+      const url = URL.createObjectURL(statement.file);
+      window.open(url, '_blank');
+    }
+  };
+
+  const downloadStatement = (statement) => {
+    if (statement.file) {
+      const url = URL.createObjectURL(statement.file);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = statement.filename;
+      link.click();
+    }
+  };
+
+  const deleteStatement = (statementId) => {
+    if (window.confirm('Bu ekstreyi silmek istediğinize emin misiniz?')) {
+      setStatements(prev => prev.filter(s => s.id !== statementId));
+    }
+  };
+  
   const getCountryInfo = (countryCode) => {
     return countries.find(c => c.code === countryCode) || { name: countryCode, flag: '🏦', code: countryCode };
   };
