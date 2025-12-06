@@ -390,6 +390,162 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     return groups.join(' ');
   };
 
+  // ==================== HANDLER FONKSİYONLARI ====================
+  
+  const handleIBANChange = (e) => {
+    const rawValue = e.target.value;
+    const cleaned = rawValue.replace(/[^A-Z0-9\s]/gi, '');
+    const formatted = formatIBAN(cleaned);
+    
+    if (formatted.replace(/\s/g, '').length > 34) return;
+    
+    setNewAccount(prev => ({ ...prev, iban: formatted }));
+    
+    const detectedSwift = detectSwiftFromIBAN(formatted);
+    if (detectedSwift && !newAccount.swift) {
+      setNewAccount(prev => ({ ...prev, swift: detectedSwift }));
+    }
+    
+    if (touched.iban) {
+      const validation = validateIBAN(formatted, newAccount.currency);
+      setErrors(prev => ({ ...prev, iban: validation.error }));
+    }
+  };
+
+  const handleSWIFTChange = (e) => {
+    const value = e.target.value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    
+    if (value.length > 11) return;
+    
+    setNewAccount(prev => ({ ...prev, swift: value }));
+    
+    if (touched.swift) {
+      const validation = validateSWIFT(value);
+      setErrors(prev => ({ ...prev, swift: validation.error }));
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    
+    if (field === 'iban') {
+      const validation = validateIBAN(newAccount.iban, newAccount.currency);
+      setErrors(prev => ({ ...prev, iban: validation.error }));
+    }
+    
+    if (field === 'swift') {
+      const validation = validateSWIFT(newAccount.swift);
+      setErrors(prev => ({ ...prev, swift: validation.error }));
+    }
+    
+    if (field === 'companyId' && !newAccount.companyId) {
+      setErrors(prev => ({ ...prev, companyId: 'Firma seçimi zorunludur' }));
+    }
+    
+    if (field === 'address' && !newAccount.address.trim()) {
+      setErrors(prev => ({ ...prev, address: 'Adres zorunludur' }));
+    }
+  };
+
+  const handleCurrencyChange = (currencyCode) => {
+    setNewAccount(prev => ({ ...prev, currency: currencyCode }));
+    
+    if (newAccount.iban && touched.iban) {
+      const validation = validateIBAN(newAccount.iban, currencyCode);
+      setErrors(prev => ({ ...prev, iban: validation.error }));
+    }
+  };
+
+  const closeModal = () => {
+    setShowAddAccount(false);
+    setEditingAccount(null);
+    setNewAccount({
+      currency: 'TRY',
+      iban: '',
+      swift: '',
+      accountNo: '',
+      branchName: '',
+      companyId: '',
+      companyName: '',
+      address: '',
+    });
+    setErrors({});
+    setTouched({});
+  };
+
+  const handleSubmitAccount = async () => {
+    setTouched({ iban: true, swift: true, companyId: true, address: true });
+    
+    const ibanValidation = validateIBAN(newAccount.iban, newAccount.currency);
+    const swiftValidation = validateSWIFT(newAccount.swift);
+    
+    const newErrors = {
+      iban: ibanValidation.error,
+      swift: swiftValidation.error,
+      companyId: !newAccount.companyId ? 'Firma seçimi zorunludur' : null,
+      address: !newAccount.address.trim() ? 'Adres zorunludur' : null,
+    };
+    
+    setErrors(newErrors);
+    
+    if (Object.values(newErrors).some(e => e)) {
+      return;
+    }
+    
+    const selectedBank = bankList.find(b => b.id === selectedBankId);
+    const selectedCompany = companies.find(c => c.id === newAccount.companyId);
+    const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+    
+    const accountData = {
+      bank_name: selectedBank?.name || '',
+      country: selectedBank?.country || 'TR',
+      currency: newAccount.currency,
+      iban: newAccount.iban.replace(/\s/g, ''),
+      swift_code: newAccount.swift,
+      account_number: newAccount.accountNo || '',
+      branch_name: newAccount.branchName,
+      company_id: newAccount.companyId,
+      company_name: selectedCompany?.name || newAccount.companyName,
+      account_holder: selectedCompany?.name || newAccount.companyName,
+      address: newAccount.address,
+    };
+    
+    try {
+      let response;
+      
+      if (editingAccount) {
+        response = await fetch(`${backendUrl}/api/banks/${editingAccount.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(accountData)
+        });
+      } else {
+        response = await fetch(`${backendUrl}/api/banks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(accountData)
+        });
+      }
+      
+      if (response.ok) {
+        const savedAccount = await response.json();
+        
+        if (editingAccount) {
+          setBanks(prev => prev.map(b => b.id === editingAccount.id ? savedAccount : b));
+        } else {
+          setBanks(prev => [...prev, savedAccount]);
+        }
+        
+        closeModal();
+      } else {
+        alert('İşlem başarısız');
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('Hata: ' + error.message);
+    }
+  };
+
   const handleDeleteBank = async (bankId) => {
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
