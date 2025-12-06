@@ -494,55 +494,54 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
 
       {/* Tab Content: Banka Hesapları */}
       {activeMainTab === 'accounts' && (
-        <div>
-          {/* Bank Sub-Tabs */}
+        <div className="p-6">
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Banka Hesapları</h3>
+            <p className="text-gray-500 text-sm">Tüm banka hesaplarınızın özeti</p>
+          </div>
+          
           {banks.length > 0 ? (
-            <>
-              <div className="flex gap-2 overflow-x-auto pb-3 mb-6">
-                {banks.map(bank => (
-                  <button
-                    key={bank.id}
-                    onClick={() => setActiveBank(bank.id)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                      activeBank === bank.id 
-                        ? 'bg-green-600 text-white' 
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {bank.bank_name}
-                  </button>
-                ))}
-              </div>
-              
-              {/* Selected Bank Content */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                {activeBank ? (
-                  (() => {
-                    const selectedBank = banks.find(b => b.id === activeBank);
-                    const isWioBank = selectedBank?.bank_name?.toLowerCase().includes('wio');
-                    
-                    if (isWioBank) {
-                      // Use static import for BankStatementAnalyzer
-                      return <BankStatementAnalyzer bankId={activeBank} />;
-                    }
-                    
-                    return (
-                      <div className="text-center py-12 text-gray-500">
-                        <span className="text-4xl mb-3 block">🏦</span>
-                        <p className="font-medium text-gray-800 mb-2">
-                          {selectedBank?.bank_name}
-                        </p>
-                        <p className="text-sm">Hesap bilgileri yakında eklenecek</p>
-                      </div>
-                    );
-                  })()
-                ) : (
-                  <div className="text-center py-12 text-gray-500">
-                    <p>Banka seçin</p>
-                  </div>
-                )}
-              </div>
-            </>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50 border-b">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Banka</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Hesap No / IBAN</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Para Birimi</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Şube</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Hesap Sahibi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {banks.map(bank => (
+                    <tr key={bank.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center space-x-2">
+                          <span>🏦</span>
+                          <span className="font-medium text-gray-900">{bank.bank_name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-mono text-sm text-gray-700">
+                          {bank.iban || bank.account_number || '-'}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-medium">
+                          {bank.currency || 'TRY'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {bank.branch_name || bank.sube || '-'}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {bank.account_holder || bank.hesap_sahibi || '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed">
               <Building2 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
