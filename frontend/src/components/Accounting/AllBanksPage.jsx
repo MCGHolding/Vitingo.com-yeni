@@ -311,10 +311,16 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   // Ekstre fonksiyonları
   const handleStatementUpload = async (e, bankId) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      console.log('❌ No file selected');
+      return;
+    }
+    
+    console.log('📤 Upload started:', { bankId, fileName: file.name, fileSize: file.size });
     
     if (file.type !== 'application/pdf') {
       alert('Sadece PDF dosyaları yükleyebilirsiniz');
+      e.target.value = ''; // Reset input
       return;
     }
     
@@ -323,13 +329,18 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       const formData = new FormData();
       formData.append('file', file);
       
+      console.log('🚀 Sending to API:', `${backendUrl}/api/banks/${bankId}/statements/upload`);
+      
       const response = await fetch(`${backendUrl}/api/banks/${bankId}/statements/upload`, {
         method: 'POST',
         body: formData
       });
       
+      console.log('📥 API Response status:', response.status);
+      
       if (response.ok) {
         const result = await response.json();
+        console.log('✅ Parse result:', result);
         
         const newStatement = {
           id: result.statementId || result.id,
@@ -371,11 +382,16 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
         alert(`✅ Ekstre parse edildi!\n📊 ${result.transactionCount || 0} işlem bulundu\n✓ ${result.categorizedCount || 0} işlem otomatik eşleşti`);
       } else {
         const error = await response.json();
+        console.error('❌ API Error:', error);
         alert('❌ Yükleme hatası: ' + (error.detail || 'Bilinmeyen hata'));
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('❌ Upload error:', error);
       alert('❌ Yükleme hatası: ' + error.message);
+    } finally {
+      // Always reset the file input to allow re-uploading the same file
+      e.target.value = '';
+      console.log('🔄 File input reset');
     }
   };
 
