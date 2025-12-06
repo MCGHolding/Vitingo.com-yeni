@@ -8596,14 +8596,14 @@ class CollectionCreate(BaseModel):
     description: str = ""
     status: str = "completed"  # pending, completed, cancelled
 
-@api_router.get("/collections")
-async def get_collections(
+@api_router.get("/collections-new")
+async def get_collections_new(
     customer_id: str = None,
     start_date: str = None,
     end_date: str = None,
     status: str = None
 ):
-    """Tahsilatları listele"""
+    """Tahsilatları listele (Yeni Sistem)"""
     try:
         query = {"status": {"$ne": "deleted"}}
         
