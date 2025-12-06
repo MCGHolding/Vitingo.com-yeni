@@ -2120,6 +2120,71 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
           }}
         />
       )}
+      
+      {/* New Upload Modal */}
+      {showNewUploadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Yeni Ekstre Yükle</h3>
+            
+            {/* Bank Selection */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Banka Seçin</label>
+              <select
+                value={selectedBankForUpload}
+                onChange={(e) => setSelectedBankForUpload(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              >
+                <option value="">-- Banka Seçiniz --</option>
+                {banks.map(bank => (
+                  <option key={bank.id} value={bank.id}>{bank.bank_name}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* File Upload Area */}
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-purple-400 hover:bg-purple-50 transition cursor-pointer mb-4"
+              onClick={() => {
+                if (selectedBankForUpload) {
+                  statementFileInputRef.current?.click();
+                } else {
+                  alert('Lütfen önce bir banka seçin');
+                }
+              }}
+            >
+              <input
+                ref={statementFileInputRef}
+                type="file"
+                accept=".pdf"
+                className="hidden"
+                onChange={(e) => {
+                  if (selectedBankForUpload) {
+                    handleStatementUpload(e, selectedBankForUpload);
+                    setShowNewUploadModal(false);
+                    setSelectedBankForUpload('');
+                  }
+                }}
+              />
+              <div className="text-4xl mb-2">📄</div>
+              <p className="font-medium text-gray-900">PDF Ekstre Yükle</p>
+              <p className="text-sm text-gray-500 mt-1">Tıklayın veya dosya sürükleyin</p>
+              <p className="text-xs text-gray-400 mt-2">Desteklenen format: PDF</p>
+            </div>
+            
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setShowNewUploadModal(false);
+                setSelectedBankForUpload('');
+              }}
+              className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+            >
+              İptal
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
