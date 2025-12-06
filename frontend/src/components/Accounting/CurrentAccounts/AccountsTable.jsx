@@ -254,6 +254,7 @@ const AccountsTable = ({
                     <AccountRowMenu
                       account={account}
                       onClose={() => setOpenMenuId(null)}
+                      onWhatsAppClick={onWhatsAppClick}
                     />
                   )}
                 </td>
