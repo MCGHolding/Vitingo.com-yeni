@@ -920,6 +920,9 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
       if (selectedBankId === bankId) {
         setSelectedBankId('');
       }
+      
+      // Backend'den bankaları yeniden yükle
+      await loadBanks();
     } catch (error) {
       console.error('Delete error:', error);
       // Network hatası olsa bile local'den sil
