@@ -1196,12 +1196,23 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                           .filter(s => s.bankId === selectedBankForStatement)
                           .map(statement => (
                             <div key={statement.id} className="flex items-center justify-between bg-white p-3 rounded-lg border">
-                              <div className="flex items-center space-x-3">
-                                <span className="text-xl">📄</span>
-                                <div>
-                                  <p className="font-medium text-gray-900 text-sm">{statement.filename}</p>
-                                  <p className="text-xs text-gray-500">{statement.period} • {statement.uploadDate}</p>
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-3 mb-2">
+                                  <span className="text-xl">📄</span>
+                                  <div>
+                                    <p className="font-medium text-gray-900 text-sm">{statement.filename}</p>
+                                    <p className="text-xs text-gray-500">{statement.period} • {statement.uploadDate}</p>
+                                  </div>
                                 </div>
+                                {statement.statistics && (
+                                  <div className="ml-8 flex items-center space-x-4 text-xs">
+                                    <span className="text-green-600">📊 {statement.statistics.transactionCount} işlem</span>
+                                    <span className="text-blue-600">✓ {statement.statistics.categorizedCount} eşleşti</span>
+                                    {statement.statistics.pendingCount > 0 && (
+                                      <span className="text-orange-600">⚠ {statement.statistics.pendingCount} bekliyor</span>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                               <div className="flex items-center space-x-2">
                                 <button
