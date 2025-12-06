@@ -291,6 +291,7 @@ const getNavigation = (userDepartment) => {
       submenu: [
         { name: 'Satış Raporları', href: '/reports/sales', icon: BarChart3 },
         { name: 'Müşteri Raporları', href: '/reports/customers', icon: Users },
+        { name: 'Teslim Belgeleri', href: '/raporlar/teslim', icon: FileText },
         { name: 'Teslim Formları', href: '/reports/handovers', icon: FileText },
         { name: 'Anketler', href: '/reports/surveys', icon: ClipboardList }
       ]
