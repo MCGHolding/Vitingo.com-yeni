@@ -997,6 +997,9 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     setNewBank({ name: '', country: 'TR' });
     setShowAddBank(false);
     setEditingBank(null);
+    
+    // Backend'den bankaları yeniden yükle
+    await loadBanks();
   };
   
   const getCountryInfo = (countryCode) => {
