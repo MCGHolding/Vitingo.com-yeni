@@ -200,12 +200,19 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
 
   // Save bank account
   const handleSaveAccount = async () => {
+    console.log('🔵 handleSaveAccount called');
+    console.log('📋 accountForm:', accountForm);
+    console.log('🔍 selectedAccount:', selectedAccount);
+    console.log('🆕 showAccountForm:', showAccountForm);
+    
     try {
       const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
       const data = {
         ...accountForm,
         status: 'active'
       };
+      
+      console.log('📤 Data to send:', data);
       
       if (selectedAccount && !showAccountForm) {
         // Update existing account
