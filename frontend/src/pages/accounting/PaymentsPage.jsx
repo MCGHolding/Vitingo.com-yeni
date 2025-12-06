@@ -191,13 +191,22 @@ const PaymentsPage = () => {
                       <span className="font-bold text-red-600">{formatCurrency(p.amount, p.currency)}</span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => handleDelete(p.id)}
-                        className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition"
-                        title="İptal Et"
-                      >
-                        🗑️
-                      </button>
+                      <div className="flex items-center justify-center space-x-2">
+                        <button
+                          onClick={() => downloadPDF(`/api/export/payment/${p.id}/pdf`)}
+                          className="p-2 text-blue-500 hover:bg-blue-100 rounded-lg transition"
+                          title="PDF İndir"
+                        >
+                          📄
+                        </button>
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition"
+                          title="İptal Et"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
