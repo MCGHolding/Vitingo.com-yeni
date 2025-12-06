@@ -139,7 +139,7 @@ const NewCollectionPage = () => {
     
     setSaving(true);
     try {
-      const response = await fetch(`${backendUrl}/api/collections`, {
+      const response = await fetch(`${backendUrl}/api/collections-new`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
