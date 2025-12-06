@@ -17435,6 +17435,231 @@ async def get_customer_performance_report(limit: int = 20):
 
 # ==================== END RAPORLAMA API ====================
 
+# ==================== WHATSAPP MESAJ API ====================
+
+class WhatsAppMessage(BaseModel):
+    phone: str
+    message: str
+    recipientName: str = ""
+    recipientType: str = "customer"  # customer, supplier
+    recipientId: str = ""
+    messageType: str = "custom"  # custom, payment_reminder, invoice, statement, thank_you
+
+class WhatsAppTemplate(BaseModel):
+    id: str = ""
+    name: str
+    content: str
+    variables: list = []
+    category: str = "general"  # general, payment, invoice, reminder
+
+@api_router.get("/whatsapp/templates")
+async def get_whatsapp_templates():
+    """Hazır WhatsApp mesaj şablonlarını getir"""
+    try:
+        # Veritabanından şablonları çek
+        templates = await db.whatsapp_templates.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        
+        # Varsayılan şablonlar
+        default_templates = [
+            {
+                "id": "payment_reminder",
+                "name": "Ödeme Hatırlatması",
+                "content": "Sayın {customerName},\n\n{invoiceNo} numaralı faturanızın vadesi {dueDate} tarihinde dolmuştur. Kalan tutar: {amount}\n\nÖdemenizi en kısa sürede yapmanızı rica ederiz.\n\nSaygılarımızla,\n{companyName}",
+                "variables": ["customerName", "invoiceNo", "dueDate", "amount", "companyName"],
+                "category": "payment"
+            },
+            {
+                "id": "invoice_sent",
+                "name": "Fatura Gönderimi",
+                "content": "Sayın {customerName},\n\n{invoiceNo} numaralı faturanız oluşturulmuştur.\n\nTutar: {amount}\nVade: {dueDate}\n\nDetaylar için lütfen e-postanızı kontrol ediniz.\n\nSaygılarımızla,\n{companyName}",
+                "variables": ["customerName", "invoiceNo", "amount", "dueDate", "companyName"],
+                "category": "invoice"
+            },
+            {
+                "id": "payment_received",
+                "name": "Ödeme Teşekkürü",
+                "content": "Sayın {customerName},\n\n{amount} tutarındaki ödemeniz başarıyla alınmıştır.\n\nMakbuz No: {receiptNo}\nTarih: {date}\n\nTeşekkür ederiz.\n\n{companyName}",
+                "variables": ["customerName", "amount", "receiptNo", "date", "companyName"],
+                "category": "payment"
+            },
+            {
+                "id": "overdue_reminder",
+                "name": "Gecikmiş Ödeme Uyarısı",
+                "content": "Sayın {customerName},\n\n{invoiceNo} numaralı faturanız {daysOverdue} gündür gecikmiş durumdadır.\n\nKalan tutar: {amount}\n\nLütfen en kısa sürede ödeme yapınız veya bizimle iletişime geçiniz.\n\nSaygılarımızla,\n{companyName}",
+                "variables": ["customerName", "invoiceNo", "daysOverdue", "amount", "companyName"],
+                "category": "reminder"
+            },
+            {
+                "id": "statement_reminder",
+                "name": "Hesap Özeti",
+                "content": "Sayın {customerName},\n\nCari hesap özetiniz:\n\nToplam Borç: {totalDebt}\nVadesi Geçmiş: {overdueAmount}\n\nDetaylı ekstre için lütfen bizimle iletişime geçiniz.\n\nSaygılarımızla,\n{companyName}",
+                "variables": ["customerName", "totalDebt", "overdueAmount", "companyName"],
+                "category": "statement"
+            },
+            {
+                "id": "general_greeting",
+                "name": "Genel Selamlama",
+                "content": "Merhaba {customerName},\n\n{customMessage}\n\nSaygılarımızla,\n{companyName}",
+                "variables": ["customerName", "customMessage", "companyName"],
+                "category": "general"
+            }
+        ]
+        
+        # Veritabanındaki şablonları varsayılanlarla birleştir
+        all_templates = default_templates + templates
+        
+        return {"templates": all_templates}
+        
+    except Exception as e:
+        logger.error(f"Error getting WhatsApp templates: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/whatsapp/templates")
+async def create_whatsapp_template(template: WhatsAppTemplate):
+    """Yeni WhatsApp şablonu oluştur"""
+    try:
+        template_data = template.dict()
+        template_data["id"] = str(uuid.uuid4())
+        template_data["created_at"] = datetime.now().isoformat()
+        template_data["status"] = "active"
+        
+        await db.whatsapp_templates.insert_one(template_data)
+        
+        return {"success": True, "id": template_data["id"]}
+        
+    except Exception as e:
+        logger.error(f"Error creating WhatsApp template: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/whatsapp/send")
+async def send_whatsapp_message(message: WhatsAppMessage):
+    """WhatsApp mesajı gönder (web.whatsapp.com linki oluştur)"""
+    try:
+        # Telefon numarasını formatla
+        phone = message.phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+        
+        # Türkiye için +90 ekle
+        if phone.startswith("0"):
+            phone = "90" + phone[1:]
+        elif not phone.startswith("90") and not phone.startswith("+"):
+            phone = "90" + phone
+        
+        phone = phone.replace("+", "")
+        
+        # URL encode mesaj
+        import urllib.parse
+        encoded_message = urllib.parse.quote(message.message)
+        
+        # WhatsApp Web linki
+        whatsapp_url = f"https://wa.me/{phone}?text={encoded_message}"
+        
+        # Mesaj logunu kaydet
+        log_data = {
+            "id": str(uuid.uuid4()),
+            "phone": phone,
+            "message": message.message,
+            "recipientName": message.recipientName,
+            "recipientType": message.recipientType,
+            "recipientId": message.recipientId,
+            "messageType": message.messageType,
+            "whatsappUrl": whatsapp_url,
+            "status": "created",
+            "created_at": datetime.now().isoformat()
+        }
+        
+        await db.whatsapp_logs.insert_one(log_data)
+        
+        return {
+            "success": True,
+            "whatsappUrl": whatsapp_url,
+            "logId": log_data["id"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Error sending WhatsApp message: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/whatsapp/logs")
+async def get_whatsapp_logs(limit: int = 50):
+    """WhatsApp mesaj loglarını getir"""
+    try:
+        logs = await db.whatsapp_logs.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(None)
+        
+        return {"logs": logs}
+        
+    except Exception as e:
+        logger.error(f"Error getting WhatsApp logs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/whatsapp/bulk-reminder")
+async def send_bulk_payment_reminder():
+    """Vadesi geçmiş müşterilere toplu hatırlatma gönder"""
+    try:
+        today = datetime.now().strftime("%Y-%m-%d")
+        
+        # Vadesi geçmiş faturaları bul
+        invoices = await db.invoices.find({"status": {"$ne": "deleted"}}, {"_id": 0}).to_list(None)
+        
+        reminders = []
+        
+        for inv in invoices:
+            due_date = inv.get("dueDate") or inv.get("due_date")
+            if not due_date or str(due_date)[:10] >= today:
+                continue
+            
+            paid = inv.get("paidAmount", 0) or 0
+            total = inv.get("total", 0) or inv.get("grandTotal", 0) or 0
+            remaining = total - paid
+            
+            if remaining <= 0:
+                continue
+            
+            customer_id = inv.get("customerId") or inv.get("customer_id")
+            if not customer_id:
+                continue
+            
+            # Müşteri bilgilerini al
+            customer = await db.customers.find_one({
+                "$or": [
+                    {"id": customer_id},
+                    {"_id": ObjectId(customer_id) if len(str(customer_id)) == 24 else None}
+                ]
+            }, {"_id": 0})
+            
+            if not customer or not customer.get("phone"):
+                continue
+            
+            try:
+                days_overdue = (datetime.now() - datetime.strptime(str(due_date)[:10], "%Y-%m-%d")).days
+            except:
+                days_overdue = 0
+            
+            reminders.append({
+                "customerId": customer_id,
+                "customerName": customer.get("companyName") or customer.get("name"),
+                "phone": customer.get("phone"),
+                "invoiceNo": inv.get("invoice_number") or inv.get("invoiceNo"),
+                "dueDate": str(due_date)[:10],
+                "daysOverdue": days_overdue,
+                "remaining": remaining
+            })
+        
+        return {
+            "success": True,
+            "overdueCount": len(reminders),
+            "reminders": reminders[:50]  # En fazla 50 tane döndür
+        }
+        
+    except Exception as e:
+        logger.error(f"Error generating bulk reminders: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== END WHATSAPP MESAJ API ====================
+
 # ===================== MAIN APP SETUP =====================
 
 # Include the API router in the main app
