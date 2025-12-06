@@ -139,7 +139,7 @@ const NewPaymentPage = () => {
   };
 
   const filteredSuppliers = suppliers.filter(s => {
-    const name = (s.companyName || s.name || '').toLowerCase();
+    const name = (s.company_title || s.companyName || s.name || s.company_short_name || '').toLowerCase();
     return name.includes(supplierSearch.toLowerCase());
   });
 
