@@ -2414,6 +2414,9 @@ function App() {
               <Route path="odemeler" element={<PaymentsPage />} />
               <Route path="odemeler/yeni" element={<NewPaymentPage />} />
 
+              {/* Raporlar */}
+              <Route path="raporlar" element={<ReportsPage />} />
+
               {/* Alış Faturaları */}
               <Route path="alis-faturalari" element={<PurchaseInvoiceListPage />} />
 
