@@ -8685,9 +8685,9 @@ async def create_collection_new(collection: CollectionCreate):
         logger.error(f"Error creating collection: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/collections/{collection_id}")
-async def get_collection(collection_id: str):
-    """Tek tahsilat detayı"""
+@api_router.get("/collections-new/{collection_id}")
+async def get_collection_new(collection_id: str):
+    """Tek tahsilat detayı (Yeni Sistem)"""
     try:
         collection = await db.collections.find_one({
             "$or": [
