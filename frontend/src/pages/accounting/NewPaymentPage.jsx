@@ -60,15 +60,16 @@ const NewPaymentPage = () => {
   };
 
   const handleSupplierSelect = (supplier) => {
+    const supplierName = supplier.company_title || supplier.companyName || supplier.name || supplier.company_short_name;
     setFormData({
       ...formData,
       supplierId: supplier.id,
-      supplierName: supplier.companyName || supplier.name,
+      supplierName: supplierName,
       invoiceId: '',
       invoiceNo: '',
       amount: ''
     });
-    setSupplierSearch(supplier.companyName || supplier.name);
+    setSupplierSearch(supplierName);
     setShowSupplierDropdown(false);
   };
 
