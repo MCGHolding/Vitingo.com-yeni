@@ -16215,35 +16215,6 @@ async def delete_pattern(bank_id: str, pattern_id: str):
         logger.error(f"Error deleting pattern: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# ===================== MAIN APP SETUP =====================
-
-# Include the API router in the main app
-app.include_router(api_router)
-
-# Contracts endpoints are above, before app.include_router
-
-# Placeholder - contracts moved above
-
-# Include lead routes
-app.include_router(leads_router.router)
-
-# Include project routes
-app.include_router(projects_router.router)
-
-# Include payment profiles router
-app.include_router(payment_profiles_router.router)
-
-# Include email router
-app.include_router(email_routes.router)
-email_routes.set_database(db)
-
-# Include proposal router
-app.include_router(proposal_router)
-app.include_router(company_group_router)
-app.include_router(advances_router.router, prefix="/api", tags=["advances"])
-app.include_router(credit_cards_router.router, prefix="/api", tags=["credit-cards"])
-app.include_router(purchase_invoices_router.router, prefix="/api", tags=["purchase-invoices"])
-
 # Tenant endpoint
 @app.get("/api/tenants/{tenant_slug}")
 async def get_tenant(tenant_slug: str):
