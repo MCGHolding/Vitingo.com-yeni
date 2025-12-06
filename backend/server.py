@@ -8689,7 +8689,7 @@ async def create_collection_new(collection: CollectionCreate):
 async def get_collection_new(collection_id: str):
     """Tek tahsilat detayı (Yeni Sistem)"""
     try:
-        collection = await db.collections.find_one({
+        collection = await db.collections_new.find_one({
             "$or": [
                 {"id": collection_id},
                 {"_id": ObjectId(collection_id) if len(collection_id) == 24 else None}
