@@ -102,6 +102,31 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     loadBanks();
   }, []);
 
+  // Mevcut bankalardan benzersiz banka isimlerini çıkar ve bankList'e aktar
+  useEffect(() => {
+    if (banks.length > 0 && bankList.length === 0) {
+      const uniqueBanks = [];
+      const seenNames = new Set();
+      
+      banks.forEach(account => {
+        const name = account.bank_name;
+        if (name && !seenNames.has(name.toLowerCase())) {
+          seenNames.add(name.toLowerCase());
+          uniqueBanks.push({
+            id: `bank-${Date.now()}-${Math.random()}`,
+            name: name,
+            country: account.country || 'TR',
+            created_at: account.created_at || new Date().toISOString()
+          });
+        }
+      });
+      
+      if (uniqueBanks.length > 0) {
+        setBankList(uniqueBanks);
+      }
+    }
+  }, [banks, bankList.length]);
+
   // Filter banks based on search and company
   useEffect(() => {
     let filtered = [...banks];
