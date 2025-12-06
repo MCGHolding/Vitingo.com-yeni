@@ -4958,6 +4958,87 @@ async def get_bank(bank_id: str):
         logger.error(f"Error getting bank {bank_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ===============================================
+# BANK ACCOUNTS ENDPOINTS
+# ===============================================
+
+@api_router.get("/bank-accounts")
+async def get_bank_accounts(bankId: str = None):
+    """Get all bank accounts or filter by bankId"""
+    try:
+        query = {"status": {"$ne": "deleted"}}
+        if bankId:
+            query["bankId"] = bankId
+        
+        accounts = await db.bank_accounts.find(query, {"_id": 0}).to_list(None)
+        return {"accounts": accounts}
+        
+    except Exception as e:
+        logger.error(f"Error getting bank accounts: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/bank-accounts")
+async def create_bank_account(data: dict):
+    """Create a new bank account"""
+    try:
+        data["id"] = str(uuid4())
+        data["createdAt"] = datetime.now(timezone.utc).isoformat()
+        data["status"] = "active"
+        
+        await db.bank_accounts.insert_one(data)
+        return {"success": True, "id": data["id"]}
+        
+    except Exception as e:
+        logger.error(f"Error creating bank account: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/bank-accounts/{account_id}")
+async def update_bank_account(account_id: str, data: dict):
+    """Update a bank account"""
+    try:
+        data["updatedAt"] = datetime.now(timezone.utc).isoformat()
+        
+        result = await db.bank_accounts.update_one(
+            {"id": account_id}, 
+            {"$set": data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Bank account not found")
+            
+        return {"success": True}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating bank account: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/bank-accounts/{account_id}")
+async def delete_bank_account(account_id: str):
+    """Soft delete a bank account"""
+    try:
+        result = await db.bank_accounts.update_one(
+            {"id": account_id}, 
+            {"$set": {
+                "status": "deleted", 
+                "deletedAt": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Bank account not found")
+            
+        return {"success": True}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting bank account: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.put("/banks/{bank_id}", response_model=Bank)
 async def update_bank(bank_id: str, bank_update: BankUpdate):
     """Update a bank"""
