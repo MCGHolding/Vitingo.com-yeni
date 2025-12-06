@@ -1368,7 +1368,7 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Yükleme Kutusu */}
                   <div 
-                    className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition cursor-pointer"
+                    className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-purple-400 hover:bg-purple-50 transition cursor-pointer"
                     onClick={() => document.getElementById('statement-upload').click()}
                   >
                     <input
@@ -1376,9 +1376,9 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
                       id="statement-upload"
                       accept=".pdf"
                       className="hidden"
-                      onChange={(e) => handleStatementUpload(e, selectedBankForStatement)}
+                      onChange={handleStatementFileSelect}
                     />
-                    <div className="text-4xl mb-3">📄</div>
+                    <div className="text-5xl mb-3">📄</div>
                     <p className="font-medium text-gray-900">PDF Ekstre Yükle</p>
                     <p className="text-sm text-gray-500 mt-1">Sürükle & Bırak veya tıklayın</p>
                     <p className="text-xs text-gray-400 mt-2">Desteklenen format: PDF</p>
