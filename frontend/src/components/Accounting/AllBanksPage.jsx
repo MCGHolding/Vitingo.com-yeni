@@ -459,6 +459,90 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
     }
   };
 
+  const handleStatementFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    if (file.type !== 'application/pdf') {
+      alert('Sadece PDF dosyaları yükleyebilirsiniz');
+      return;
+    }
+    
+    setUploadingFile(file);
+    setShowStatementUploadModal(true);
+  };
+
+  const saveStatement = async () => {
+    if (!uploadingFile) return;
+    
+    const selectedBank = bankList.find(b => b.id === selectedBankForStatement);
+    
+    // Backend'e yükle ve parse et
+    try {
+      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+      const formData = new FormData();
+      formData.append('file', uploadingFile);
+      
+      const response = await fetch(`${backendUrl}/api/banks/${selectedBankForStatement}/statements/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Backend'den gelen veya kullanıcıdan girilen bilgileri birleştir
+        const newStatement = {
+          id: result.statementId || result.id || Date.now().toString(),
+          bankId: selectedBankForStatement,
+          bankName: selectedBank?.name || '',
+          filename: result.fileName || uploadingFile.name,
+          
+          // Kullanıcı girdileri varsa onları kullan, yoksa backend'den gelenleri
+          periodStart: statementMeta.startDate || result.periodStart,
+          periodEnd: statementMeta.endDate || result.periodEnd,
+          startDate: statementMeta.startDate ? new Date(statementMeta.startDate).toLocaleDateString('tr-TR') : result.periodStart,
+          endDate: statementMeta.endDate ? new Date(statementMeta.endDate).toLocaleDateString('tr-TR') : result.periodEnd,
+          period: statementMeta.startDate && statementMeta.endDate 
+            ? `${new Date(statementMeta.startDate).toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' })} - ${new Date(statementMeta.endDate).toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' })}`
+            : result.period,
+          
+          currency: statementMeta.currency || result.currency,
+          openingBalance: statementMeta.openingBalance ? parseFloat(statementMeta.openingBalance) : result.openingBalance,
+          closingBalance: statementMeta.closingBalance ? parseFloat(statementMeta.closingBalance) : result.closingBalance,
+          netChange: result.netChange,
+          
+          totalIncoming: result.totalIncoming,
+          totalOutgoing: result.totalOutgoing,
+          totalTransactions: result.transactionCount || 0,
+          totalCredits: result.totalIncoming,
+          totalDebits: result.totalOutgoing,
+          
+          transactionCount: result.transactionCount,
+          categorizedCount: result.categorizedCount,
+          pendingCount: result.pendingCount,
+          
+          uploadDate: new Date().toLocaleDateString('tr-TR'),
+          status: 'processed'
+        };
+        
+        setStatements(prev => [...prev, newStatement]);
+        alert(`✅ Ekstre kaydedildi!\n📊 ${result.transactionCount || 0} işlem parse edildi`);
+      } else {
+        const error = await response.json();
+        alert('❌ Yükleme hatası: ' + (error.detail || 'Bilinmeyen hata'));
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('❌ Yükleme hatası: ' + error.message);
+    }
+    
+    // Modal kapat ve temizle
+    setShowStatementUploadModal(false);
+    setUploadingFile(null);
+    setStatementMeta({ startDate: '', endDate: '', openingBalance: '', closingBalance: '', currency: 'TRY' });
+  };
+
   // ==================== VALİDASYON FONKSİYONLARI ====================
   
   const validateIBAN = (iban, currency) => {
