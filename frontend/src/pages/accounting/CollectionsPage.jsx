@@ -192,13 +192,22 @@ const CollectionsPage = () => {
                       <span className="font-bold text-green-600">{formatCurrency(c.amount, c.currency)}</span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => handleDelete(c.id)}
-                        className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition"
-                        title="İptal Et"
-                      >
-                        🗑️
-                      </button>
+                      <div className="flex items-center justify-center space-x-2">
+                        <button
+                          onClick={() => downloadPDF(`/api/export/collection/${c.id}/pdf`)}
+                          className="p-2 text-blue-500 hover:bg-blue-100 rounded-lg transition"
+                          title="PDF İndir"
+                        >
+                          📄
+                        </button>
+                        <button
+                          onClick={() => handleDelete(c.id)}
+                          className="p-2 text-red-500 hover:bg-red-100 rounded-lg transition"
+                          title="İptal Et"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
