@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const AccountRowMenu = ({ account, onClose }) => {
+const AccountRowMenu = ({ account, onClose, onWhatsAppClick }) => {
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const { tenantSlug } = useParams();
@@ -43,7 +43,13 @@ const AccountRowMenu = ({ account, onClose }) => {
         window.location.href = `mailto:${account.email || ''}?subject=Cari Hesap Bildirimi`;
         break;
       case 'whatsapp':
-        window.open(`https://wa.me/${account.phone || ''}`, '_blank');
+        if (onWhatsAppClick) {
+          onWhatsAppClick(account);
+        } else {
+          const phone = account.phone?.replace(/\D/g, '') || '';
+          const formattedPhone = phone.startsWith('90') ? phone : '90' + phone;
+          window.open(`https://wa.me/${formattedPhone}`, '_blank');
+        }
         break;
       case 'detail':
         navigate(`/${tenantSlug}/cari-hesaplar/${account.id}`);
