@@ -8871,7 +8871,7 @@ async def get_payment(payment_id: str):
 async def delete_payment(payment_id: str):
     """Ödeme sil"""
     try:
-        result = await db.payments.update_one(
+        result = await db.payments_new.update_one(
             {"$or": [{"id": payment_id}, {"_id": ObjectId(payment_id) if len(payment_id) == 24 else None}]},
             {"$set": {"status": "deleted", "deleted_at": datetime.now(timezone.utc).isoformat()}}
         )
