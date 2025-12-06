@@ -1396,171 +1396,486 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
 
       {/* Tab Content: Banka Hesapları */}
       {activeMainTab === 'accounts' && (
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Banka Hesapları</h3>
-              <p className="text-sm text-gray-500">Banka hesap bilgilerinizi yönetin</p>
-            </div>
-          </div>
+        <div className="grid grid-cols-12 gap-6 p-6">
           
-          {/* Banka yoksa uyarı */}
-          {bankList.length === 0 ? (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-              <span className="text-3xl">⚠️</span>
-              <p className="mt-2 text-yellow-800 font-medium">Önce &quot;Bankalar&quot; sekmesinden banka eklemelisiniz</p>
-              <button
-                onClick={() => setActiveMainTab('banks')}
-                className="mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-              >
-                Banka Ekle
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* Banka Seçimi */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Banka Seçin</label>
-                <div className="flex flex-wrap gap-2">
-                  {bankList.map(bank => {
-                    const country = countries.find(c => c.code === bank.country);
-                    return (
-                      <button
-                        key={bank.id}
-                        onClick={() => setSelectedBankId(bank.id)}
-                        className={`px-4 py-2 rounded-lg border transition flex items-center space-x-2 ${
-                          selectedBankId === bank.id
-                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                            : 'border-gray-200 hover:border-gray-300 bg-white'
-                        }`}
-                      >
-                        <span>{country?.flag || '🏦'}</span>
-                        <span>{bank.name}</span>
-                      </button>
-                    );
-                  })}
+          {/* SOL PANEL: HESAP LİSTESİ */}
+          <div className="col-span-4">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              
+              {/* Header */}
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                <h3 className="font-semibold text-gray-800">Banka Hesapları</h3>
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                  {bankAccounts.length} hesap
+                </span>
+              </div>
+              
+              {/* Arama */}
+              <div className="p-3 border-b border-gray-100">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                  <input 
+                    type="text" 
+                    placeholder="Hesap ara..." 
+                    value={accountSearchTerm}
+                    onChange={(e) => setAccountSearchTerm(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+                  />
                 </div>
               </div>
               
-              {/* Seçili Banka Hesapları */}
-              {selectedBankId && (
-                <div>
-                  {/* Hesap listesi - mevcut banks array'inden bu bankaya ait olanlar */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {banks
-                      .filter(account => {
-                        const selectedBank = bankList.find(b => b.id === selectedBankId);
-                        return selectedBank && account.bank_name?.toLowerCase().includes(selectedBank.name.toLowerCase());
-                      })
-                      .map(account => (
-                        <div key={account.id} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition group">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center space-x-2">
-                              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
-                                {currencies.find(c => c.code === account.currency)?.flag} {account.currency || 'TRY'}
-                              </span>
-                              {account.branch_name && (
-                                <span className="text-sm text-gray-500">{account.branch_name}</span>
-                              )}
-                            </div>
-                            
-                            {/* Düzenle/Sil Butonları */}
-                            <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition">
-                              <button
-                                onClick={() => {
-                                  setNewAccount({
-                                    currency: account.currency || 'TRY',
-                                    iban: account.iban || '',
-                                    swift: account.swift_code || '',
-                                    accountNo: account.account_number || '',
-                                    branchName: account.branch_name || '',
-                                    accountHolder: account.account_holder || '',
-                                  });
-                                  setEditingAccount(account);
-                                  setShowAddAccount(true);
-                                }}
-                                className="p-1.5 hover:bg-gray-100 rounded-lg"
-                                title="Düzenle"
-                              >
-                                ✏️
-                              </button>
-                              <button
-                                onClick={async () => {
-                                  if (window.confirm('Bu hesabı silmek istediğinize emin misiniz?')) {
-                                    try {
-                                      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-                                      await fetch(`${backendUrl}/api/banks/${account.id}`, {
-                                        method: 'DELETE'
-                                      });
-                                      // Sadece local state'i güncelle, loadBanks() çağırma
-                                      setBanks(prev => prev.filter(b => b.id !== account.id));
-                                    } catch (error) {
-                                      console.error('Delete error:', error);
-                                    }
-                                  }
-                                }}
-                                className="p-1.5 hover:bg-red-100 rounded-lg text-red-500"
-                                title="Sil"
-                              >
-                                🗑️
-                              </button>
-                            </div>
+              {/* Hesap Listesi */}
+              <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
+                {bankAccounts
+                  .filter(acc => 
+                    !accountSearchTerm || 
+                    acc.bankName?.toLowerCase().includes(accountSearchTerm.toLowerCase()) ||
+                    acc.iban?.toLowerCase().includes(accountSearchTerm.toLowerCase())
+                  )
+                  .map(account => (
+                    <div 
+                      key={account.id}
+                      onClick={() => {
+                        setSelectedAccount(account);
+                        setAccountForm({
+                          groupCompany: account.groupCompany || '',
+                          country: account.country || '',
+                          bankName: account.bankName || '',
+                          swiftCode: account.swiftCode || '',
+                          iban: account.iban || '',
+                          branchName: account.branchName || '',
+                          branchCode: account.branchCode || '',
+                          accountHolder: account.accountHolder || '',
+                          accountNumber: account.accountNumber || '',
+                          currency: account.currency || 'TRY',
+                          accountType: account.accountType || 'current'
+                        });
+                        setShowAccountForm(false);
+                        setIsEditing(false);
+                      }}
+                      className={`p-4 cursor-pointer transition ${
+                        selectedAccount?.id === account.id 
+                          ? 'bg-green-50 border-l-4 border-green-500' 
+                          : 'hover:bg-gray-50 border-l-4 border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            selectedAccount?.id === account.id ? 'bg-white shadow-sm' : 'bg-gray-100'
+                          }`}>
+                            <span className="text-lg">
+                              {account.country === 'TR' ? '🇹🇷' : 
+                               account.country === 'AE' ? '🇦🇪' : 
+                               account.country === 'US' ? '🇺🇸' : 
+                               account.country === 'DE' ? '🇩🇪' : 
+                               account.country === 'GB' ? '🇬🇧' : '🏦'}
+                            </span>
                           </div>
-                          
-                          <div className="space-y-2 text-sm">
-                            {account.iban && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-500">IBAN</span>
-                                <span className="font-mono text-gray-900">{account.iban}</span>
-                              </div>
-                            )}
-                            {account.swift_code && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-500">SWIFT</span>
-                                <span className="font-mono text-gray-900">{account.swift_code}</span>
-                              </div>
-                            )}
-                            {account.account_number && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-500">Hesap No</span>
-                                <span className="font-mono text-gray-900">{account.account_number}</span>
-                              </div>
-                            )}
-                            {account.account_holder && (
-                              <div className="flex justify-between">
-                                <span className="text-gray-500">Hesap Sahibi</span>
-                                <span className="text-gray-900">{account.account_holder}</span>
-                              </div>
-                            )}
+                          <div>
+                            <p className="font-medium text-gray-900">{account.bankName}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {account.iban?.substring(0, 18)}****
+                            </p>
                           </div>
                         </div>
-                      ))}
-                    
-                    {/* Yeni hesap ekle kartı */}
-                    <div
-                      onClick={() => setShowAddAccount(true)}
-                      className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition flex flex-col items-center justify-center min-h-[150px]"
-                    >
-                      <span className="text-3xl">➕</span>
-                      <p className="mt-2 text-sm text-gray-500">Yeni Hesap Ekle</p>
+                        <span className={`px-2 py-0.5 text-xs rounded font-medium ${
+                          account.currency === 'USD' ? 'bg-blue-100 text-blue-700' :
+                          account.currency === 'EUR' ? 'bg-purple-100 text-purple-700' :
+                          account.currency === 'TRY' ? 'bg-red-100 text-red-700' :
+                          account.currency === 'AED' ? 'bg-emerald-100 text-emerald-700' :
+                          account.currency === 'GBP' ? 'bg-gray-100 text-gray-700' :
+                          'bg-gray-100 text-gray-700'
+                        }`}>
+                          {account.currency}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex items-center justify-between text-sm">
+                        <span className="text-gray-500">Bakiye:</span>
+                        <span className="font-semibold text-gray-900">
+                          {new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(account.balance || 0)} {account.currency}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+              
+              {/* Yeni Hesap Butonu */}
+              <div className="p-3 border-t border-gray-100">
+                <button 
+                  onClick={() => {
+                    setSelectedAccount(null);
+                    setAccountForm({
+                      groupCompany: '',
+                      country: '',
+                      bankName: '',
+                      swiftCode: '',
+                      iban: '',
+                      branchName: '',
+                      branchCode: '',
+                      accountHolder: '',
+                      accountNumber: '',
+                      currency: 'TRY',
+                      accountType: 'current'
+                    });
+                    setShowAccountForm(true);
+                    setIsEditing(false);
+                  }}
+                  className="w-full py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2 font-medium"
+                >
+                  <span>➕</span>
+                  <span>Yeni Hesap Ekle</span>
+                </button>
+              </div>
+              
+            </div>
+          </div>
+          
+          {/* SAĞ PANEL: HESAP DETAY / FORM */}
+          <div className="col-span-8">
+            {selectedAccount || showAccountForm ? (
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                
+                {/* Header */}
+                <div className="px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                      <span className="text-2xl">🏦</span>
+                    </div>
+                    <div>
+                      <h2 className="text-white font-semibold text-lg">
+                        {selectedAccount && !showAccountForm ? 'Hesap Detayları' : 'Yeni Hesap Ekle'}
+                      </h2>
+                      <p className="text-green-100 text-sm">
+                        {selectedAccount && !showAccountForm ? 'Banka hesap bilgilerini görüntüle ve düzenle' : 'Yeni banka hesabı oluştur'}
+                      </p>
                     </div>
                   </div>
+                  {selectedAccount && !showAccountForm && (
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        onClick={() => setIsEditing(!isEditing)}
+                        className="px-3 py-1.5 bg-white/20 text-white text-sm rounded-lg hover:bg-white/30 transition"
+                      >
+                        ✏️ Düzenle
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteAccount(selectedAccount.id)}
+                        className="px-3 py-1.5 bg-red-500/80 text-white text-sm rounded-lg hover:bg-red-600 transition"
+                      >
+                        🗑️ Sil
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-              
-              {/* Banka seçilmemişse */}
-              {!selectedBankId && (
-                <div className="bg-gray-50 rounded-xl p-8 text-center">
-                  <span className="text-4xl">👆</span>
-                  <p className="mt-2 text-gray-600">Hesapları görmek için yukarıdan bir banka seçin</p>
+                
+                {/* Form İçeriği */}
+                <div className="p-6 space-y-6">
+                  
+                  {/* BÖLÜM 1: Grup Şirketi Seçimi */}
+                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <span className="text-lg">🏢</span>
+                      <h3 className="font-semibold text-gray-800">Grup Şirketi Seçimi</h3>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Grup Şirketi *</label>
+                      <select 
+                        value={accountForm.groupCompany}
+                        onChange={(e) => {
+                          const company = groupCompanies.find(c => c.id === e.target.value);
+                          setAccountForm(prev => ({
+                            ...prev, 
+                            groupCompany: e.target.value,
+                            accountHolder: company?.name || '',
+                            country: company?.country || ''
+                          }));
+                        }}
+                        disabled={selectedAccount && !isEditing && !showAccountForm}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white disabled:bg-gray-100"
+                      >
+                        <option value="">Şirket seçin...</option>
+                        {groupCompanies.map(company => (
+                          <option key={company.id} value={company.id}>{company.name}</option>
+                        ))}
+                      </select>
+                      {accountForm.accountHolder && (
+                        <p className="mt-2 text-sm text-green-600 flex items-center">
+                          <span className="mr-1">✓</span>
+                          Hesap sahibi otomatik olarak <strong className="mx-1">"{accountForm.accountHolder}"</strong> şeklinde doldurulacaktır
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* BÖLÜM 2: Ülke Seçimi */}
+                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <span className="text-lg">🌍</span>
+                      <h3 className="font-semibold text-gray-800">Ülke Seçimi</h3>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ülke * <span className="text-gray-400 font-normal">(Grup şirketine göre otomatik belirlenir)</span>
+                      </label>
+                      <select 
+                        value={accountForm.country}
+                        onChange={(e) => setAccountForm(prev => ({...prev, country: e.target.value}))}
+                        disabled={selectedAccount && !isEditing && !showAccountForm}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white disabled:bg-gray-100"
+                      >
+                        <option value="">Ülke seçin...</option>
+                        <option value="AE">🇦🇪 BAE (Birleşik Arap Emirlikleri)</option>
+                        <option value="TR">🇹🇷 Türkiye</option>
+                        <option value="SA">🇸🇦 Suudi Arabistan</option>
+                        <option value="DE">🇩🇪 Almanya</option>
+                        <option value="US">🇺🇸 ABD</option>
+                        <option value="GB">🇬🇧 İngiltere</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  {/* BÖLÜM 3: Banka Bilgileri */}
+                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
+                    <div className="flex items-center space-x-2 mb-4">
+                      <span className="text-lg">🏦</span>
+                      <h3 className="font-semibold text-gray-800">Banka Bilgileri</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      
+                      {/* Banka Adı */}
+                      <div className="col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Banka Adı *</label>
+                        <input 
+                          type="text" 
+                          value={accountForm.bankName}
+                          onChange={(e) => setAccountForm(prev => ({...prev, bankName: e.target.value}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          placeholder="Örn: Garanti BBVA"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100"
+                        />
+                      </div>
+                      
+                      {/* SWIFT Kodu */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">SWIFT Kodu *</label>
+                        <input 
+                          type="text" 
+                          value={accountForm.swiftCode}
+                          onChange={(e) => setAccountForm(prev => ({...prev, swiftCode: e.target.value.toUpperCase()}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          placeholder="Örn: TGBATRISXXX"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none uppercase disabled:bg-gray-100"
+                        />
+                      </div>
+                      
+                      {/* IBAN */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">IBAN *</label>
+                        <input 
+                          type="text" 
+                          value={accountForm.iban}
+                          onChange={(e) => setAccountForm(prev => ({...prev, iban: e.target.value.toUpperCase()}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          placeholder="Örn: TR12 3456 7890 1234 5678 9012 34"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100"
+                        />
+                        <p className="mt-1 text-xs text-gray-500">IBAN ülke koduna göre otomatik doğrulanır</p>
+                      </div>
+                      
+                      {/* Şube Adı */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Şube Adı</label>
+                        <input 
+                          type="text" 
+                          value={accountForm.branchName}
+                          onChange={(e) => setAccountForm(prev => ({...prev, branchName: e.target.value}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          placeholder="Örn: Downtown Dubai Branch"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100"
+                        />
+                      </div>
+                      
+                      {/* Şube Kodu */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Şube Kodu</label>
+                        <input 
+                          type="text" 
+                          value={accountForm.branchCode}
+                          onChange={(e) => setAccountForm(prev => ({...prev, branchCode: e.target.value}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          placeholder="Örn: 033"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100"
+                        />
+                      </div>
+                      
+                      {/* Hesap Sahibi */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Hesap Sahibi</label>
+                        <input 
+                          type="text" 
+                          value={accountForm.accountHolder}
+                          disabled
+                          className="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-100 text-gray-600"
+                        />
+                        {accountForm.accountHolder && (
+                          <p className="mt-1 text-xs text-green-600 flex items-center">
+                            <span className="mr-1">✓</span>
+                            Otomatik dolduruldu: {accountForm.accountHolder}
+                          </p>
+                        )}
+                      </div>
+                      
+                      {/* Hesap Numarası */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Hesap Numarası <span className="text-gray-400 font-normal">(Opsiyonel)</span>
+                        </label>
+                        <input 
+                          type="text" 
+                          value={accountForm.accountNumber}
+                          onChange={(e) => setAccountForm(prev => ({...prev, accountNumber: e.target.value}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          placeholder="Örn: 1234567890123456"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none disabled:bg-gray-100"
+                        />
+                      </div>
+                      
+                      {/* Para Birimi */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Para Birimi *</label>
+                        <select 
+                          value={accountForm.currency}
+                          onChange={(e) => setAccountForm(prev => ({...prev, currency: e.target.value}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white disabled:bg-gray-100"
+                        >
+                          <option value="TRY">🇹🇷 TRY - Türk Lirası</option>
+                          <option value="USD">🇺🇸 USD - Amerikan Doları</option>
+                          <option value="EUR">🇪🇺 EUR - Euro</option>
+                          <option value="AED">🇦🇪 AED - BAE Dirhemi</option>
+                          <option value="GBP">🇬🇧 GBP - İngiliz Sterlini</option>
+                          <option value="SAR">🇸🇦 SAR - Suudi Riyali</option>
+                        </select>
+                      </div>
+                      
+                      {/* Hesap Türü */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Hesap Türü</label>
+                        <select 
+                          value={accountForm.accountType}
+                          onChange={(e) => setAccountForm(prev => ({...prev, accountType: e.target.value}))}
+                          disabled={selectedAccount && !isEditing && !showAccountForm}
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white disabled:bg-gray-100"
+                        >
+                          <option value="current">Vadesiz Hesap</option>
+                          <option value="savings">Vadeli Hesap</option>
+                          <option value="foreign">Döviz Hesabı</option>
+                        </select>
+                      </div>
+                      
+                    </div>
+                  </div>
+                  
+                  {/* BÖLÜM 4: Bakiye Bilgileri (Sadece mevcut hesaplarda göster) */}
+                  {selectedAccount && !showAccountForm && (
+                    <div className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-5">
+                      <div className="flex items-center space-x-2 mb-4">
+                        <span className="text-lg">💰</span>
+                        <h3 className="font-semibold text-white">Bakiye Bilgileri</h3>
+                        <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded">Ekstreden Otomatik</span>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-white/10 rounded-lg p-4">
+                          <p className="text-gray-400 text-sm">Açılış Bakiyesi</p>
+                          <p className="text-white text-xl font-bold mt-1">
+                            {new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(selectedAccount.openingBalance || 0)} {selectedAccount.currency}
+                          </p>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-4">
+                          <p className="text-gray-400 text-sm">Güncel Bakiye</p>
+                          <p className="text-green-400 text-xl font-bold mt-1">
+                            {new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2 }).format(selectedAccount.balance || 0)} {selectedAccount.currency}
+                          </p>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-4">
+                          <p className="text-gray-400 text-sm">Son İşlem</p>
+                          <p className="text-white text-xl font-bold mt-1">
+                            {selectedAccount.lastTransactionDate || '-'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Butonlar */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <button 
+                      onClick={() => {
+                        setAccountForm({
+                          groupCompany: '',
+                          country: '',
+                          bankName: '',
+                          swiftCode: '',
+                          iban: '',
+                          branchName: '',
+                          branchCode: '',
+                          accountHolder: '',
+                          accountNumber: '',
+                          currency: 'TRY',
+                          accountType: 'current'
+                        });
+                        setSelectedAccount(null);
+                        setShowAccountForm(false);
+                        setIsEditing(false);
+                      }}
+                      className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                    >
+                      Temizle
+                    </button>
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        onClick={() => {
+                          setSelectedAccount(null);
+                          setShowAccountForm(false);
+                          setIsEditing(false);
+                        }}
+                        className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                      >
+                        İptal
+                      </button>
+                      {(isEditing || showAccountForm) && (
+                        <button 
+                          onClick={() => handleSaveAccount()}
+                          className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center space-x-2 font-medium"
+                        >
+                          <span>💾</span>
+                          <span>Kaydet</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  
                 </div>
-              )}
-            </>
-          )}
+              </div>
+            ) : (
+              /* Hesap seçilmediğinde */
+              <div className="bg-white rounded-xl border border-gray-200 h-full flex items-center justify-center py-20">
+                <div className="text-center">
+                  <span className="text-6xl mb-4 block">👆</span>
+                  <p className="text-gray-500 text-lg">Hesapları görmek için soldan bir hesap seçin</p>
+                  <p className="text-gray-400 text-sm mt-2">veya yeni hesap ekleyin</p>
+                </div>
+              </div>
+            )}
+          </div>
+          
         </div>
       )}
-
 
       {/* Tab Content: Ekstreler */}
       {activeMainTab === 'statements' && (
