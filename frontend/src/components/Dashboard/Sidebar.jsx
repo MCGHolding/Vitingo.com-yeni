@@ -298,11 +298,7 @@ const getNavigation = (userDepartment) => {
         { name: 'Dönemsel Karşılaştırma', href: '/raporlar/donemsel-karsilastirma', icon: BarChart3 },
         { name: 'Satıcı Performansı', href: '/raporlar/satici-performansi', icon: Award },
         { name: 'Rapor Dışa Aktar', href: '/raporlar/disa-aktar', icon: Download },
-        { name: 'Teslim Belgeleri', href: '/raporlar/teslim', icon: FileText },
-        { name: 'Satış Raporları', href: '/reports/sales', icon: BarChart3 },
-        { name: 'Müşteri Raporları', href: '/reports/customers', icon: Users },
-        { name: 'Teslim Formları', href: '/reports/handovers', icon: FileText },
-        { name: 'Anketler', href: '/reports/surveys', icon: ClipboardList }
+        { name: 'Teslim Belgeleri', href: '/raporlar/teslim', icon: FileText }
       ]
     },
     { name: 'Görevler', href: '/tasks', icon: Target, current: false },
