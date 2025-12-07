@@ -11,13 +11,22 @@ Ultra Admin bu verileri yönetir.
 Tenant'lar sadece okuyabilir.
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
 
 router = APIRouter(prefix="/api/global", tags=["Global Data"])
+
+# Dependency to get database
+async def get_db():
+    client = AsyncIOMotorClient(os.environ.get('MONGO_URL'))
+    db_name = os.environ.get('DB_NAME', 'crm_db')
+    db = client[db_name]
+    return db
 
 
 # ============================================================
