@@ -5,11 +5,12 @@ Created: 2025-12-07
 """
 
 import os
-from typing import Dict
-from fastapi import Request, Depends
+from typing import Dict, Optional
+from fastapi import Request, Depends, HTTPException, Header, status
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from middleware.tenant_router import get_tenant_context, tenant_router
+from auth_utils import decode_access_token
 
 # MongoDB connection
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
