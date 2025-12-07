@@ -92,21 +92,11 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
 
   const confirmDelete = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/fairs/${fairToDelete.id}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        setShowDeleteConfirm(false);
-        setSuccessMessage('Fuar başarıyla silindi!');
-        setShowSuccessModal(true);
-        loadFairs();
-      } else {
-        setShowDeleteConfirm(false);
-        setErrorMessage('Fuar silinemedi!');
-        setShowErrorModal(true);
-      }
+      await apiClient.deleteFair(fairToDelete.id);
+      setShowDeleteConfirm(false);
+      setSuccessMessage('Fuar başarıyla silindi!');
+      setShowSuccessModal(true);
+      loadFairs();
     } catch (error) {
       console.error('Error deleting fair:', error);
       setShowDeleteConfirm(false);
