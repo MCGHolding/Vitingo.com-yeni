@@ -109,6 +109,7 @@ const TenantLayoutInner = () => {
     onProposalProfiles: () => handleNavigate('/teklifler/profiller'),
     onDraftQuotes: () => handleNavigate('/teklifler?durum=taslak'),
     onSentQuotes: () => handleNavigate('/teklifler?durum=gonderildi'),
+    onPendingApprovalQuotes: () => handleNavigate('/teklifler?durum=onay-bekleyen'),
     onWonQuotes: () => handleNavigate('/teklifler?durum=kazanildi'),
     onLostQuotes: () => handleNavigate('/teklifler?durum=kaybedildi'),
     
