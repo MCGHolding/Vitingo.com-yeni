@@ -238,6 +238,8 @@ import PeriodComparison from './pages/reports/PeriodComparison';
 import UserPerformance from './pages/reports/UserPerformance';
 import ReportExport from './pages/reports/ReportExport';
 
+// Demo Routes
+import { demoRoutes } from './routes/demoRoutes';
 
 // Avanslar pages
 import {
