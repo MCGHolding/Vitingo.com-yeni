@@ -339,28 +339,19 @@ async def check_feature_flag(flag_key: str, check: FeatureFlagCheck, db = Depend
         }
     
     if status == "enabled":
-        # Enabled durumunda, rol kontrolü varsa kontrol et
-        enabled_roles = flag.get("enabled_for_roles", [])
-        
-        if enabled_roles and check.user_role not in enabled_roles:
-            return FeatureFlagResponse(
-                key=flag_key,
-                enabled=False,
-                reason="role_not_allowed"
-            )
-        
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=True,
-            reason="enabled"
-        )
+        # Enabled durumunda, rol kontrolü kaldırıyoruz - herkes erişebilsin
+        return {
+            "key": flag_key,
+            "enabled": True,
+            "reason": "enabled"
+        }
     
     # Bilinmeyen status
-    return FeatureFlagResponse(
-        key=flag_key,
-        enabled=False,
-        reason="unknown_status"
-    )
+    return {
+        "key": flag_key,
+        "enabled": False,
+        "reason": "unknown_status"
+    }
 
 
 @router.get("/{flag_key}/stats")
