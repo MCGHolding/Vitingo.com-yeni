@@ -108,21 +108,15 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
   // Save edit
   const handleSaveEdit = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/fairs/${editFormData.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editFormData)
-      });
-
-      if (response.ok) {
-        setShowEditModal(false);
-        setSuccessMessage('Fuar başarıyla güncellendi!');
-        setShowSuccessModal(true);
-        loadFairs();
-      } else {
-        setErrorMessage('Güncelleme başarısız!');
-        setShowErrorModal(true);
+      await apiClient.updateFair(editFormData.id, editFormData);
+      setShowEditModal(false);
+      setSuccessMessage('Fuar başarıyla güncellendi!');
+      setShowSuccessModal(true);
+      loadFairs();
+    } catch (error) {
+      console.error('Error updating fair:', error);
+      setErrorMessage('Güncelleme başarısız!');
+      setShowErrorModal(true);
       }
     } catch (error) {
       console.error('Error updating fair:', error);
