@@ -47,7 +47,7 @@ async def create_platform_db_structure():
     # 4. Packages collection
     print("\n🔹 Creating 'packages' collection...")
     await platform_db.create_collection("packages")
-    await platform_db.packages.create_index([("key", ASCENDING)], unique=True)
+    await platform_db.packages.create_index([("package_id", ASCENDING)], unique=True)
     print("   ✅ Packages collection created")
     
     # 5. Global data collections
