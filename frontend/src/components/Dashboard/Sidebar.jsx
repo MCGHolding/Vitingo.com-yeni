@@ -354,6 +354,7 @@ export default function Sidebar({
   // Teklif handlers
   onDraftQuotes,
   onSentQuotes,
+  onPendingApprovalQuotes,
   onWonQuotes,
   onLostQuotes,
   onNewFair,
