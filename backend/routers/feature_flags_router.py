@@ -327,16 +327,16 @@ async def check_feature_flag(flag_key: str, check: FeatureFlagCheck, db = Depend
         tenant_hash = hash(tenant_slug) % 100
         
         if tenant_hash < rollout_percentage:
-            return FeatureFlagResponse(
-                key=flag_key,
-                enabled=True,
-                reason=f"rollout_{rollout_percentage}%"
-            )
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=False,
-            reason=f"rollout_excluded_{rollout_percentage}%"
-        )
+            return {
+                "key": flag_key,
+                "enabled": True,
+                "reason": f"rollout_{rollout_percentage}%"
+            }
+        return {
+            "key": flag_key,
+            "enabled": False,
+            "reason": f"rollout_excluded_{rollout_percentage}%"
+        }
     
     if status == "enabled":
         # Enabled durumunda, rol kontrolü varsa kontrol et
