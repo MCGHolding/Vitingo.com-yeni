@@ -4,6 +4,8 @@
  * Created: 2025-12-07
  */
 
+import { logger } from './logger';
+
 /**
  * Convert frontend slug (with dashes) to backend slug (with underscores)
  * @param {string} slug - Frontend slug (e.g., 'quattro-stand')
