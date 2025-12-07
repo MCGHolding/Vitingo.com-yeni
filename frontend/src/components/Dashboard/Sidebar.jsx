@@ -311,6 +311,18 @@ const getNavigation = (userDepartment) => {
       current: false
     },
     { 
+      name: 'Demo', 
+      href: '/demo', 
+      icon: Beaker, 
+      current: false,
+      hasSubmenu: true,
+      requiredRoles: ['super-admin', 'admin'],
+      featureFlag: 'demo_module',
+      submenu: [
+        { name: 'Demo Ana Sayfa', href: '/demo', icon: Beaker }
+      ]
+    },
+    { 
       name: 'Ayarlar', 
       href: '/settings', 
       icon: Settings, 
