@@ -168,6 +168,12 @@ const RevenueForecast = () => {
       {/* Monthly Forecast */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Aylık Gelir Tahmini</h3>
+        {(!data?.monthlyForecast || data.monthlyForecast.length === 0) ? (
+          <div className="text-center py-8 text-gray-500">
+            <p>📅 Aylık tahmin verisi bulunmuyor</p>
+            <p className="text-sm mt-2">Fırsatlar oluşturup kapanış tarihleri belirlediğinizde tahminler görünecektir.</p>
+          </div>
+        ) : (
         <div className="space-y-3">
           {data?.monthlyForecast?.map((month, index) => {
             const maxRevenue = Math.max(...(data.monthlyForecast?.map(m => m.forecastedRevenue) || [1]));
