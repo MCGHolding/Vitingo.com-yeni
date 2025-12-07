@@ -74,24 +74,24 @@ const Header = ({
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors group"
               >
                 <div className="flex items-center space-x-2">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center ring-2 ring-offset-2 ring-transparent group-hover:ring-blue-500 transition-all">
                     <span className="text-sm font-medium text-white">
-                      {user ? user.fullName?.split(' ').map(n => n.charAt(0)).slice(0, 2).join('') : 'AD'}
+                      {user ? (user.name || user.fullName)?.split(' ').map(n => n.charAt(0)).slice(0, 2).join('') : 'AD'}
                     </span>
                   </div>
                   <div className="hidden sm:block text-left">
                     <p className="text-sm font-medium text-gray-900">
-                      {user ? user.fullName : 'Admin User'}
+                      {user ? (user.name || user.fullName) : 'Admin User'}
                     </p>
                     <p className="text-xs text-gray-500">
                       {user ? user.department : 'Yönetici'}
                     </p>
                   </div>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-500" />
+                <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
               </button>
 
               {/* Dropdown menu */}
