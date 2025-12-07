@@ -188,6 +188,12 @@ const CustomerAnalysis = () => {
         {/* Ülke Bazlı Dağılım */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Ülke Bazlı Dağılım</h3>
+          {(!data?.geography || data.geography.length === 0) ? (
+            <div className="text-center py-8 text-gray-500">
+              <p>🌍 Ülke bazlı veri bulunmuyor</p>
+              <p className="text-sm mt-2">Farklı ülkelerden müşteriler ekledikçe bu grafik görünecektir.</p>
+            </div>
+          ) : (
           <div className="space-y-3">
             {data?.geography?.slice(0, 5).map((geo, index) => {
               const maxValue = Math.max(...(data.geography?.map(g => g.totalValue) || [1]));
