@@ -232,6 +232,8 @@ import SalesSummary from './pages/reports/SalesSummary';
 import PerformanceAnalysis from './pages/reports/PerformanceAnalysis';
 import SalesPipeline from './pages/reports/SalesPipeline';
 import FairAnalysis from './pages/reports/FairAnalysis';
+import CustomerAnalysis from './pages/reports/CustomerAnalysis';
+import RevenueForecast from './pages/reports/RevenueForecast';
 
 
 // Avanslar pages
