@@ -182,6 +182,7 @@ const CustomerAnalysis = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
 
         {/* Ülke Bazlı Dağılım */}
