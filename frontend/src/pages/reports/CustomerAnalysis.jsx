@@ -152,6 +152,12 @@ const CustomerAnalysis = () => {
         {/* Müşteri Segmentasyonu */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Müşteri Segmentasyonu</h3>
+          {(!data?.segmentation || data.segmentation.length === 0) ? (
+            <div className="text-center py-8 text-gray-500">
+              <p>📊 Müşteri segmentasyon verisi bulunmuyor</p>
+              <p className="text-sm mt-2">Müşteriler ekledikçe bu grafik otomatik olarak dolacaktır.</p>
+            </div>
+          ) : (
           <div className="space-y-4">
             {data?.segmentation?.map((seg, index) => (
               <div key={index}>
