@@ -239,7 +239,7 @@ async def delete_feature_flag(flag_key: str):
 
 
 @router.post("/{flag_key}/check")
-async def check_feature_flag(flag_key: str, check: FeatureFlagCheck):
+async def check_feature_flag(flag_key: str, check: FeatureFlagCheck, db = Depends(get_db)):
     """
     Belirli bir tenant için flag durumunu kontrol et
     
@@ -251,7 +251,7 @@ async def check_feature_flag(flag_key: str, check: FeatureFlagCheck):
     """
     collection = db["feature_flags"]
     
-    flag = await collection.find_one({"key": flag_key})
+    flag = await collection.find_one({"flag": flag_key})
     
     if not flag:
         return FeatureFlagResponse(
