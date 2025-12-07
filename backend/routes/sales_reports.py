@@ -797,8 +797,8 @@ async def get_sales_pipeline(
         aging_data = [
             {
                 "status": a["_id"],
-                "avgDays": round(a["avgDays"]),
-                "maxDays": round(a["maxDays"]),
+                "avgDays": round(a["avgDays"]) if a.get("avgDays") is not None else 0,
+                "maxDays": round(a["maxDays"]) if a.get("maxDays") is not None else 0,
                 "count": a["count"]
             }
             for a in aging_list
