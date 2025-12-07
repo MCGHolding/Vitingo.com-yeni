@@ -24,10 +24,11 @@ const PeopleListPage = () => {
     try {
       setLoading(true);
       console.log('🔍 Loading people...');
-      const data = await apiClient.getPeople();
-      setPeople(data);
+      const response = await apiClient.getPeople();
+      const peopleList = response.data || response || [];
+      setPeople(peopleList);
       setLoaded(true);
-      console.log(`✅ Loaded ${data.length} people`);
+      console.log(`✅ Loaded ${peopleList.length} people`);
     } catch (error) {
       console.error('Error loading people:', error);
     } finally {
