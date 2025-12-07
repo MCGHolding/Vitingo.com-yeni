@@ -16662,9 +16662,9 @@ async def update_payment_term_profile(profile_id: str, profile: dict):
         logger.error(f"Error updating payment term profile: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error updating payment term profile: {str(e)}")
 
-@app.delete("/api/payment-term-profiles/{profile_id}")
+@app.delete("/api/payment-term-profiles/{profile_id}", deprecated=True)
 async def delete_payment_term_profile(profile_id: str):
-    """Soft delete payment term profile"""
+    """DEPRECATED: Use tenant-aware endpoint instead. Soft delete payment term profile"""
     try:
         result = await db.payment_term_profiles.update_one(
             {"id": profile_id},
