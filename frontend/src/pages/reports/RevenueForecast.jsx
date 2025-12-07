@@ -213,6 +213,12 @@ const RevenueForecast = () => {
         {/* Aşama Bazlı Tahmin */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Aşama Bazlı Tahmin</h3>
+          {(!data?.byStage || data.byStage.length === 0) ? (
+            <div className="text-center py-8 text-gray-500">
+              <p>🎯 Aşama bazlı veri bulunmuyor</p>
+              <p className="text-sm mt-2">Fırsatlar oluşturun ve aşamalar belirleyin.</p>
+            </div>
+          ) : (
           <div className="space-y-4">
             {data?.byStage?.map((stage, index) => (
               <div key={index}>
