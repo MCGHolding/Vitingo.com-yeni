@@ -44,18 +44,9 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
   const loadFairs = async () => {
     setLoading(true);
     try {
-      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-      
-      const response = await fetch(`${backendUrl}/api/fairs`);
-      
-      if (response.ok) {
-        const fairsData = await response.json();
-        setFairs(fairsData);
-      } else {
-        setFairs(initialFairs || []);
-      }
+      const response = await apiClient.getFairs();
+      const fairsData = response.data || response || [];
+      setFairs(fairsData);
     } catch (error) {
       console.error('Error loading fairs:', error);
       setFairs(initialFairs || []);
