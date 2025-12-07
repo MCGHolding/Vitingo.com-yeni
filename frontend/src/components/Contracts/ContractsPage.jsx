@@ -111,19 +111,20 @@ const ContractsPage = ({ setCurrentView }) => {
   const fetchContracts = async () => {
     try {
       const data = await apiClient.getContracts();
-      setContracts(data.contracts || []);
+      const contractsList = data.contracts || [];
+      setContracts(contractsList);
       
       // Calculate stats
       const stats = {
-        total: data.contracts.length,
-        active: data.contracts.filter(c => c.status === 'active').length,
-        draft: data.contracts.filter(c => c.status === 'draft').length,
-        completed: data.contracts.filter(c => c.status === 'completed').length
+        total: contractsList.length,
+        active: contractsList.filter(c => c.status === 'active').length,
+        draft: contractsList.filter(c => c.status === 'draft').length,
+        completed: contractsList.filter(c => c.status === 'completed').length
       };
       setStats(stats);
       
       // Calculate chart data - Monthly trend for last 6 months
-      const monthlyData = calculateMonthlyData(data.contracts);
+      const monthlyData = calculateMonthlyData(contractsList);
       setChartData(monthlyData);
     } catch (error) {
       console.error('Error fetching contracts:', error);
