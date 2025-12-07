@@ -816,6 +816,20 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Satış Hunisi') {
+      if (onSalesPipeline) {
+        onSalesPipeline();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Fuar Bazlı Analiz') {
+      if (onFairAnalysis) {
+        onFairAnalysis();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Teslim Belgeleri') {
       if (onHandoverReceipts) {
         onHandoverReceipts();
