@@ -490,65 +490,100 @@ async def seed_feature_flags():
     await collection.delete_many({})
     print("🗑️  Eski flag'ler temizlendi")
     
+    now = datetime.now(timezone.utc)
+    
     default_flags = [
         {
-            "key": "demo_module",
+            "flag": "demo_module",
             "name": "Demo Modülü",
-            "description": "Demo bölümünü aktif eder",
-            "module": "demo",
-            "status": "development",
+            "description": "Geliştirme aşamasındaki yeni özellikleri test etmek için demo modülü",
+            "status": "enabled",
+            "created_at": now,
+            "updated_at": now,
+            "enabled_for_roles": ["super-admin", "admin"],
+            "enabled_for_users": [],
             "rollout_percentage": 0,
-            "whitelist_tenants": ["quattro-stand"],
-            "blacklist_tenants": [],
-            "config": {}
-        },
-        {
-            "key": "customer_module_v2",
-            "name": "Müşteri Modülü V2",
-            "description": "Gelişmiş müşteri modülü - bulk actions, 360° view",
-            "module": "customers",
-            "status": "development",
-            "rollout_percentage": 0,
-            "whitelist_tenants": ["quattro-stand"],
-            "blacklist_tenants": [],
-            "config": {
-                "enable_bulk_actions": True,
-                "enable_kanban_view": True,
-                "enable_health_score": True
+            "metadata": {
+                "category": "module",
+                "priority": "high"
             }
         },
         {
-            "key": "lead_generation",
-            "name": "Lead Generation Modülü",
-            "description": "Apollo/RocketReach entegrasyonu",
-            "module": "leads",
-            "status": "disabled",
+            "flag": "customer_module_v2",
+            "name": "Müşteri Modülü V2",
+            "description": "Gelişmiş müşteri yönetimi - bulk seçim, 360° görünüm, Kanban",
+            "status": "development",
+            "created_at": now,
+            "updated_at": now,
+            "enabled_for_roles": ["super-admin", "admin"],
+            "enabled_for_users": [],
             "rollout_percentage": 0,
-            "whitelist_tenants": [],
-            "blacklist_tenants": [],
-            "config": {}
+            "metadata": {
+                "category": "module",
+                "priority": "medium"
+            }
         },
         {
-            "key": "email_threads",
+            "flag": "dashboard_v2",
+            "name": "Dashboard V2",
+            "description": "Yeni modern dashboard tasarımı - özelleştirilebilir widget'lar",
+            "status": "development",
+            "created_at": now,
+            "updated_at": now,
+            "enabled_for_roles": ["super-admin", "admin"],
+            "enabled_for_users": [],
+            "rollout_percentage": 0,
+            "metadata": {
+                "category": "module",
+                "priority": "medium"
+            }
+        },
+        {
+            "flag": "email_threads",
             "name": "E-posta Thread Sistemi",
-            "description": "Müşteri ile e-posta yazışmalarını CRM'de görme",
-            "module": "emails",
+            "description": "Müşteri e-posta yazışmalarını CRM içinde görüntüleme",
             "status": "development",
+            "created_at": now,
+            "updated_at": now,
+            "enabled_for_roles": ["super-admin", "admin"],
+            "enabled_for_users": [],
             "rollout_percentage": 0,
-            "whitelist_tenants": ["quattro-stand"],
-            "blacklist_tenants": [],
-            "config": {}
+            "metadata": {
+                "category": "feature",
+                "priority": "low"
+            }
         },
         {
-            "key": "advanced_reports",
-            "name": "Gelişmiş Raporlar",
-            "description": "Yeni rapor modülü",
-            "module": "reports",
-            "status": "development",
+            "flag": "lead_generation",
+            "name": "Lead Generation",
+            "description": "Apollo.io ve RocketReach entegrasyonu - kredi bazlı lead bulma",
+            "status": "disabled",
+            "created_at": now,
+            "updated_at": now,
+            "enabled_for_roles": [],
+            "enabled_for_users": [],
             "rollout_percentage": 0,
-            "whitelist_tenants": ["quattro-stand"],
-            "blacklist_tenants": [],
-            "config": {}
+            "metadata": {
+                "category": "integration",
+                "priority": "low",
+                "planned_release": "Q2 2025"
+            }
+        },
+        {
+            "flag": "ai_features",
+            "name": "AI Özellikleri",
+            "description": "Yapay zeka destekli özellikler - stand tasarım, teklif oluşturma",
+            "status": "disabled",
+            "created_at": now,
+            "updated_at": now,
+            "enabled_for_roles": ["super-admin"],
+            "enabled_for_users": [],
+            "rollout_percentage": 0,
+            "metadata": {
+                "category": "ai",
+                "priority": "experimental",
+                "requires_api_key": True
+            }
         }
     ]
     
