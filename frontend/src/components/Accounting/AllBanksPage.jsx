@@ -173,22 +173,25 @@ const AllBanksPage = ({ onBackToDashboard, onNewBank, onEditBank }) => {
   };
 
   // Load banks from backend
+  useEffect(() => {
+    if (tenantSlug) {
+      apiClient.setTenantSlug(tenantSlug);
+    }
+  }, [tenantSlug]);
+
   const loadBanks = async () => {
     setIsLoading(true);
     try {
-      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/banks`);
+      const response = await apiClient.getBanks();
       
-      if (response.ok) {
-        const banksData = await response.json();
-        console.log('Loaded banks:', banksData);
+      if (response && response.status === 'success') {
+        const banksData = response.data || [];
+        console.log(`✅ Loaded ${banksData.length} banks from tenant-aware API`);
+        console.log(`📊 Tenant: ${response.tenant?.name}`);
         setBanks(banksData);
-      } else {
-        console.error('Failed to load banks:', response.statusText);
-        setBanks([]);
       }
     } catch (error) {
-      console.error('Error loading banks:', error);
+      console.error('❌ Error loading banks:', error);
       setBanks([]);
     } finally {
       setIsLoading(false);
