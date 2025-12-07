@@ -187,44 +187,22 @@ export default function LoginPage() {
                 
                 <button
                   type="button"
-                  onClick={async () => {
-                    setLoading(true);
-                    setError('');
-                    try {
-                      await login({ username: 'biry', password: '', rememberMe: false });
-                      navigate('/quattro-stand');
-                    } catch (err) {
-                      setError(err.message);
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
+                  onClick={() => fillDemoCredentials('tame@quattrostand.com')}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
-                  <div className="font-medium text-gray-900">👔 Admin</div>
-                  <div className="text-sm text-gray-600">biry - Birtan Yılmaz</div>
+                  <div className="font-medium text-gray-900">💼 Kullanıcı</div>
+                  <div className="text-sm text-gray-600">tame@quattrostand.com - Tamer Erdim</div>
                 </button>
                 
                 <button
                   type="button"
-                  onClick={async () => {
-                    setLoading(true);
-                    setError('');
-                    try {
-                      await login({ username: 'tame', password: '', rememberMe: false });
-                      navigate('/quattro-stand');
-                    } catch (err) {
-                      setError(err.message);
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
+                  onClick={() => fillDemoCredentials('batc@quattrostand.com')}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
-                  <div className="font-medium text-gray-900">💼 Müşteri Temsilcisi</div>
-                  <div className="text-sm text-gray-600">tame - Tamer Erdim</div>
+                  <div className="font-medium text-gray-900">💼 Kullanıcı</div>
+                  <div className="text-sm text-gray-600">batc@quattrostand.com - Batuhan Cücük</div>
                 </button>
               </div>
             </div>
