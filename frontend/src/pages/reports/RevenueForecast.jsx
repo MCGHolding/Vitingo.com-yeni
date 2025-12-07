@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const RevenueForecast = () => {
   const navigate = useNavigate();
+  const { tenantSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [months, setMonths] = useState(6);
