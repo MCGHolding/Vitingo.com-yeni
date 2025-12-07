@@ -415,21 +415,17 @@ async def get_tenant_features(tenant_slug: str):
 @router.post("/seed")
 async def seed_packages():
     """
-    Varsayılan paketleri ve özellikleri oluştur
+    Paketleri seed et - Starter, Professional, Enterprise
     """
-    db = await get_platform_db()
+    from datetime import datetime, timezone
     
-    # Önce özellikleri seed et
-    features_result = await _seed_features(db)
+    collection = db["packages"]
     
-    # Sonra paketleri seed et
-    packages_result = await _seed_packages(db)
+    # Önce mevcut paketleri temizle
+    await collection.delete_many({})
+    print("🗑️  Eski paketler temizlendi")
     
-    return {
-        "message": "Packages seed tamamlandı",
-        "features": features_result,
-        "packages": packages_result
-    }
+    now = datetime.now(timezone.utc)
 
 
 async def _seed_features(db):
