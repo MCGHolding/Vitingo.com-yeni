@@ -50,7 +50,7 @@ export const useFeatureFlag = (flagKey) => {
       try {
         const backendUrl = (window.ENV?.REACT_APP_BACKEND_URL) || 
                           process.env.REACT_APP_BACKEND_URL || 
-                          'https://crmmigration-1.preview.emergentagent.com';
+                          'https://saas-migration.preview.emergentagent.com';
         
         const response = await fetch(`${backendUrl}/api/feature-flags/${flagKey}/check`, {
           method: 'POST',
@@ -128,7 +128,7 @@ export const useFeatureFlags = (flagKeys) => {
         try {
           const backendUrl = (window.ENV?.REACT_APP_BACKEND_URL) || 
                             process.env.REACT_APP_BACKEND_URL || 
-                            'https://crmmigration-1.preview.emergentagent.com';
+                            'https://saas-migration.preview.emergentagent.com';
           
           const response = await fetch(`${backendUrl}/api/feature-flags/batch/check?tenant_slug=${tenantSlug}`, {
             method: 'POST',

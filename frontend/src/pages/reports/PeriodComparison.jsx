@@ -10,7 +10,7 @@ const PeriodComparison = () => {
 
   const backendUrl = (window.ENV?.REACT_APP_BACKEND_URL) ||
     process.env.REACT_APP_BACKEND_URL ||
-    'https://crmmigration-1.preview.emergentagent.com';
+    'https://saas-migration.preview.emergentagent.com';
 
   useEffect(() => {
     loadData();

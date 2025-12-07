@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://crmmigration-1.preview.emergentagent.com"
+BACKEND_URL = "https://saas-migration.preview.emergentagent.com"
 
 def verify_update_issue():
     """Verify the update issue by checking database state"""
