@@ -62,6 +62,11 @@ from routes import credit_cards as credit_cards_router
 from routes import purchase_invoices as purchase_invoices_router
 from routes import sales_reports as sales_reports_router
 
+# Import new routers
+from routers import feature_flags_router
+from routers import global_data_router
+from routers import package_features_router
+
 # Import email routes
 import email_routes
 
