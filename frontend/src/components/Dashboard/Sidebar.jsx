@@ -291,6 +291,8 @@ const getNavigation = (userDepartment) => {
       submenu: [
         { name: 'Satış Özeti', href: '/raporlar/satis-ozeti', icon: BarChart3 },
         { name: 'Performans Analizi', href: '/raporlar/performans', icon: BarChart3 },
+        { name: 'Satış Hunisi', href: '/raporlar/pipeline', icon: BarChart3 },
+        { name: 'Fuar Bazlı Analiz', href: '/raporlar/fuar-analizi', icon: BarChart3 },
         { name: 'Teslim Belgeleri', href: '/raporlar/teslim', icon: FileText },
         { name: 'Satış Raporları', href: '/reports/sales', icon: BarChart3 },
         { name: 'Müşteri Raporları', href: '/reports/customers', icon: Users },
