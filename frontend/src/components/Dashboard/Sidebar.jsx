@@ -373,6 +373,9 @@ export default function Sidebar({
   // Contract handlers
   onContracts,
   onNewContract,
+  // Reports handlers
+  onSalesSummary,
+  onPerformanceAnalysis,
   onSalesReports,
   onCustomerReports,
   onHandoverReceipts,
