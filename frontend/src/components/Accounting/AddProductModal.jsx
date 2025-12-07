@@ -75,38 +75,24 @@ export default function AddProductModal({ onClose, onProductAdded }) {
     setIsLoading(true);
 
     try {
-      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      
       const productData = {
         ...formData,
         default_price: formData.default_price ? parseFloat(formData.default_price) : null,
         is_active: true
       };
 
-      const response = await fetch(`${backendUrl}/api/products`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productData)
+      const result = await apiClient.post('/products', productData, true);
+
+      toast({
+        title: "Ürün Eklendi",
+        description: `${formData.name} başarıyla ürün veritabanına eklendi.`
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        toast({
-          title: "Ürün Eklendi",
-          description: `${formData.name} başarıyla ürün veritabanına eklendi.`
-        });
-
-        if (onProductAdded) {
-          onProductAdded(result.product);
-        }
-
-        onClose();
-      } else {
-        throw new Error(result.detail || 'Ürün eklenirken hata oluştu');
+      if (onProductAdded) {
+        onProductAdded(result.product || result);
       }
+
+      onClose();
 
     } catch (error) {
       console.error('Error adding product:', error);
