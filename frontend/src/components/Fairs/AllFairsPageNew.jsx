@@ -11,6 +11,7 @@ import {
   MoreHorizontal,
   X
 } from 'lucide-react';
+import apiClient from '../../utils/apiClient';
 
 export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard, title = "Tüm Fuarlar", titleColor = "text-gray-900", showImport = true }) {
   const [searchTerm, setSearchTerm] = useState('');
