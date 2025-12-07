@@ -99,10 +99,11 @@ async def get_feature_flags_collection():
 # ENDPOINTS
 # ============================================================
 
-@router.get("")
+@router.get("/list")
 async def list_feature_flags(
     status: Optional[str] = None,
-    module: Optional[str] = None
+    module: Optional[str] = None,
+    db = Depends(get_db)
 ):
     """
     Tüm feature flag'leri listele
@@ -111,7 +112,7 @@ async def list_feature_flags(
     - status: Duruma göre filtrele
     - module: Modüle göre filtrele
     """
-    collection = await get_feature_flags_collection()
+    collection = db['feature_flags']
     
     query = {}
     if status:
