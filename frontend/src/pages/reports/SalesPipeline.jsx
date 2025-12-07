@@ -149,7 +149,7 @@ const SalesPipeline = () => {
                     </div>
                   </div>
                   <div className="text-xs text-gray-400">
-                    Max: {stage.maxDays}g
+                    Max: {stage.maxDays} gün
                   </div>
                 </div>
               </div>
