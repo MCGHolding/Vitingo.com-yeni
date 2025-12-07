@@ -2103,3 +2103,207 @@ async def get_user_performance(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Kullanıcı performansı alınırken hata: {str(e)}")
 
+
+
+
+@router.get("/export-options")
+async def get_export_options(db = Depends(get_db)):
+    """Get available report types for export"""
+    try:
+        report_types = [
+            {
+                "id": "sales_summary",
+                "name": "Satış Özeti Raporu",
+                "description": "Genel satış performansı ve KPI'lar",
+                "icon": "📊",
+                "formats": ["pdf", "excel"]
+            },
+            {
+                "id": "performance",
+                "name": "Performans Analizi Raporu",
+                "description": "Detaylı satış performans metrikleri",
+                "icon": "📈",
+                "formats": ["pdf", "excel"]
+            },
+            {
+                "id": "pipeline",
+                "name": "Satış Hunisi Raporu",
+                "description": "Satış aşamaları ve dönüşüm oranları",
+                "icon": "🔄",
+                "formats": ["pdf", "excel"]
+            },
+            {
+                "id": "customers",
+                "name": "Müşteri Analizi Raporu",
+                "description": "Müşteri segmentasyonu ve davranış analizi",
+                "icon": "👥",
+                "formats": ["pdf", "excel"]
+            },
+            {
+                "id": "forecast",
+                "name": "Gelir Tahminleri Raporu",
+                "description": "Potansiyel gelir ve pipeline analizi",
+                "icon": "💰",
+                "formats": ["pdf", "excel"]
+            },
+            {
+                "id": "period_comparison",
+                "name": "Dönemsel Karşılaştırma Raporu",
+                "description": "Yıllık performans karşılaştırması",
+                "icon": "📅",
+                "formats": ["pdf", "excel"]
+            },
+            {
+                "id": "user_performance",
+                "name": "Satıcı Performansı Raporu",
+                "description": "Takım üyelerinin satış performansı",
+                "icon": "🏆",
+                "formats": ["pdf", "excel"]
+            }
+        ]
+        
+        # Get scheduled reports from database
+        scheduled_reports_collection = db["scheduled_reports"]
+        scheduled_count = await scheduled_reports_collection.count_documents({})
+        
+        result = {
+            "success": True,
+            "data": {
+                "reportTypes": report_types,
+                "scheduledReportsCount": scheduled_count,
+                "availableFormats": ["pdf", "excel"],
+                "schedulingOptions": {
+                    "frequencies": ["daily", "weekly", "monthly"],
+                    "deliveryMethods": ["email", "download"]
+                }
+            }
+        }
+        
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        print(f"❌ Export options error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Export seçenekleri alınırken hata: {str(e)}")
+
+
+@router.post("/schedule-report")
+async def schedule_report(
+    report_type: str,
+    frequency: str,
+    format: str,
+    email: str,
+    report_name: str = None,
+    db = Depends(get_db)
+):
+    """Schedule a recurring report"""
+    try:
+        scheduled_reports = db["scheduled_reports"]
+        
+        # Create scheduled report document
+        report_doc = {
+            "reportType": report_type,
+            "reportName": report_name or f"{report_type}_report",
+            "frequency": frequency,
+            "format": format,
+            "email": email,
+            "isActive": True,
+            "createdAt": datetime.now(timezone.utc),
+            "lastRunAt": None,
+            "nextRunAt": calculate_next_run(frequency),
+            "runCount": 0
+        }
+        
+        result = await scheduled_reports.insert_one(report_doc)
+        
+        return JSONResponse(content={
+            "success": True,
+            "data": {
+                "reportId": str(result.inserted_id),
+                "message": "Rapor zamanlaması başarıyla oluşturuldu",
+                "nextRun": report_doc["nextRunAt"].isoformat() if report_doc["nextRunAt"] else None
+            }
+        })
+        
+    except Exception as e:
+        print(f"❌ Schedule report error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Rapor zamanlanırken hata: {str(e)}")
+
+
+@router.get("/scheduled-reports")
+async def get_scheduled_reports(db = Depends(get_db)):
+    """Get all scheduled reports"""
+    try:
+        scheduled_reports = db["scheduled_reports"]
+        
+        cursor = scheduled_reports.find({}, {"_id": 0})
+        reports_list = await cursor.to_list(length=100)
+        
+        # Convert datetime to ISO format
+        for report in reports_list:
+            if "createdAt" in report and report["createdAt"]:
+                report["createdAt"] = report["createdAt"].isoformat()
+            if "lastRunAt" in report and report["lastRunAt"]:
+                report["lastRunAt"] = report["lastRunAt"].isoformat()
+            if "nextRunAt" in report and report["nextRunAt"]:
+                report["nextRunAt"] = report["nextRunAt"].isoformat()
+        
+        result = {
+            "success": True,
+            "data": {
+                "scheduledReports": reports_list,
+                "totalCount": len(reports_list)
+            }
+        }
+        
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        print(f"❌ Get scheduled reports error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Zamanlanmış raporlar alınırken hata: {str(e)}")
+
+
+@router.delete("/scheduled-reports/{report_id}")
+async def delete_scheduled_report(report_id: str, db = Depends(get_db)):
+    """Delete a scheduled report"""
+    try:
+        scheduled_reports = db["scheduled_reports"]
+        
+        result = await scheduled_reports.delete_one({"reportId": report_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Rapor bulunamadı")
+        
+        return JSONResponse(content={
+            "success": True,
+            "message": "Zamanlanmış rapor başarıyla silindi"
+        })
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Delete scheduled report error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Rapor silinirken hata: {str(e)}")
+
+
+def calculate_next_run(frequency: str) -> datetime:
+    """Calculate next run time based on frequency"""
+    now = datetime.now(timezone.utc)
+    
+    if frequency == "daily":
+        return now + timedelta(days=1)
+    elif frequency == "weekly":
+        return now + timedelta(weeks=1)
+    elif frequency == "monthly":
+        # Add roughly 30 days
+        return now + timedelta(days=30)
+    else:
+        return now + timedelta(days=1)
+
