@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import apiClient from '../utils/apiClient';
 
 const TenantContext = createContext(null);
 
@@ -19,17 +20,29 @@ export const TenantProvider = ({ children }) => {
 
       try {
         setLoading(true);
-        // Fetch tenant from backend
-        const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-        const response = await fetch(`${backendUrl}/api/tenants/${tenantSlug}`);
         
-        if (!response.ok) {
-          throw new Error(`Tenant fetch failed: ${response.status}`);
+        // Set tenant slug in API client
+        apiClient.setTenantSlug(tenantSlug);
+        
+        // Fetch tenant from new tenant-aware test endpoint
+        const response = await apiClient.getTenantBySlug(tenantSlug);
+        
+        if (response && response.status === 'success') {
+          // Extract tenant info from test endpoint response
+          const tenantData = {
+            slug: response.tenant_info.slug,
+            name: response.tenant_info.name,
+            id: response.tenant_info.id,
+            status: response.tenant_info.status,
+            package: response.tenant_info.package,
+            database_name: response.tenant_info.database_name
+          };
+          setTenant(tenantData);
+          setError(null);
+          console.log('✅ Tenant loaded:', tenantData);
+        } else {
+          throw new Error('Invalid tenant response');
         }
-        
-        const data = await response.json();
-        setTenant(data);
-        setError(null);
       } catch (err) {
         console.error('Tenant load error:', err);
         setError('Şirket bulunamadı');
