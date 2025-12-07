@@ -16644,9 +16644,9 @@ async def create_payment_term_profile(profile: dict):
         logger.error(f"Error creating payment term profile: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating payment term profile: {str(e)}")
 
-@app.put("/api/payment-term-profiles/{profile_id}")
+@app.put("/api/payment-term-profiles/{profile_id}", deprecated=True)
 async def update_payment_term_profile(profile_id: str, profile: dict):
-    """Update payment term profile"""
+    """DEPRECATED: Use tenant-aware endpoint instead. Update payment term profile"""
     try:
         profile['updatedAt'] = datetime.now(timezone.utc).isoformat()
         result = await db.payment_term_profiles.update_one(
