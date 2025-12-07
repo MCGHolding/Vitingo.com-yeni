@@ -836,6 +836,20 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Müşteri Analizi') {
+      if (onCustomerAnalysis) {
+        onCustomerAnalysis();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Gelir Tahminleri') {
+      if (onRevenueForecast) {
+        onRevenueForecast();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Teslim Belgeleri') {
       if (onHandoverReceipts) {
         onHandoverReceipts();
