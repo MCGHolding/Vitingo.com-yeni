@@ -178,6 +178,8 @@ const TenantLayoutInner = () => {
     // Raporlar
     onSalesSummary: () => handleNavigate('/raporlar/satis-ozeti'),
     onPerformanceAnalysis: () => handleNavigate('/raporlar/performans'),
+    onSalesPipeline: () => handleNavigate('/raporlar/pipeline'),
+    onFairAnalysis: () => handleNavigate('/raporlar/fuar-analizi'),
     onSalesReports: () => handleNavigate('/raporlar/satis'),
     onCustomerReports: () => handleNavigate('/raporlar/musteri'),
     onHandoverReceipts: () => handleNavigate('/raporlar/teslim'),
