@@ -528,6 +528,16 @@ export default function Sidebar({
       return;
     }
     
+    // Handle Demo submenu items
+    if (item.name === 'Demo' && subItem) {
+      if (subItem.name === 'Demo Ana Sayfa') {
+        if (onDemo) {
+          onDemo();
+        }
+        return;
+      }
+    }
+    
     // Handle Ayarlar submenu items
     if (item.name === 'Ayarlar' && subItem) {
       if (subItem.name === 'Avans Yönetimi') {
