@@ -38,14 +38,14 @@ export const AuthProvider = ({ children }) => {
             // Token is valid, restore session
             setToken(savedToken);
             setUser(JSON.parse(savedUser));
-            console.log('✅ Session restored from localStorage');
+            logger.log('✅ Session restored from localStorage');
           } else {
             // Token is invalid, clear storage
-            console.log('⚠️ Token expired, clearing session');
+            logger.log('⚠️ Token expired, clearing session');
             clearAuth();
           }
         } catch (error) {
-          console.error('Error verifying token:', error);
+          logger.error('Error verifying token:', error);
           clearAuth();
         }
       }
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
       setToken(authToken);
       setUser(userData);
 
-      console.log('✅ Login successful:', userData.email);
+      logger.log('✅ Login successful:', userData.email);
       
       return {
         success: true,
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
         tenant: data.tenant
       };
     } catch (error) {
-      console.error('Login error:', error);
+      logger.error('Login error:', error);
       return {
         success: false,
         error: error.message
@@ -127,11 +127,11 @@ export const AuthProvider = ({ children }) => {
         });
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      logger.error('Logout error:', error);
     } finally {
       // Clear local storage and state
       clearAuth();
-      console.log('✅ Logged out successfully');
+      logger.log('✅ Logged out successfully');
     }
   };
 
@@ -156,7 +156,7 @@ export const AuthProvider = ({ children }) => {
         return null;
       }
     } catch (error) {
-      console.error('Error refreshing user:', error);
+      logger.error('Error refreshing user:', error);
       return null;
     }
   };
