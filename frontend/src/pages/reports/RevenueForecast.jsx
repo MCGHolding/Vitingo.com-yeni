@@ -246,6 +246,7 @@ const RevenueForecast = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
 
         {/* Güven Seviyesi Dağılımı */}
