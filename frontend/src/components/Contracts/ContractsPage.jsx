@@ -110,8 +110,8 @@ const ContractsPage = ({ setCurrentView }) => {
 
   const fetchContracts = async () => {
     try {
-      const data = await apiClient.getContracts();
-      const contractsList = data.contracts || [];
+      const response = await apiClient.getContracts();
+      const contractsList = response.data || response.contracts || [];
       setContracts(contractsList);
       
       // Calculate stats
