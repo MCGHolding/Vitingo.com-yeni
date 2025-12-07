@@ -143,7 +143,7 @@ async def list_currencies(
     Frontend'de tüm dropdown'larda bu endpoint kullanılır.
     """
     db = await get_platform_db()
-    collection = db.global_currencies
+    collection = db.currencies
     
     query = {}
     if active_only:
@@ -163,7 +163,7 @@ async def list_currencies(
 async def get_currency(code: str):
     """Tek para birimi getir"""
     db = await get_platform_db()
-    collection = db.global_currencies
+    collection = db.currencies
     
     currency = await collection.find_one({"code": code.upper()})
     
@@ -180,7 +180,7 @@ async def create_currency(currency: CurrencyCreate):
     Yeni para birimi ekle (Ultra Admin)
     """
     db = await get_platform_db()
-    collection = db.global_currencies
+    collection = db.currencies
     
     # Benzersizlik kontrolü
     existing = await collection.find_one({"code": currency.code.upper()})
@@ -204,7 +204,7 @@ async def create_currency(currency: CurrencyCreate):
 async def update_currency(code: str, update: CurrencyUpdate):
     """Para birimi güncelle (Ultra Admin)"""
     db = await get_platform_db()
-    collection = db.global_currencies
+    collection = db.currencies
     
     existing = await collection.find_one({"code": code.upper()})
     if not existing:
@@ -228,7 +228,7 @@ async def update_currency(code: str, update: CurrencyUpdate):
 async def delete_currency(code: str):
     """Para birimi sil (Ultra Admin) - Dikkat: Kullanımda olabilir"""
     db = await get_platform_db()
-    collection = db.global_currencies
+    collection = db.currencies
     
     existing = await collection.find_one({"code": code.upper()})
     if not existing:
@@ -488,7 +488,7 @@ async def seed_global_data():
 
 async def _seed_currencies(db):
     """Para birimlerini seed et"""
-    collection = db.global_currencies
+    collection = db.currencies
     
     currencies = [
         {"code": "TRY", "name": "Turkish Lira", "name_tr": "Türk Lirası", "symbol": "₺", "decimal_places": 2, "thousand_separator": ".", "decimal_separator": ",", "symbol_position": "after", "is_active": True, "is_common": True, "sort_order": 1},
