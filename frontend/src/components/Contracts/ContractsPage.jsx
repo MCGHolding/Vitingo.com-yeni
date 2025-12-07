@@ -110,32 +110,21 @@ const ContractsPage = ({ setCurrentView }) => {
 
   const fetchContracts = async () => {
     try {
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-
-      // TODO: Get user email from auth context
-      const userEmail = 'mbucak@gmail.com';
-
-      const response = await fetch(`${backendUrl}/api/contracts?user_email=${userEmail}`);
+      const data = await apiClient.getContracts();
+      setContracts(data.contracts || []);
       
-      if (response.ok) {
-        const data = await response.json();
-        setContracts(data.contracts || []);
-        
-        // Calculate stats
-        const stats = {
-          total: data.contracts.length,
-          active: data.contracts.filter(c => c.status === 'active').length,
-          draft: data.contracts.filter(c => c.status === 'draft').length,
-          completed: data.contracts.filter(c => c.status === 'completed').length
-        };
-        setStats(stats);
-        
-        // Calculate chart data - Monthly trend for last 6 months
-        const monthlyData = calculateMonthlyData(data.contracts);
-        setChartData(monthlyData);
-      }
+      // Calculate stats
+      const stats = {
+        total: data.contracts.length,
+        active: data.contracts.filter(c => c.status === 'active').length,
+        draft: data.contracts.filter(c => c.status === 'draft').length,
+        completed: data.contracts.filter(c => c.status === 'completed').length
+      };
+      setStats(stats);
+      
+      // Calculate chart data - Monthly trend for last 6 months
+      const monthlyData = calculateMonthlyData(data.contracts);
+      setChartData(monthlyData);
     } catch (error) {
       console.error('Error fetching contracts:', error);
     } finally {
