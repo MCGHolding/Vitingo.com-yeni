@@ -66,7 +66,7 @@ const CustomerAnalysis = () => {
       <div className="flex items-center justify-between">
         <div>
           <button
-            onClick={() => navigate('/raporlar/satis-ozeti')}
+            onClick={() => navigate(`/${tenantSlug}/raporlar/satis-ozeti`)}
             className="text-green-600 hover:text-green-700 mb-2 flex items-center space-x-2"
           >
             <span>←</span>
