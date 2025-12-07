@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTenant } from '../../contexts/TenantContext';
 import AllPeoplePage from '../../components/Customers/AllPeoplePage';
+import apiClient from '../../utils/apiClient';
 
 const PeopleListPage = () => {
   const navigate = useNavigate();
@@ -11,11 +12,6 @@ const PeopleListPage = () => {
   const [people, setPeople] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
-
-  // Backend URL
-  const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
-                    process.env.REACT_APP_BACKEND_URL || 
-                    'https://saas-migration.preview.emergentagent.com';
 
   // Kişileri yükle - useCallback ile memoize et
   const loadPeople = useCallback(async () => {
@@ -28,19 +24,16 @@ const PeopleListPage = () => {
     try {
       setLoading(true);
       console.log('🔍 Loading people...');
-      const response = await fetch(`${backendUrl}/api/people`);
-      if (response.ok) {
-        const data = await response.json();
-        setPeople(data);
-        setLoaded(true);
-        console.log(`✅ Loaded ${data.length} people`);
-      }
+      const data = await apiClient.getPeople();
+      setPeople(data);
+      setLoaded(true);
+      console.log(`✅ Loaded ${data.length} people`);
     } catch (error) {
       console.error('Error loading people:', error);
     } finally {
       setLoading(false);
     }
-  }, [backendUrl, loaded]);
+  }, [loaded]);
 
   // Sadece ilk yüklemede çalış
   useEffect(() => {
@@ -64,19 +57,16 @@ const PeopleListPage = () => {
     setLoaded(false);
     try {
       setLoading(true);
-      const response = await fetch(`${backendUrl}/api/people`);
-      if (response.ok) {
-        const data = await response.json();
-        setPeople(data);
-        setLoaded(true);
-        console.log(`🔄 Refreshed ${data.length} people`);
-      }
+      const data = await apiClient.getPeople();
+      setPeople(data);
+      setLoaded(true);
+      console.log(`🔄 Refreshed ${data.length} people`);
     } catch (error) {
       console.error('Error refreshing people:', error);
     } finally {
       setLoading(false);
     }
-  }, [backendUrl]);
+  }, []);
 
   if (loading && !loaded) {
     return (
