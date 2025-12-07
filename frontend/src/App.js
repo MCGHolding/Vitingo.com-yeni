@@ -230,6 +230,8 @@ import PublicHandoverSign from './pages/PublicHandoverSign';
 // Sales Reports Pages
 import SalesSummary from './pages/reports/SalesSummary';
 import PerformanceAnalysis from './pages/reports/PerformanceAnalysis';
+import SalesPipeline from './pages/reports/SalesPipeline';
+import FairAnalysis from './pages/reports/FairAnalysis';
 
 
 // Avanslar pages
