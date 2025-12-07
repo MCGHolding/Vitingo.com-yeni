@@ -60,6 +60,7 @@ from routes import payment_profiles as payment_profiles_router
 from routes import advances as advances_router
 from routes import credit_cards as credit_cards_router
 from routes import purchase_invoices as purchase_invoices_router
+from routes import sales_reports as sales_reports_router
 
 # Import email routes
 import email_routes
