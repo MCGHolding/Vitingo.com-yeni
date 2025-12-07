@@ -256,7 +256,7 @@ async def list_countries(
     Ülkeleri listele
     """
     db = await get_platform_db()
-    collection = db.global_countries
+    collection = db.countries
     
     query = {}
     if active_only:
@@ -281,7 +281,7 @@ async def list_countries(
 async def get_country(code: str):
     """Tek ülke getir"""
     db = await get_platform_db()
-    collection = db.global_countries
+    collection = db.countries
     
     country = await collection.find_one({"code": code.upper()})
     
@@ -296,7 +296,7 @@ async def get_country(code: str):
 async def create_country(country: CountryCreate):
     """Yeni ülke ekle (Ultra Admin)"""
     db = await get_platform_db()
-    collection = db.global_countries
+    collection = db.countries
     
     existing = await collection.find_one({"code": country.code.upper()})
     if existing:
@@ -319,7 +319,7 @@ async def create_country(country: CountryCreate):
 async def update_country(code: str, update: CountryUpdate):
     """Ülke güncelle (Ultra Admin)"""
     db = await get_platform_db()
-    collection = db.global_countries
+    collection = db.countries
     
     existing = await collection.find_one({"code": code.upper()})
     if not existing:
@@ -517,7 +517,7 @@ async def _seed_currencies(db):
 
 async def _seed_countries(db):
     """Ülkeleri seed et"""
-    collection = db.global_countries
+    collection = db.countries
     
     countries = [
         {"code": "TR", "name": "Turkey", "name_tr": "Türkiye", "name_native": "Türkiye", "phone_code": "+90", "currency_code": "TRY", "flag_emoji": "🇹🇷", "is_active": True, "sort_order": 1, "tax_config": {"tax_name": "KDV", "default_rate": 20}},
