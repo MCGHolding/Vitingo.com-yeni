@@ -425,7 +425,7 @@ async def list_languages(active_only: bool = Query(True)):
     Dilleri listele
     """
     db = await get_platform_db()
-    collection = db.global_languages
+    collection = db.languages
     
     query = {}
     if active_only:
@@ -443,7 +443,7 @@ async def list_languages(active_only: bool = Query(True)):
 async def create_language(language: LanguageCreate):
     """Yeni dil ekle (Ultra Admin)"""
     db = await get_platform_db()
-    collection = db.global_languages
+    collection = db.languages
     
     existing = await collection.find_one({"code": language.code.lower()})
     if existing:
@@ -617,7 +617,7 @@ async def _seed_cities(db):
 
 async def _seed_languages(db):
     """Dilleri seed et"""
-    collection = db.global_languages
+    collection = db.languages
     
     languages = [
         {"code": "tr", "name": "Turkish", "name_native": "Türkçe", "direction": "ltr", "is_active": True, "is_default": True, "sort_order": 1},
