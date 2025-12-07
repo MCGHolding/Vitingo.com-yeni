@@ -290,33 +290,33 @@ async def check_feature_flag(flag_key: str, check: FeatureFlagCheck, db = Depend
     status = flag.get("status", "disabled")
     
     if status == "disabled":
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=False,
-            reason="disabled"
-        )
+        return {
+            "key": flag_key,
+            "enabled": False,
+            "reason": "disabled"
+        }
     
     if status == "development":
         # Sadece whitelist'tekiler görebilir (yukarıda kontrol edildi)
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=False,
-            reason="development_only"
-        )
+        return {
+            "key": flag_key,
+            "enabled": False,
+            "reason": "development_only"
+        }
     
     if status == "testing":
         # Test modunda - belirli roller görebilir
         if check.user_role in ["super-admin", "admin"]:
-            return FeatureFlagResponse(
-                key=flag_key,
-                enabled=True,
-                reason="testing_admin"
-            )
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=False,
-            reason="testing_restricted"
-        )
+            return {
+                "key": flag_key,
+                "enabled": True,
+                "reason": "testing_admin"
+            }
+        return {
+            "key": flag_key,
+            "enabled": False,
+            "reason": "testing_restricted"
+        }
     
     if status == "gradual":
         # Kademeli rollout - tenant bazlı deterministik
