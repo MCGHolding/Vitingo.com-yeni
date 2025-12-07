@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTenant } from '../../contexts/TenantContext';
+import apiClient from '../../utils/apiClient';
 import AllCustomersPage from '../../components/Customers/AllCustomersPage';
 
 const CustomerListPage = () => {
@@ -23,17 +24,21 @@ const CustomerListPage = () => {
 
   const currentFilter = getFilterFromPath();
 
-  // Backend URL - Always use env variable, ignore window.ENV override
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://crmmigration-1.preview.emergentagent.com';
-
-  // Müşterileri yükle
+  // Müşterileri yükle - YENİ TENANT-AWARE API
   const loadCustomers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${backendUrl}/api/customers`);
-      if (response.ok) {
-        let data = await response.json();
+      
+      // Set tenant slug in API client (if not already set)
+      if (tenantSlug) {
+        apiClient.setTenantSlug(tenantSlug);
+      }
+      
+      // Use new tenant-aware API
+      const response = await apiClient.getCustomers();
+      
+      if (response && response.status === 'success') {
+        let data = response.data || [];
         
         // Filtreleme uygula
         if (currentFilter === 'passive') {
@@ -45,10 +50,12 @@ const CustomerListPage = () => {
         }
         
         setCustomers(data);
-        console.log(`✅ Loaded ${data.length} customers (filter: ${currentFilter})`);
+        console.log(`✅ Loaded ${data.length} customers from tenant-aware API (filter: ${currentFilter})`);
+        console.log(`📊 Tenant: ${response.tenant?.name} (${response.tenant?.slug})`);
       }
     } catch (error) {
       console.error('Error loading customers:', error);
+      setCustomers([]);
     } finally {
       setLoading(false);
     }
@@ -56,7 +63,7 @@ const CustomerListPage = () => {
 
   useEffect(() => {
     loadCustomers();
-  }, [currentFilter]); // Filter değişince yeniden yükle
+  }, [currentFilter, tenantSlug]); // Filter veya tenant değişince yeniden yükle
 
   // Navigation handlers
   const handleViewCustomer = (customer) => {
