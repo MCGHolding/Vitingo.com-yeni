@@ -18714,6 +18714,18 @@ from routes import tenant_documents_router
 from routes import tenant_activities_router
 from routes import tenant_settings_router
 from routes import tenant_dashboard_router
+from routes import tenant_invoices_router
+from routes import tenant_suppliers_router
+from routes import tenant_banks_router
+from routes import tenant_contracts_router
+from routes import tenant_proposals_router
+from routes import tenant_opportunities_router
+from routes import tenant_fairs_router
+from routes import tenant_people_router
+from routes import tenant_expense_receipts_router
+from routes import tenant_briefs_router
+from routes import tenant_users_router
+from routes import tenant_reports_router
 
 app.include_router(tenant_routes.router)
 app.include_router(tenant_projects_router.router)
@@ -18724,6 +18736,18 @@ app.include_router(tenant_documents_router.router)
 app.include_router(tenant_activities_router.router)
 app.include_router(tenant_settings_router.router)
 app.include_router(tenant_dashboard_router.router)
+app.include_router(tenant_invoices_router.router)
+app.include_router(tenant_suppliers_router.router)
+app.include_router(tenant_banks_router.router)
+app.include_router(tenant_contracts_router.router)
+app.include_router(tenant_proposals_router.router)
+app.include_router(tenant_opportunities_router.router)
+app.include_router(tenant_fairs_router.router)
+app.include_router(tenant_people_router.router)
+app.include_router(tenant_expense_receipts_router.router)
+app.include_router(tenant_briefs_router.router)
+app.include_router(tenant_users_router.router)
+app.include_router(tenant_reports_router.router)
 
 app.add_middleware(
     CORSMiddleware,
