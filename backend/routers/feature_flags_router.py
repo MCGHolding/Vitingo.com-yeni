@@ -158,7 +158,8 @@ async def create_feature_flag(flag: FeatureFlagCreate):
     
     result = await collection.insert_one(flag_doc)
     flag_doc["id"] = str(result.inserted_id)
-    del flag_doc["_id"] if "_id" in flag_doc else None
+    if "_id" in flag_doc:
+        del flag_doc["_id"]
     
     return flag_doc
 
