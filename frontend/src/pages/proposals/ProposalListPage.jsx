@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Plus, Search, FileText, Send, Eye, CheckCircle, XCircle, DollarSign } from 'lucide-react';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+import apiClient from '../../utils/apiClient';
 
 const STATUS_CONFIG = {
   draft: { label: 'Taslak', color: 'bg-yellow-100 text-yellow-800', icon: '🟡' },
@@ -14,6 +14,7 @@ const STATUS_CONFIG = {
 };
 
 const ProposalListPage = ({ onNewProposal, onViewProposal }) => {
+  const { tenantSlug } = useParams();
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,6 +29,9 @@ const ProposalListPage = ({ onNewProposal, onViewProposal }) => {
   });
 
   useEffect(() => {
+    if (tenantSlug) {
+      apiClient.setTenantSlug(tenantSlug);
+    }
     loadProposals();
     
     // Check URL for status filter
@@ -36,20 +40,22 @@ const ProposalListPage = ({ onNewProposal, onViewProposal }) => {
     if (status && ['draft', 'sent', 'viewed', 'accepted', 'rejected'].includes(status)) {
       setStatusFilter(status);
     }
-  }, []);
+  }, [tenantSlug]);
 
   const loadProposals = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${BACKEND_URL}/api/proposals?user_id=demo-user`);
-      const data = await response.json();
+      const response = await apiClient.getProposals();
       
-      if (Array.isArray(data)) {
+      if (response && response.status === 'success') {
+        const data = response.data || [];
+        console.log(`✅ Loaded ${data.length} proposals from tenant-aware API`);
+        console.log(`📊 Tenant: ${response.tenant?.name}`);
         setProposals(data);
         calculateStats(data);
       }
     } catch (error) {
-      console.error('Error loading proposals:', error);
+      console.error('❌ Error loading proposals:', error);
     } finally {
       setLoading(false);
     }
