@@ -587,26 +587,18 @@ async def seed_feature_flags():
         }
     ]
     
-    created = 0
-    skipped = 0
+    # Tüm flag'leri insert et
+    if default_flags:
+        result = await collection.insert_many(default_flags)
+        created = len(result.inserted_ids)
+    else:
+        created = 0
     
-    for flag in default_flags:
-        existing = await collection.find_one({"key": flag["key"]})
-        if existing:
-            skipped += 1
-            continue
-        
-        flag["created_at"] = datetime.utcnow()
-        flag["updated_at"] = datetime.utcnow()
-        flag["created_by"] = "system"
-        flag["enabled_at"] = None
-        flag["disabled_at"] = None
-        
-        await collection.insert_one(flag)
-        created += 1
+    print(f"✅ {created} flag oluşturuldu")
     
     return {
+        "success": True,
         "message": "Feature flags seed tamamlandı",
         "created": created,
-        "skipped": skipped
+        "flags": [f["flag"] for f in default_flags]
     }
