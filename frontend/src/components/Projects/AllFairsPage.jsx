@@ -1,34 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { useToast } from '../../hooks/use-toast';
+import apiClient from '../../utils/apiClient';
 import { ArrowLeft, Search, MapPin, Globe, Users, Calendar } from 'lucide-react';
 
 export default function AllFairsPage({ onBackToDashboard }) {
+  const { tenantSlug } = useParams();
   const { toast } = useToast();
   const [fairs, setFairs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (tenantSlug) {
+      apiClient.setTenantSlug(tenantSlug);
+    }
     loadFairs();
-  }, []);
+  }, [tenantSlug]);
 
   const loadFairs = async () => {
     setLoading(true);
     try {
-      const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-
-      const response = await fetch(`${backendUrl}/api/projects/fairs/all`);
-      if (response.ok) {
-        const data = await response.json();
+      const response = await apiClient.getFairs();
+      
+      if (response && response.status === 'success') {
+        const data = response.data || [];
+        console.log(`✅ Loaded ${data.length} fairs from tenant-aware API`);
+        console.log(`📊 Tenant: ${response.tenant?.name}`);
         setFairs(data);
       }
     } catch (error) {
-      console.error('Error loading fairs:', error);
+      console.error('❌ Error loading fairs:', error);
       toast({
         title: "Hata",
         description: "Fuarlar yüklenirken hata oluştu",
