@@ -55,7 +55,7 @@ const parseJsonSafe = async (res) => {
   try {
     return JSON.parse(cleaned);
   } catch (e) {
-    console.error('Non-JSON response:', cleaned.slice(0, 200));
+    logger.error('Non-JSON response:', cleaned.slice(0, 200));
     throw new Error(`Non-JSON response (${res.status})`);
   }
 };
@@ -145,7 +145,7 @@ class ApiClient {
       
       // Handle 401 Unauthorized - token expired or invalid
       if (response.status === 401) {
-        console.warn('⚠️ 401 Unauthorized - Token expired or invalid');
+        logger.warn('⚠️ 401 Unauthorized - Token expired or invalid');
         // Clear auth data
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
@@ -165,7 +165,7 @@ class ApiClient {
 
       return await parseJsonSafe(response);
     } catch (error) {
-      console.error(`API Error [${endpoint}]:`, error);
+      logger.error(`API Error [${endpoint}]:`, error);
       throw error;
     }
   }
