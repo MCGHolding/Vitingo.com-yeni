@@ -18,6 +18,7 @@ import {
   Users,
   Calendar
 } from 'lucide-react';
+import apiClient from '../../utils/apiClient';
 import { 
   BarChart, 
   Bar, 
