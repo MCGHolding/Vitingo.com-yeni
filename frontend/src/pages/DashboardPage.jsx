@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import apiClient from '../utils/apiClient';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { tenantSlug } = useParams();
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
   
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,11 +16,8 @@ const DashboardPage = () => {
   const loadDashboard = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${backendUrl}/api/dashboard/stats`);
-      if (response.ok) {
-        const result = await response.json();
-        setData(result);
-      }
+      const result = await apiClient.getDashboardOverview();
+      setData(result);
     } catch (error) {
       console.error('Error loading dashboard:', error);
     } finally {
