@@ -305,7 +305,8 @@ async def get_sales_summary(
             proposal_stats = []
         
         # Monthly trend (last 6 months)
-        six_months_ago = now - timedelta(days=180)
+        now_utc = datetime.now(timezone.utc)
+        six_months_ago = now_utc - timedelta(days=180)
         monthly_trend_pipeline = [
             {
                 "$match": {
