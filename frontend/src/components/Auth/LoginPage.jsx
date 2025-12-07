@@ -107,35 +107,48 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Username Field */}
+              {/* Email Field */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700 flex items-center">
                   <User className="h-4 w-4 mr-2" />
-                  Kullanıcı Adı
+                  Email
                 </label>
                 <Input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
-                  placeholder="Kullanıcı adınızı giriniz"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="Email adresinizi giriniz"
                   className="h-12"
                   disabled={loading}
+                  autoComplete="email"
                 />
               </div>
 
-              {/* Remember Me */}
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  type="checkbox"
-                  checked={formData.rememberMe}
-                  onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  disabled={loading}
-                />
-                <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700">
-                  Beni hatırla
+              {/* Password Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 flex items-center">
+                  <Lock className="h-4 w-4 mr-2" />
+                  Şifre
                 </label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    placeholder="Şifrenizi giriniz"
+                    className="h-12 pr-10"
+                    disabled={loading}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    disabled={loading}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
 
               {/* Login Button */}
