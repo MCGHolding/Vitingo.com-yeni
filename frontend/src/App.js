@@ -2516,6 +2516,9 @@ function App() {
                 <Route path="kapanmis" element={<AdvanceClosedPage />} />
                 <Route path="cari-hesap" element={<AdvanceCurrentAccountPage />} />
               </Route>
+
+              {/* Demo Modülü */}
+              {demoRoutes}
             </Route>
             
             {/* Ana sayfa - tenant'a yönlendir */}
