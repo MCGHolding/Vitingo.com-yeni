@@ -71,14 +71,21 @@ async def get_customers(
     limit: int = 100
 ):
     """
-    Get customers for specific tenant (tenant-aware)
+    Get customers for specific tenant (tenant-aware with JWT verification)
     
     Query params:
         - limit: Maximum number of customers to return (default: 100)
     
     Returns:
         List of customers from tenant database
+        
+    Security:
+        - Requires JWT authentication
+        - Verifies user has access to requested tenant
     """
+    tenant_db = tenant_context["tenant_db"]
+    tenant = tenant_context["tenant"]
+    
     try:
         # Fetch customers from tenant database (without _id)
         customers = await tenant_db.customers.find(
