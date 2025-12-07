@@ -13,7 +13,8 @@ from dependencies import (
     get_tenant_info,
     get_tenant_slug,
     get_full_tenant_context,
-    get_platform_db
+    get_platform_db,
+    verify_tenant_access
 )
 
 # Create router
