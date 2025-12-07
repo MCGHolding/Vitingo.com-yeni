@@ -16628,9 +16628,9 @@ async def get_payment_term_profiles():
         logger.error(f"Error fetching payment term profiles: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error fetching payment term profiles: {str(e)}")
 
-@app.post("/api/payment-term-profiles")
+@app.post("/api/payment-term-profiles", deprecated=True)
 async def create_payment_term_profile(profile: dict):
-    """Create new payment term profile"""
+    """DEPRECATED: Use tenant-aware endpoint instead. Create new payment term profile"""
     try:
         profile_id = str(uuid4())
         profile['id'] = profile_id
