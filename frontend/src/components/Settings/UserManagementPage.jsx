@@ -6,6 +6,7 @@ import {
 import NewUserModal from './NewUserModal';
 import InviteUserModal from './InviteUserModal';
 import UserCreatedSuccessModal from './UserCreatedSuccessModal';
+import apiClient from '../../utils/apiClient';
 
 const UserManagementPage = ({ onBack }) => {
   const [users, setUsers] = useState([]);
@@ -23,22 +24,14 @@ const UserManagementPage = ({ onBack }) => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
 
       // Fetch all users with different statuses
-      const [activeRes, invitedRes, inactiveRes, archivedRes] = await Promise.all([
-        fetch(`${backendUrl}/api/users?status=active`),
-        fetch(`${backendUrl}/api/users?status=invited`),
-        fetch(`${backendUrl}/api/users?status=inactive`),
-        fetch(`${backendUrl}/api/users?status=archived`)
+      const [activeUsers, invitedUsers, inactiveUsers, archivedUsers] = await Promise.all([
+        apiClient.getUsers({ status: 'active' }).catch(() => []),
+        apiClient.getUsers({ status: 'invited' }).catch(() => []),
+        apiClient.getUsers({ status: 'inactive' }).catch(() => []),
+        apiClient.getUsers({ status: 'archived' }).catch(() => [])
       ]);
-
-      const activeUsers = activeRes.ok ? await activeRes.json() : [];
-      const invitedUsers = invitedRes.ok ? await invitedRes.json() : [];
-      const inactiveUsers = inactiveRes.ok ? await inactiveRes.json() : [];
-      const archivedUsers = archivedRes.ok ? await archivedRes.json() : [];
 
       setUsers({
         active: Array.isArray(activeUsers) ? activeUsers : [],
@@ -56,41 +49,25 @@ const UserManagementPage = ({ onBack }) => {
 
   const handleCreateUser = async (userData) => {
     try {
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-
-      const response = await fetch(`${backendUrl}/api/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCreatedUserData(data);
-        setShowNewUserModal(false);
-        setShowSuccessModal(true);
-        fetchUsers(); // Refresh list
-      } else {
-        const error = await response.json();
-        alert(error.detail || 'Kullanıcı oluşturulurken bir hata oluştu');
-      }
+      const data = await apiClient.createUser(userData);
+      setCreatedUserData(data);
+      setShowNewUserModal(false);
+      setShowSuccessModal(true);
+      fetchUsers(); // Refresh list
     } catch (error) {
       console.error('Error creating user:', error);
-      alert('Bir hata oluştu');
+      alert(error.message || 'Kullanıcı oluşturulurken bir hata oluştu');
     }
   };
 
   const handleInviteUser = async (inviteData) => {
     try {
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-
-      const response = await fetch(`${backendUrl}/api/users/invite`, {
+      // Use buildUrl to get the correct tenant-aware URL
+      const url = apiClient.buildUrl('/users/invite', true);
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(inviteData)
       });
 
@@ -115,25 +92,12 @@ const UserManagementPage = ({ onBack }) => {
     }
 
     try {
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-
-      const response = await fetch(`${backendUrl}/api/users/${userId}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        alert(data.message);
-        fetchUsers(); // Refresh list
-      } else {
-        const error = await response.json();
-        alert(error.detail || 'Kullanıcı silinirken bir hata oluştu');
-      }
+      await apiClient.deleteUser(userId);
+      alert('Kullanıcı başarıyla arşivlendi');
+      fetchUsers(); // Refresh list
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert('Bir hata oluştu');
+      alert(error.message || 'Kullanıcı silinirken bir hata oluştu');
     }
   };
 
