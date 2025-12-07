@@ -115,11 +115,6 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
       loadFairs();
     } catch (error) {
       console.error('Error updating fair:', error);
-      setErrorMessage('Güncelleme başarısız!');
-      setShowErrorModal(true);
-      }
-    } catch (error) {
-      console.error('Error updating fair:', error);
       setErrorMessage('Bir hata oluştu!');
       setShowErrorModal(true);
     }
