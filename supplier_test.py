@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Backend URL from environment
-BACKEND_URL = "https://sales-reports-hub.preview.emergentagent.com"
+BACKEND_URL = "https://feature-flags-1.preview.emergentagent.com"
 
 # Global variables for test data
 test_category_id = None

@@ -1,33 +1,33 @@
 <analysis>**original_problem_statement:**
-The user is building a comprehensive CRM system, VİTİNGO CRM. The initial request was to fix a series of critical regressions and UI/UX issues on the Bankalar (Banks) page. After stabilizing the page, the user requested a major new feature: a Stand Teslim Belgesi (Handover Receipt) module for managing, sending, and digitally signing stand handover documents. Following the successful implementation of that module, the user's latest request is to add a highly sophisticated, real-time IBAN validation system to the Bank Accounts form.
+The user is building a comprehensive CRM system, VİTİNGO CRM. The project initially focused on building a multi-phased **Sales Reports Module**. After completing all phases of the Sales Reports module, the user requested a major new feature: a **Feature Flagging and Demo Module system**. This involved integrating new backend routers and frontend hooks/pages provided by the user, debugging the integration, and then creating and running comprehensive seed scripts to populate the database with initial data for feature flags, global settings (countries, currencies), and subscription packages.
 
 PRODUCT REQUIREMENTS:
-1.  **Bug Fixes & Stability:** Resolve all outstanding bugs on the Bankalar page, including statement parsing, data persistence (for statements and banks), and UI/UX issues.
-2.  **Handover Receipt Module:**
-    *   **Backend:** Create a new database collection () and API endpoints for full CRUD, sending documents via a public link, and capturing digital signatures.
-    *   **Frontend:**
-        *   Build a new page () to list, filter, create, and manage handover receipts.
-        *   Build a public-facing page () for customers to view and sign the document using a signature canvas.
-        *   Integrate .
-        *   Add a link to the main sidebar menu under Raporlar.
-3.  **Advanced IBAN Validation:**
-    *   Create a dedicated utility file for IBAN validation logic supporting 40+ countries.
-    *   Integrate this logic into the Banka Hesapları form to provide real-time, user-friendly feedback (icons, color-coded borders, helper text) as the user types.
-    *   The validation must include checks for length, format, country code mismatch, and MOD-97 checksum.
-    *   This change should *only* affect the IBAN input field, leaving all other form fields and page functionality untouched.
+1.  **Sales Reports Module (Completed):** Build a comprehensive sales reporting system with the following sub-pages: Satış Özeti, Performans Analizi, Satış Hunisi, Fuar Bazlı Analiz, Müşteri Analizi, Gelir Tahminleri, Dönemsel Karşılaştırma, Satıcı Performansı, and Rapor Dışa Aktar.
+2.  **Sidebar Cleanup (Completed):** Remove obsolete menu items and reorder existing menus for better usability.
+3.  **Feature Flag & Demo Module System (Completed):**
+    *   Integrate user-provided backend routers (, , ) and frontend files (, , etc.).
+    *   Add a new Demo menu to the sidebar, controlled by a feature flag.
+    *   Ensure the feature flag system correctly checks user roles and flag status to grant or deny access to the demo page.
+4.  **Database Seeding (Completed):**
+    *   Create and execute seed scripts to populate the database with initial data for:
+        *   **Feature Flags:** , , , etc.
+        *   **Global Data:** Currencies (TRY, USD, EUR), Countries (Türkiye, USA, etc.), Cities, and Languages.
+        *   **Packages:** , , and  subscription tiers.
 
 **User's preferred language**: Turkish
 
 **what currently exists?**
-The application is a full-stack CRM with a FastAPI backend and a React frontend. The Bankalar page is now stable and features a three-tab layout. The Banka Hesapları (Bank Accounts) tab has been completely redesigned with a two-panel layout (account list on the left, form on the right) and is fully functional. The Ekstreler (Statements) tab's PDF parsing and data persistence issues have been resolved.
+The application is a full-stack CRM with a FastAPI backend and React frontend. The entire Sales Reports Module is now complete, with all sub-pages implemented on both the backend and frontend. The sidebar navigation has been cleaned up and re-organized per the user's request.
 
-A major new Stand Teslim Belgesi (Handover Receipt) module has been fully implemented, including backend endpoints, frontend management and public signing pages, and sidebar integration. The project structure now includes new pages under  for this module. The agent's last action was to create a utility file for the next task: advanced IBAN validation.
+A new, significant Feature Flag and Demo module has been fully implemented. This includes three new backend routers integrated into , new custom hooks (, , etc.), and new frontend pages for the demo module.
+
+Crucially, the database () has been populated with essential seed data for feature flags, global data (10 currencies, 12 countries, 35 cities, 4 languages), and 3 subscription packages. The feature flag system is active and correctly controls access to the new demo page.
 
 **Last working item**:
-- Last item agent was working: The agent was tasked with creating a sophisticated, real-time IBAN validation system. The agent has successfully created the utility file  containing all the complex validation logic, constants for different countries, and helper functions as specified by the user. The next step is to integrate this utility into the  component.
-- Status: **IN PROGRESS**
-- Agent Testing Done: N
-- Which testing method agent to use? Frontend testing agent. The test should navigate to the Banka Hesapları tab, open the form to add a new account, and test various valid and invalid IBANs for multiple countries (e.g., TR, AE, DE). The test must verify that the input field's border color, the validation icon (✓/✗), and the helper messages change in real-time as the user types, and that saving is blocked for an invalid IBAN.
+- Last item agent was working: The agent created, ran, and verified three separate database seed scripts as requested by the user. This involved updating existing  endpoints in the new backend routers (, , ) with the specified data, calling each endpoint via , and finally confirming with  commands that all collections (, , , , , ) were successfully populated.
+- Status: **USER VERIFICATION PENDING**
+- Agent Testing Done: Y
+- Which testing method agent to use? **Manual Testing**. The next agent should verify that the seeded data is being correctly used in the application, for example, by checking dropdowns for countries/currencies or observing the behavior of the new feature flags.
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
@@ -35,136 +35,147 @@ A major new Stand Teslim Belgesi (Handover Receipt) module has been fully implem
 
 **Issues Detail:**
 - **Issue 1: Ödeme planı tutarları güncelleme sorunu (Payment term amounts update issue)**
-    - **Description:** On project forms, when the total contract amount is changed, the new total is not propagated to the  component, so the calculated payment term amounts remain incorrect. This is a lower-priority recurring issue from a previous session.
     - **Attempted fixes:** None in this session.
+    - **Next debug checklist:** The  component in the frontend likely doesn't update its state when the total contract amount prop changes in the parent form. Check the component's  hook to see if it's listening for changes to the total amount prop.
+    - **Why fix this issue and what will be achieved with the fix?** Fixes a critical financial calculation bug, ensuring data integrity in project forms.
     - **Status:** NOT STARTED
     - **Is recurring issue?** Y
     - **Should Test frontend/backend/both after fix?** frontend
     - **Blocked on other issue:** None
 
 **In progress Task List**:
-- **Task 1: Implement Advanced IBAN Validation (P0)**
-    - **Where to resume:** Integrate the  utility into the  component.
-        1.  Import the necessary functions (, , etc.) at the top of .
-        2.  Add a new state .
-        3.  Create the  function to update the form state and trigger validation.
-        4.  Replace the existing IBAN input's JSX with the new, enhanced version that uses  and displays conditional styling and messaging based on  state.
-        5.  Update the  function to check  before proceeding with the API call.
-    - **What will be achieved with this?** A professional, error-preventing IBAN input field that provides an excellent user experience.
-    - **Status:** IN PROGRESS
-    - **Should Test frontend/backend/both after fix?** frontend
-    - **Blocked on something:** None
+- None
 
 **Upcoming and Future Tasks**
 - **Upcoming Tasks:**
-  - **P1: Refactor :** The main backend file is extremely large and should be broken down into modular router files (e.g., , ).
-  - **P2: Consolidate Data Models:** Plan and execute the migration of data from old collections (, ) to the new ones (, ).
+  - **P0: Integrate Feature Flag & Package Hooks:** The new hooks (, ) have been added but are not yet used widely. The next step is to integrate them across the application to control access to features based on flags and user subscription packages.
+  - **P1: Develop Demo Module Content:** The  is a placeholder. The agent needs to build the actual pages for the features listed (Müşteriler V2, Dashboard V2, etc.).
+  - **P2: Refactor :** This file is extremely large and needs to be broken down into more modular routers for better maintainability. This is a high-priority technical debt item.
 - **Future Tasks:**
   - Implement Backend for Invoice Import & Export.
+  - Consolidate Data Models: Plan and execute the migration of data from old collections to new ones.
   - Remove deprecated  endpoints from .
 
 **Completed work in this session**
-- **Bank Statement Parsing & Persistence:** Fixed the critical regression where PDF parsing was broken and ensured that uploaded statements are saved to the DB and fetched on page load.
-- **Bank/Statement Deletion:** Implemented correct backend API calls for permanently deleting banks and statements.
-- **Banks/Accounts Page Overhaul:**
-    - Completely redesigned the Banka Hesapları tab with a professional two-panel UI.
-    - Implemented company-based grouping for the account list.
-    - Fixed numerous bugs related to data persistence, form saving ( import error), and UI controls (e.g., making Bank Name a dropdown).
-- **New Module: Stand Teslim Belgesi (Handover Receipt):**
-    - **Backend:** Added a new  collection and a full suite of API endpoints to  for CRUD, sending, public viewing, and signing.
-    - **Frontend:** Created the main management page () and the public signing page (), installed , and correctly configured all routing and sidebar menu links.
-- **Sidebar Navigation Fixes:** Resolved multiple issues preventing new menu items from navigating correctly by implementing the required event handler pattern in  and .
+- **Sales Reports Module - Phase 3 (Customer Analysis & Revenue Forecast):** Completed frontend pages, integrated navigation, and fixed a critical Back button routing bug.
+- **Sales Reports Module - Phase 4 (Period Comparison & User Performance):** Completed full-stack implementation, including backend endpoints and frontend pages.
+- **Sales Reports Module - Phase 5 (Report Export):** Completed full-stack implementation, creating the final page for the module.
+- **Sidebar Cleanup & Reorganization:** Removed three obsolete menu items and moved the Brief menu under Takvim as requested.
+- **Feature Flag System Implementation:**
+  - Integrated 3 new backend routers: , , .
+  - Integrated 5 new frontend files for hooks and demo pages.
+  - Debugged and fixed multiple issues related to database connections ( function), environment variables (), and API response formats in the new routers.
+  - Fixed frontend hook () to use the correct backend URL and request format.
+- **Database Seeding:**
+  - Created and successfully executed seed scripts for **Feature Flags**, **Global Data** (currencies, countries, cities, languages), and **Packages**.
+  - Verified all data was correctly written to the MongoDB  database.
 
 **Earlier issues found/mentioned but not fixed**
-- The Ödeme planı tutarları güncelleme sorunu (Payment term amounts update issue) from the previous fork remains unfixed.
+- **Issue 1: Ödeme planı tutarları güncelleme sorunu (Payment term amounts update issue)**
+    - **Debug checklist:** This is a frontend issue. The  component likely needs to be updated to receive the new total contract amount as a prop or listen for a state change when the total is updated in the parent project form.
+    - **Why to solve this issue and what will be achieved with this?** This will fix incorrect financial calculations on project forms, improving data integrity.
+    - **Should Test frontend/backend/both after fix:** frontend
+    - **Is recurring issue?** Y
 
 **Known issue recurrence from previous fork**
-- None.
+- **Issue recurrence in previous fork:** Ödeme planı tutarları güncelleme sorunu (Payment term amounts update issue)
+- **Recurrence count:** 2+
+- **Status:** NOT STARTED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Monolithic Component ():** While still large, it has been stabilized and significantly refactored, especially the Banka Hesapları tab.
-- **Modular Feature Development:** The new Handover Receipt module was built correctly using separate page components (, ) and backend endpoints, rather than being added to an existing monolith.
-- **Encapsulated Logic:** The creation of  demonstrates a good practice of isolating complex, reusable logic into a dedicated utility file.
-- **Event-Driven Navigation:** The sidebar navigation relies on a pattern of event handlers passed as props from  to , which is critical to know when adding new menu items.
+- **Phased Feature Development:** Large features are built incrementally, allowing for user feedback.
+- **Modular Backend Routes (FastAPI):** New logic is placed in dedicated router files, a pattern that should be continued.
+- **Feature Flagging:** A new system for backend-driven UI control. Features can be toggled (, , ) and targeted to specific user roles.
+- **Database Seeding:** A pattern was established for using API endpoints () to populate the database with essential initial data.
+- **Centralized State/Context:** The app uses React Context (, ) for managing global state like user authentication and tenant information.
 
 **key DB schema**
-- **handover_receipts:** 
-- **bank_accounts:** 
+- **crm_db** (The single database used)
+  - **feature_flags:** 
+  - **currencies:** 
+  - **countries:** 
+  - **cities:** 
+  - **languages:** 
+  - **packages:** 
 
 **changes in tech stack**
-- Added  library to the frontend.
+- None.
 
 **All files of reference**
-- **To be modified:**  (Integrate IBAN validation)
-- **Reference/Newly Created:**
-  -  (Contains the IBAN logic to be integrated)
-  -  (New feature main page)
-  -  (New feature signing page)
-  -  (Contains all backend logic)
-  -  (For understanding sidebar navigation)
+- **Backend Routers (New):**
+  - 
+  - 
+  - 
+- **Frontend Hooks (New):**
+  - 
+  - 
+- **Core Integration Files (Modified):**
+  - 
+  - 
+  - 
+  - 
+- **Demo Module Files (New):**
+  - 
+  - 
 
 **Areas that need refactoring**:
-- ** (HIGH PRIORITY):** This file is now extremely large and urgently needs to be broken down into modular routers (e.g., , , ).
-- ** (Medium Priority):** Although more stable, it's still a 2500+ line component. The three main tabs (, , ) should be extracted into their own components.
+- ** (HIGH PRIORITY):** Still a monolithic file containing thousands of lines of code. It must be broken down into more modular routers following the pattern of the newly added files.
 
 **key api endpoints**
-- **Bank Accounts:**
+- **Sales Reports (Completed):**
+  - , , , , , , , 
+  - 
+- **Seed Endpoints (New):**
   - 
   - 
   - 
+- **Feature Flag Check (New):**
   - 
-- **Handover Receipts (New):**
-  - 
-  -  (Creates a receipt)
-  -  (Generates public link)
-  -  (For customer to view)
-  -  (For customer to sign)
 
 **Critical Info for New Agent**
-- **Your immediate and only task is to implement the advanced IBAN validation.** The user has provided a highly detailed prompt. Follow it precisely.
-- The core logic is already written in . Your job is to integrate it into .
-- **DO NOT** modify any part of  other than the IBAN input field and its related state and handlers. The user was very explicit about this.
-- The user is highly engaged and provides excellent, prescriptive feedback. Adhere to their requests closely.
-- Remember the  navigation pattern if you need to add more menu items in the future.
+- The entire Sales Reports module is finished. Do not work on it unless the user requests changes.
+- A new **Feature Flagging** system is now the core of new development. Your immediate tasks should revolve around using it.
+- The database has been **seeded**. You now have access to currencies, countries, subscription packages, and feature flags via API calls. Do not try to re-seed unless requested.
+- **Your next task** should be to start integrating the  and  hooks into existing and new components to make the application feature-aware. After that, begin building the actual content for the pages in the new Demo module.
+- The  dependency function is defined *inside* each router file. When creating new routers, you must copy this function and the required , , and  imports. This was a major source of bugs in the last session.
 
 **documents created in this job**
 - None
 
 **Last 10 User Messages and any pending user messages**
-1.  **User (pending):** VİTİNGO CRM - BANKA HESAPLARI IBAN VALİDASYONU - A very detailed prompt to add advanced, real-time IBAN validation.
-2.  **Agent:** Fixed the project dropdown in the Handover Receipt modal.
-3.  **User:** projeleri neden veritabanından çektirmiyorsun (Why aren't you pulling projects from the database?) - Pointed out the project dropdown was empty.
-4.  **Agent:** Fixed the Handover Receipt menu link navigation issue.
-5.  **User:** tıklayınca hiç bir şey olmuyor (Nothing happens when I click it) - Reported the new menu link was not working.
-6.  **Agent:** Corrected the menu link path in the sidebar.
-7.  **User:** bu nenüde nerde görünüyor ? (Where does this appear in the menu?) - Asking for the location of the new menu item.
-8.  **Agent:** Announced completion of the Handover Receipt module.
-9.  **User:** evet (yes) - Approved continuing with the implementation.
-10. **Agent:** Asked for confirmation to proceed with creating the large frontend files for the new module.
+1.  **User:** Requested to activate the demo module by enabling its feature flag. (Completed)
+2.  **Agent:** Enabled the flag and confirmed the Demo menu appeared in the sidebar.
+3.  **User:** Pointed out the demo page still showed Access Restricted and asked the agent to debug it. (In Progress)
+4.  **Agent:** Debugged and fixed both the frontend hook () and the backend check endpoint, successfully displaying the demo page content.
+5.  **User:** Asked the agent to check for the existence of core contexts (, ) and seed data. (Completed)
+6.  **Agent:** Confirmed contexts exist but global data collections are empty.
+7.  **User:** Provided detailed requirements to create and run seed scripts for Feature Flags, Global Data, and Packages. (In Progress)
+8.  **Agent:** Created/updated the three seed endpoints on the backend.
+9.  **Agent:** Executed all three seed endpoints via  and confirmed success from the API responses.
+10. **Agent:** Performed a final database verification using  commands to confirm all data was written correctly. (Completed)
+- **Pending Messages:** None. The last user request (seeding) has been fully executed.
 
 **Project Health Check:**
-- **Broken:**
-  - None. All major features are functional.
-- **Mocked:**
-  - None.
+- **Broken:** The Ödeme planı tutarları güncelleme sorunu is a known bug.
+- **Mocked:** The pages within the Demo Module () are placeholders showing what will be built.
 
 **3rd Party Integrations**:
-- : Used for all PDF generation on the backend.
-- : Available for Excel operations.
-- : **(New)** Used on the frontend for capturing digital signatures.
+- : Used for PDF generation in the backend.
+- : Used for Excel operations in the backend.
+- : Used for digital signatures on the frontend.
 
 **Testing status**
-- Testing agent used after significant changes: NO (Agent used screenshots and manual checks for recent changes).
-- Troubleshoot agent used after agent stuck in loop: YES (Used to diagnose the initial file upload issue).
+- Testing agent used after significant changes: NO
+- Troubleshoot agent used after agent stuck in loop: NO
 - Test files created: []
-- Known regressions: None currently. All regressions from this session have been fixed.
+- Known regressions: None
 
 **Credentials to test flow:**
 - User: 
 - Password: 
 
 **What agent forgot to execute**
-- The agent has not yet addressed the long-standing Ödeme planı tutarları güncelleme sorunu from a previous fork.</analysis>
+- The long-standing, low-priority Ödeme planı tutarları güncelleme sorunu (Payment term amounts update issue) remains unaddressed as focus shifted to major feature development.</analysis>

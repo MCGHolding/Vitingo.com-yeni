@@ -12,7 +12,7 @@ const InvoiceEditPage = () => {
 
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://sales-reports-hub.preview.emergentagent.com';
+                    'https://feature-flags-1.preview.emergentagent.com';
 
   useEffect(() => {
     const loadInvoice = async () => {

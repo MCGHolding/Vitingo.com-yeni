@@ -9,7 +9,7 @@ const SalesSummary = () => {
 
   const backendUrl = (window.ENV?.REACT_APP_BACKEND_URL) ||
     process.env.REACT_APP_BACKEND_URL ||
-    'https://sales-reports-hub.preview.emergentagent.com';
+    'https://feature-flags-1.preview.emergentagent.com';
 
   const periods = [
     { value: 'today', label: 'Bugün' },

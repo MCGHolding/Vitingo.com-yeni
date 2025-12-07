@@ -14,7 +14,7 @@ const CustomerDetailPage = () => {
 
   // Backend URL - Always use env variable, ignore window.ENV override
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://sales-reports-hub.preview.emergentagent.com';
+                    'https://feature-flags-1.preview.emergentagent.com';
 
   // Müşteri detayını yükle
   useEffect(() => {

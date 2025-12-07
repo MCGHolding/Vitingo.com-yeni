@@ -3,7 +3,7 @@
 import requests
 import json
 
-BACKEND_URL = "https://sales-reports-hub.preview.emergentagent.com"
+BACKEND_URL = "https://feature-flags-1.preview.emergentagent.com"
 
 def test_convention_centers_focused():
     """Focused test of convention centers with better error handling"""
