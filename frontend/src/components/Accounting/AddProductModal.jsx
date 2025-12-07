@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { useToast } from '../../hooks/use-toast';
 import { X, Package, DollarSign, Tag } from 'lucide-react';
+import apiClient from '../../utils/apiClient';
 
 export default function AddProductModal({ onClose, onProductAdded }) {
   const { toast } = useToast();
