@@ -61,7 +61,8 @@ import {
   PenTool,
   Search,
   Award,
-  BookOpen
+  BookOpen,
+  Beaker
 } from 'lucide-react';
 
 // Function to get navigation based on user department
