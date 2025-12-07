@@ -28,9 +28,10 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
     const loadReceipts = async () => {
       setLoading(true);
       try {
-        const data = await apiClient.getExpenseReceipts();
-        setReceipts(data);
-        setFilteredReceipts(data);
+        const response = await apiClient.getExpenseReceipts();
+        const receiptsList = response.data || response || [];
+        setReceipts(receiptsList);
+        setFilteredReceipts(receiptsList);
       } catch (error) {
         console.error('Error loading expense receipts:', error);
         setError('Gider makbuzları yüklenirken hata oluştu');
