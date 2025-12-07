@@ -216,6 +216,7 @@ const CustomerAnalysis = () => {
               );
             })}
           </div>
+          )}
         </div>
       </div>
 
