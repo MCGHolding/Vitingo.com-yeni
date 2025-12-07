@@ -187,30 +187,16 @@ export default function AllFairsPageNew({ fairs: initialFairs, onBackToDashboard
     setImporting(true);
 
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-      
-      const response = await fetch(`${backendUrl}/api/fairs/bulk-import`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fairs: importPreview })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setShowImportModal(false);
-        setImportFile(null);
-        setImportPreview([]);
-        setSuccessMessage(`${result.count || importPreview.length} fuar başarıyla içe aktarıldı!`);
-        setShowSuccessModal(true);
-        loadFairs();
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(`İçe aktarma başarısız: ${errorData.detail || ''}`);
-        setShowErrorModal(true);
-      }
+      const result = await apiClient.post('/fairs/bulk-import', { fairs: importPreview }, true);
+      setShowImportModal(false);
+      setImportFile(null);
+      setImportPreview([]);
+      setSuccessMessage(`${result.count || importPreview.length} fuar başarıyla içe aktarıldı!`);
+      setShowSuccessModal(true);
+      loadFairs();
     } catch (error) {
       console.error('Import error:', error);
-      setErrorMessage('Bir hata oluştu!');
+      setErrorMessage(`İçe aktarma başarısız: ${error.message || ''}`);
       setShowErrorModal(true);
     } finally {
       setImporting(false);
