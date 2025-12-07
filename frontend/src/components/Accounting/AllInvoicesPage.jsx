@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import apiClient from '../../utils/apiClient';
 import { 
   FileText,
   Search,
@@ -22,6 +24,7 @@ import {
 import InvoicePreviewModal from './InvoicePreviewModal';
 
 const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => {
+  const { tenantSlug } = useParams();
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,25 +54,27 @@ const AllInvoicesPage = ({ onBackToDashboard, onNewInvoice, onEditInvoice }) => 
   const [exportFormat, setExportFormat] = useState('xlsx');
   const [exportProgress, setExportProgress] = useState(0);
 
+  useEffect(() => {
+    if (tenantSlug) {
+      apiClient.setTenantSlug(tenantSlug);
+    }
+    loadInvoices();
+  }, [tenantSlug]);
+
   // Load invoices from backend
   const loadInvoices = async () => {
     setIsLoading(true);
     try {
-      const backendUrl = window.runtimeConfig?.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/invoices`);
+      const response = await apiClient.getInvoices();
       
-      if (response.ok) {
-        const invoiceData = await response.json();
-        console.log('Loaded invoices:', invoiceData);
+      if (response && response.status === 'success') {
+        const invoiceData = response.data || [];
+        console.log(`✅ Loaded ${invoiceData.length} invoices from tenant-aware API`);
+        console.log(`📊 Tenant: ${response.tenant?.name}`);
         setInvoices(invoiceData);
-      } else {
-        console.error('Failed to load invoices:', response.statusText);
-        // Fallback to empty array
-        setInvoices([]);
       }
     } catch (error) {
-      console.error('Error loading invoices:', error);
-      // Fallback to empty array
+      console.error('❌ Error loading invoices:', error);
       setInvoices([]);
     } finally {
       setIsLoading(false);
