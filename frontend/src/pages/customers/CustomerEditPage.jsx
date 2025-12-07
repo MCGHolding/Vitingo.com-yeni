@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTenant } from '../../contexts/TenantContext';
 import EditCustomerPage from '../../components/Customers/EditCustomerPage';
+import apiClient from '../../utils/apiClient';
 
 const CustomerEditPageWrapper = () => {
   const navigate = useNavigate();
@@ -12,27 +13,20 @@ const CustomerEditPageWrapper = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Backend URL - Always use env variable, ignore window.ENV override
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://saas-migration.preview.emergentagent.com';
-
   // Müşteri detayını yükle
   useEffect(() => {
     const loadCustomer = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${backendUrl}/api/customers/${customerId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setCustomer(data);
-        } else if (response.status === 404) {
+        const data = await apiClient.getCustomer(customerId);
+        setCustomer(data);
+      } catch (error) {
+        console.error('Error loading customer:', error);
+        if (error.message.includes('404')) {
           setError('Müşteri bulunamadı');
         } else {
           setError('Müşteri yüklenirken hata oluştu');
         }
-      } catch (error) {
-        console.error('Error loading customer:', error);
-        setError('Müşteri yüklenirken hata oluştu');
       } finally {
         setLoading(false);
       }
@@ -41,7 +35,7 @@ const CustomerEditPageWrapper = () => {
     if (customerId) {
       loadCustomer();
     }
-  }, [customerId, backendUrl]);
+  }, [customerId]);
 
   // Navigation handlers
   const handleBack = () => {
@@ -50,21 +44,9 @@ const CustomerEditPageWrapper = () => {
 
   const handleSave = async (updatedCustomer) => {
     try {
-      const response = await fetch(`${backendUrl}/api/customers/${customerId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedCustomer)
-      });
-
-      if (response.ok) {
-        // Başarılı kayıt sonrası detay sayfasına dön
-        navigate(`/${tenantSlug}/musteriler/${customerId}`);
-      } else {
-        const errorData = await response.json();
-        alert('Müşteri güncellenirken hata oluştu: ' + (errorData.detail || 'Bilinmeyen hata'));
-      }
+      await apiClient.updateCustomer(customerId, updatedCustomer);
+      // Başarılı kayıt sonrası detay sayfasına dön
+      navigate(`/${tenantSlug}/musteriler/${customerId}`);
     } catch (error) {
       console.error('Error updating customer:', error);
       alert('Müşteri güncellenirken hata oluştu: ' + error.message);
