@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Eye, Edit2, MoreHorizontal, FileText, CheckCircle, XCircle, Clock, DollarSign, Trash2, Mail } from 'lucide-react';
+import apiClient from '../../utils/apiClient';
 
 const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
   const [receipts, setReceipts] = useState([]);
@@ -27,14 +28,7 @@ const AllExpenseReceiptsPage = ({ onBackToDashboard, onNewExpenseReceipt }) => {
     const loadReceipts = async () => {
       setLoading(true);
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://saas-migration.preview.emergentagent.com';
-        const response = await fetch(`${backendUrl}/api/expense-receipts`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch expense receipts');
-        }
-        
-        const data = await response.json();
+        const data = await apiClient.getExpenseReceipts();
         setReceipts(data);
         setFilteredReceipts(data);
       } catch (error) {
