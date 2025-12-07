@@ -132,7 +132,7 @@ async def list_feature_flags(
 @router.get("/{flag_key}")
 async def get_feature_flag(flag_key: str):
     """Tek bir feature flag getir"""
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     flag = await collection.find_one({"key": flag_key})
     
@@ -150,7 +150,7 @@ async def create_feature_flag(flag: FeatureFlagCreate):
     
     Sadece Ultra Admin kullanabilir.
     """
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     # Key benzersizliği kontrolü
     existing = await collection.find_one({"key": flag.key})
@@ -181,7 +181,7 @@ async def update_feature_flag(flag_key: str, update: FeatureFlagUpdate):
     
     Sadece Ultra Admin kullanabilir.
     """
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     # Mevcut flag'i bul
     existing = await collection.find_one({"key": flag_key})
@@ -219,7 +219,7 @@ async def delete_feature_flag(flag_key: str):
     DİKKAT: Production'da aktif flag silinmemeli.
     Sadece Ultra Admin kullanabilir.
     """
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     # Mevcut flag'i bul
     existing = await collection.find_one({"key": flag_key})
@@ -249,7 +249,7 @@ async def check_feature_flag(flag_key: str, check: FeatureFlagCheck):
     - enabled: True/False
     - reason: Neden açık/kapalı olduğu
     """
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     flag = await collection.find_one({"key": flag_key})
     
@@ -354,7 +354,7 @@ async def get_feature_flag_stats(flag_key: str):
     - Rollout durumu
     - Hata oranı (eğer tracking varsa)
     """
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     flag = await collection.find_one({"key": flag_key})
     
@@ -389,7 +389,7 @@ async def set_rollout_percentage(flag_key: str, percentage: int):
     if percentage < 0 or percentage > 100:
         raise HTTPException(status_code=400, detail="Yüzde 0-100 arasında olmalı")
     
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     # Flag'i bul
     flag = await collection.find_one({"key": flag_key})
@@ -430,7 +430,7 @@ async def batch_check_feature_flags(tenant_slug: str, flag_keys: List[str]):
     
     Frontend'de sayfa yüklenirken tüm flag'leri çekmek için kullanılır.
     """
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     results = {}
     
@@ -472,7 +472,7 @@ async def seed_feature_flags():
     
     Sadece development ortamında kullanılmalı.
     """
-    collection = await get_feature_flags_collection()
+    collection = db["feature_flags"]
     
     default_flags = [
         {
