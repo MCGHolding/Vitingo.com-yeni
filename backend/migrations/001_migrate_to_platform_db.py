@@ -41,7 +41,7 @@ async def create_platform_db_structure():
     # 3. Feature flags collection
     print("\n🔹 Creating 'feature_flags' collection...")
     await platform_db.create_collection("feature_flags")
-    await platform_db.feature_flags.create_index([("key", ASCENDING)], unique=True)
+    await platform_db.feature_flags.create_index([("flag", ASCENDING)], unique=True)
     print("   ✅ Feature flags collection created")
     
     # 4. Packages collection
