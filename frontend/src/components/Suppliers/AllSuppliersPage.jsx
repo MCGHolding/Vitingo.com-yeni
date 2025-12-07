@@ -116,25 +116,30 @@ const AllSuppliersPage = ({ onBackToDashboard, onNewSupplier }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
+  const { tenantSlug } = useParams();
+
   useEffect(() => {
+    if (tenantSlug) {
+      apiClient.setTenantSlug(tenantSlug);
+    }
     loadData();
-  }, []);
+  }, [tenantSlug]);
 
   const loadData = async () => {
     try {
       setIsLoading(true);
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
       
-      const [suppliersRes, categoriesRes] = await Promise.all([
-        fetch(`${backendUrl}/api/suppliers`),
-        fetch(`${backendUrl}/api/supplier-categories`)
-      ]);
+      // Use tenant-aware API for suppliers
+      const suppliersResponse = await apiClient.getSuppliers();
+      const categoriesRes = await fetch(`${backendUrl}/api/supplier-categories`);
 
-      if (suppliersRes.ok && categoriesRes.ok) {
-        const [suppliersData, categoriesData] = await Promise.all([
-          suppliersRes.json(),
-          categoriesRes.json()
-        ]);
+      if (suppliersResponse && suppliersResponse.status === 'success' && categoriesRes.ok) {
+        const suppliersData = suppliersResponse.data || [];
+        const categoriesData = await categoriesRes.json();
+
+        console.log(`✅ Loaded ${suppliersData.length} suppliers from tenant-aware API`);
+        console.log(`📊 Tenant: ${suppliersResponse.tenant?.name}`);
 
         setSuppliers(suppliersData);
         setCategories(categoriesData);
