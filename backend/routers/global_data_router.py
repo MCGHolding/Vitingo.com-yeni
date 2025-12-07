@@ -640,3 +640,452 @@ async def _seed_languages(db):
             created += 1
     
     return {"created": created, "total": len(languages)}
+
+
+
+@router.post("/seed/all")
+async def seed_all_global_data():
+    """
+    Tüm global verileri seed et
+    
+    Currencies, Countries, Cities ve Languages'i tek seferde oluşturur.
+    """
+    from datetime import datetime, timezone
+    
+    results = {
+        "success": True,
+        "currencies": 0,
+        "countries": 0,
+        "cities": 0,
+        "languages": 0
+    }
+    
+    now = datetime.now(timezone.utc)
+    
+    # 1. CURRENCIES SEED
+    currencies_data = [
+        {
+            "code": "TRY",
+            "name": "Turkish Lira",
+            "name_tr": "Türk Lirası",
+            "symbol": "₺",
+            "decimal_places": 2,
+            "thousand_separator": ".",
+            "decimal_separator": ",",
+            "symbol_position": "after",
+            "is_active": True,
+            "is_common": True,
+            "sort_order": 1,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "USD",
+            "name": "US Dollar",
+            "name_tr": "Amerikan Doları",
+            "symbol": "$",
+            "decimal_places": 2,
+            "thousand_separator": ",",
+            "decimal_separator": ".",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": True,
+            "sort_order": 2,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "EUR",
+            "name": "Euro",
+            "name_tr": "Euro",
+            "symbol": "€",
+            "decimal_places": 2,
+            "thousand_separator": ".",
+            "decimal_separator": ",",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": True,
+            "sort_order": 3,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "GBP",
+            "name": "British Pound",
+            "name_tr": "İngiliz Sterlini",
+            "symbol": "£",
+            "decimal_places": 2,
+            "thousand_separator": ",",
+            "decimal_separator": ".",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": True,
+            "sort_order": 4,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "AED",
+            "name": "UAE Dirham",
+            "name_tr": "BAE Dirhemi",
+            "symbol": "د.إ",
+            "decimal_places": 2,
+            "thousand_separator": ",",
+            "decimal_separator": ".",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": True,
+            "sort_order": 5,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "SAR",
+            "name": "Saudi Riyal",
+            "name_tr": "Suudi Riyali",
+            "symbol": "ر.س",
+            "decimal_places": 2,
+            "thousand_separator": ",",
+            "decimal_separator": ".",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": True,
+            "sort_order": 6,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "CHF",
+            "name": "Swiss Franc",
+            "name_tr": "İsviçre Frangı",
+            "symbol": "CHF",
+            "decimal_places": 2,
+            "thousand_separator": "'",
+            "decimal_separator": ".",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": False,
+            "sort_order": 7,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "RUB",
+            "name": "Russian Ruble",
+            "name_tr": "Rus Rublesi",
+            "symbol": "₽",
+            "decimal_places": 2,
+            "thousand_separator": " ",
+            "decimal_separator": ",",
+            "symbol_position": "after",
+            "is_active": True,
+            "is_common": False,
+            "sort_order": 8,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "CNY",
+            "name": "Chinese Yuan",
+            "name_tr": "Çin Yuanı",
+            "symbol": "¥",
+            "decimal_places": 2,
+            "thousand_separator": ",",
+            "decimal_separator": ".",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": False,
+            "sort_order": 9,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "JPY",
+            "name": "Japanese Yen",
+            "name_tr": "Japon Yeni",
+            "symbol": "¥",
+            "decimal_places": 0,
+            "thousand_separator": ",",
+            "decimal_separator": ".",
+            "symbol_position": "before",
+            "is_active": True,
+            "is_common": False,
+            "sort_order": 10,
+            "created_at": now,
+            "updated_at": now
+        }
+    ]
+    
+    currencies_collection = db["currencies"]
+    await currencies_collection.delete_many({})
+    if currencies_data:
+        await currencies_collection.insert_many(currencies_data)
+        results["currencies"] = len(currencies_data)
+    
+    print(f"✅ {results['currencies']} para birimi oluşturuldu")
+    
+    # 2. COUNTRIES & CITIES SEED
+    countries_data = [
+        {
+            "code": "TR",
+            "name": "Turkey",
+            "name_tr": "Türkiye",
+            "phone_code": "+90",
+            "currency_code": "TRY",
+            "is_active": True,
+            "sort_order": 1,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "US",
+            "name": "United States",
+            "name_tr": "Amerika Birleşik Devletleri",
+            "phone_code": "+1",
+            "currency_code": "USD",
+            "is_active": True,
+            "sort_order": 2,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "DE",
+            "name": "Germany",
+            "name_tr": "Almanya",
+            "phone_code": "+49",
+            "currency_code": "EUR",
+            "is_active": True,
+            "sort_order": 3,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "GB",
+            "name": "United Kingdom",
+            "name_tr": "Birleşik Krallık",
+            "phone_code": "+44",
+            "currency_code": "GBP",
+            "is_active": True,
+            "sort_order": 4,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "AE",
+            "name": "United Arab Emirates",
+            "name_tr": "Birleşik Arap Emirlikleri",
+            "phone_code": "+971",
+            "currency_code": "AED",
+            "is_active": True,
+            "sort_order": 5,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "SA",
+            "name": "Saudi Arabia",
+            "name_tr": "Suudi Arabistan",
+            "phone_code": "+966",
+            "currency_code": "SAR",
+            "is_active": True,
+            "sort_order": 6,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "FR",
+            "name": "France",
+            "name_tr": "Fransa",
+            "phone_code": "+33",
+            "currency_code": "EUR",
+            "is_active": True,
+            "sort_order": 7,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "IT",
+            "name": "Italy",
+            "name_tr": "İtalya",
+            "phone_code": "+39",
+            "currency_code": "EUR",
+            "is_active": True,
+            "sort_order": 8,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "ES",
+            "name": "Spain",
+            "name_tr": "İspanya",
+            "phone_code": "+34",
+            "currency_code": "EUR",
+            "is_active": True,
+            "sort_order": 9,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "NL",
+            "name": "Netherlands",
+            "name_tr": "Hollanda",
+            "phone_code": "+31",
+            "currency_code": "EUR",
+            "is_active": True,
+            "sort_order": 10,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "RU",
+            "name": "Russia",
+            "name_tr": "Rusya",
+            "phone_code": "+7",
+            "currency_code": "RUB",
+            "is_active": True,
+            "sort_order": 11,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "CN",
+            "name": "China",
+            "name_tr": "Çin",
+            "phone_code": "+86",
+            "currency_code": "CNY",
+            "is_active": True,
+            "sort_order": 12,
+            "created_at": now,
+            "updated_at": now
+        }
+    ]
+    
+    countries_collection = db["countries"]
+    await countries_collection.delete_many({})
+    if countries_data:
+        await countries_collection.insert_many(countries_data)
+        results["countries"] = len(countries_data)
+    
+    print(f"✅ {results['countries']} ülke oluşturuldu")
+    
+    # 3. CITIES SEED
+    cities_data = [
+        # Turkey
+        {"name": "İstanbul", "name_en": "Istanbul", "country_code": "TR", "is_capital": False, "population": 15840900, "created_at": now},
+        {"name": "Ankara", "name_en": "Ankara", "country_code": "TR", "is_capital": True, "population": 5747325, "created_at": now},
+        {"name": "İzmir", "name_en": "Izmir", "country_code": "TR", "is_capital": False, "population": 4425789, "created_at": now},
+        {"name": "Bursa", "name_en": "Bursa", "country_code": "TR", "is_capital": False, "population": 3101833, "created_at": now},
+        {"name": "Antalya", "name_en": "Antalya", "country_code": "TR", "is_capital": False, "population": 2619832, "created_at": now},
+        
+        # USA
+        {"name": "New York", "name_en": "New York", "country_code": "US", "is_capital": False, "population": 8336817, "created_at": now},
+        {"name": "Los Angeles", "name_en": "Los Angeles", "country_code": "US", "is_capital": False, "population": 3979576, "created_at": now},
+        {"name": "Chicago", "name_en": "Chicago", "country_code": "US", "is_capital": False, "population": 2693976, "created_at": now},
+        {"name": "Houston", "name_en": "Houston", "country_code": "US", "is_capital": False, "population": 2320268, "created_at": now},
+        {"name": "Washington", "name_en": "Washington", "country_code": "US", "is_capital": True, "population": 705749, "created_at": now},
+        
+        # Germany
+        {"name": "Berlin", "name_en": "Berlin", "country_code": "DE", "is_capital": True, "population": 3769495, "created_at": now},
+        {"name": "Hamburg", "name_en": "Hamburg", "country_code": "DE", "is_capital": False, "population": 1899160, "created_at": now},
+        {"name": "Munich", "name_en": "Munich", "country_code": "DE", "is_capital": False, "population": 1558395, "created_at": now},
+        {"name": "Cologne", "name_en": "Cologne", "country_code": "DE", "is_capital": False, "population": 1087863, "created_at": now},
+        {"name": "Frankfurt", "name_en": "Frankfurt", "country_code": "DE", "is_capital": False, "population": 753056, "created_at": now},
+        
+        # UK
+        {"name": "London", "name_en": "London", "country_code": "GB", "is_capital": True, "population": 9002488, "created_at": now},
+        {"name": "Birmingham", "name_en": "Birmingham", "country_code": "GB", "is_capital": False, "population": 1141816, "created_at": now},
+        {"name": "Manchester", "name_en": "Manchester", "country_code": "GB", "is_capital": False, "population": 547627, "created_at": now},
+        {"name": "Leeds", "name_en": "Leeds", "country_code": "GB", "is_capital": False, "population": 503388, "created_at": now},
+        {"name": "Glasgow", "name_en": "Glasgow", "country_code": "GB", "is_capital": False, "population": 635640, "created_at": now},
+        
+        # UAE
+        {"name": "Dubai", "name_en": "Dubai", "country_code": "AE", "is_capital": False, "population": 3478344, "created_at": now},
+        {"name": "Abu Dhabi", "name_en": "Abu Dhabi", "country_code": "AE", "is_capital": True, "population": 1807000, "created_at": now},
+        {"name": "Sharjah", "name_en": "Sharjah", "country_code": "AE", "is_capital": False, "population": 1800000, "created_at": now},
+        {"name": "Al Ain", "name_en": "Al Ain", "country_code": "AE", "is_capital": False, "population": 766936, "created_at": now},
+        {"name": "Ajman", "name_en": "Ajman", "country_code": "AE", "is_capital": False, "population": 490035, "created_at": now},
+        
+        # Saudi Arabia
+        {"name": "Riyadh", "name_en": "Riyadh", "country_code": "SA", "is_capital": True, "population": 7676654, "created_at": now},
+        {"name": "Jeddah", "name_en": "Jeddah", "country_code": "SA", "is_capital": False, "population": 4697000, "created_at": now},
+        {"name": "Mecca", "name_en": "Mecca", "country_code": "SA", "is_capital": False, "population": 2078766, "created_at": now},
+        {"name": "Medina", "name_en": "Medina", "country_code": "SA", "is_capital": False, "population": 1488782, "created_at": now},
+        {"name": "Dammam", "name_en": "Dammam", "country_code": "SA", "is_capital": False, "population": 1252523, "created_at": now},
+        
+        # France
+        {"name": "Paris", "name_en": "Paris", "country_code": "FR", "is_capital": True, "population": 2165423, "created_at": now},
+        {"name": "Marseille", "name_en": "Marseille", "country_code": "FR", "is_capital": False, "population": 870731, "created_at": now},
+        {"name": "Lyon", "name_en": "Lyon", "country_code": "FR", "is_capital": False, "population": 516092, "created_at": now},
+        {"name": "Toulouse", "name_en": "Toulouse", "country_code": "FR", "is_capital": False, "population": 479553, "created_at": now},
+        {"name": "Nice", "name_en": "Nice", "country_code": "FR", "is_capital": False, "population": 341522, "created_at": now},
+    ]
+    
+    cities_collection = db["cities"]
+    await cities_collection.delete_many({})
+    if cities_data:
+        await cities_collection.insert_many(cities_data)
+        results["cities"] = len(cities_data)
+    
+    print(f"✅ {results['cities']} şehir oluşturuldu")
+    
+    # 4. LANGUAGES SEED
+    languages_data = [
+        {
+            "code": "tr",
+            "name": "Turkish",
+            "name_native": "Türkçe",
+            "direction": "ltr",
+            "is_active": True,
+            "is_default": True,
+            "sort_order": 1,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "en",
+            "name": "English",
+            "name_native": "English",
+            "direction": "ltr",
+            "is_active": True,
+            "is_default": False,
+            "sort_order": 2,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "de",
+            "name": "German",
+            "name_native": "Deutsch",
+            "direction": "ltr",
+            "is_active": True,
+            "is_default": False,
+            "sort_order": 3,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "code": "ar",
+            "name": "Arabic",
+            "name_native": "العربية",
+            "direction": "rtl",
+            "is_active": True,
+            "is_default": False,
+            "sort_order": 4,
+            "created_at": now,
+            "updated_at": now
+        }
+    ]
+    
+    languages_collection = db["languages"]
+    await languages_collection.delete_many({})
+    if languages_data:
+        await languages_collection.insert_many(languages_data)
+        results["languages"] = len(languages_data)
+    
+    print(f"✅ {results['languages']} dil oluşturuldu")
+    
+    return {
+        **results,
+        "message": "Tüm global data başarıyla seed edildi"
+    }
+
