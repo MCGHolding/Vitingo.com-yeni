@@ -18704,6 +18704,10 @@ app.include_router(feature_flags_router.router)
 app.include_router(global_data_router.router)
 app.include_router(package_features_router.router)
 
+# Include tenant-aware router (Multi-Tenant SaaS)
+from routes import tenant_router as tenant_routes
+app.include_router(tenant_routes.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
