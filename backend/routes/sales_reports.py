@@ -1699,6 +1699,348 @@ async def get_revenue_forecast(
             
             days_until = (opp.get("expectedCloseDate") - now).days if opp.get("expectedCloseDate") else 0
             
+
+
+@router.get("/period-comparison")
+async def get_period_comparison(
+    comparison_type: str = Query("year_over_year", description="Type: year_over_year, quarter_over_quarter, month_over_month"),
+    year: int = Query(datetime.now().year, description="Base year"),
+    db = Depends(get_db)
+):
+    """Get period-over-period comparison analysis"""
+    try:
+        proposals = db["proposals"]
+        opportunities = db["opportunities"]
+        
+        current_year = year
+        previous_year = year - 1
+        
+        # Helper function to get period data
+        async def get_year_data(target_year):
+            start_date = datetime(target_year, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+            end_date = datetime(target_year, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+            
+            # Revenue from won proposals
+            revenue_pipeline = [
+                {
+                    "$match": {
+                        "createdAt": {"$gte": start_date, "$lte": end_date},
+                        "status": {"$in": ["accepted", "kazanildi", "kazanıldı"]}
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": None,
+                        "totalRevenue": {"$sum": "$totalAmount"},
+                        "count": {"$sum": 1},
+                        "avgValue": {"$avg": "$totalAmount"}
+                    }
+                }
+            ]
+            
+            revenue_cursor = proposals.aggregate(revenue_pipeline)
+            revenue_data = await revenue_cursor.to_list(length=1)
+            revenue_summary = revenue_data[0] if revenue_data else {"totalRevenue": 0, "count": 0, "avgValue": 0}
+            
+            # Opportunities data
+            opp_pipeline = [
+                {
+                    "$match": {
+                        "createdAt": {"$gte": start_date, "$lte": end_date}
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": "$status",
+                        "count": {"$sum": 1},
+                        "totalValue": {"$sum": "$value"}
+                    }
+                }
+            ]
+            
+            opp_cursor = opportunities.aggregate(opp_pipeline)
+            opp_data = await opp_cursor.to_list(length=None)
+            
+            won_count = sum(o["count"] for o in opp_data if o["_id"] in ["won", "kazanildi", "kazanıldı"])
+            lost_count = sum(o["count"] for o in opp_data if o["_id"] in ["lost", "kaybedildi"])
+            total_opps = sum(o["count"] for o in opp_data)
+            
+            return {
+                "revenue": revenue_summary.get("totalRevenue", 0),
+                "deals": revenue_summary.get("count", 0),
+                "avgDealSize": revenue_summary.get("avgValue", 0),
+                "opportunities": total_opps,
+                "wonOpportunities": won_count,
+                "lostOpportunities": lost_count,
+                "winRate": round((won_count / total_opps * 100) if total_opps > 0 else 0, 1)
+            }
+        
+        # Get data for both periods
+        current_data = await get_year_data(current_year)
+        previous_data = await get_year_data(previous_year)
+        
+        # Calculate changes
+        def calculate_change(current, previous):
+            if previous == 0:
+                return 100 if current > 0 else 0
+            return round(((current - previous) / previous) * 100, 1)
+        
+        comparison = {
+            "revenue": {
+                "current": current_data["revenue"],
+                "previous": previous_data["revenue"],
+                "change": calculate_change(current_data["revenue"], previous_data["revenue"]),
+                "changeAmount": current_data["revenue"] - previous_data["revenue"]
+            },
+            "deals": {
+                "current": current_data["deals"],
+                "previous": previous_data["deals"],
+                "change": calculate_change(current_data["deals"], previous_data["deals"]),
+                "changeAmount": current_data["deals"] - previous_data["deals"]
+            },
+            "avgDealSize": {
+                "current": current_data["avgDealSize"],
+                "previous": previous_data["avgDealSize"],
+                "change": calculate_change(current_data["avgDealSize"], previous_data["avgDealSize"]),
+                "changeAmount": current_data["avgDealSize"] - previous_data["avgDealSize"]
+            },
+            "opportunities": {
+                "current": current_data["opportunities"],
+                "previous": previous_data["opportunities"],
+                "change": calculate_change(current_data["opportunities"], previous_data["opportunities"]),
+                "changeAmount": current_data["opportunities"] - previous_data["opportunities"]
+            },
+            "winRate": {
+                "current": current_data["winRate"],
+                "previous": previous_data["winRate"],
+                "change": current_data["winRate"] - previous_data["winRate"],
+                "changeAmount": current_data["winRate"] - previous_data["winRate"]
+            }
+        }
+        
+        # Monthly breakdown
+        monthly_comparison = []
+        month_names = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 
+                       'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
+        
+        for month in range(1, 13):
+            month_start_current = datetime(current_year, month, 1, 0, 0, 0, tzinfo=timezone.utc)
+            month_start_previous = datetime(previous_year, month, 1, 0, 0, 0, tzinfo=timezone.utc)
+            
+            if month == 12:
+                month_end_current = datetime(current_year, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+                month_end_previous = datetime(previous_year, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+            else:
+                month_end_current = datetime(current_year, month + 1, 1, 0, 0, 0, tzinfo=timezone.utc) - timedelta(seconds=1)
+                month_end_previous = datetime(previous_year, month + 1, 1, 0, 0, 0, tzinfo=timezone.utc) - timedelta(seconds=1)
+            
+            # Current month data
+            current_month_cursor = proposals.aggregate([
+                {
+                    "$match": {
+                        "createdAt": {"$gte": month_start_current, "$lte": month_end_current},
+                        "status": {"$in": ["accepted", "kazanildi", "kazanıldı"]}
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": None,
+                        "revenue": {"$sum": "$totalAmount"},
+                        "count": {"$sum": 1}
+                    }
+                }
+            ])
+            current_month_data = await current_month_cursor.to_list(length=1)
+            current_revenue = current_month_data[0]["revenue"] if current_month_data else 0
+            current_count = current_month_data[0]["count"] if current_month_data else 0
+            
+            # Previous month data
+            previous_month_cursor = proposals.aggregate([
+                {
+                    "$match": {
+                        "createdAt": {"$gte": month_start_previous, "$lte": month_end_previous},
+                        "status": {"$in": ["accepted", "kazanildi", "kazanıldı"]}
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": None,
+                        "revenue": {"$sum": "$totalAmount"},
+                        "count": {"$sum": 1}
+                    }
+                }
+            ])
+            previous_month_data = await previous_month_cursor.to_list(length=1)
+            previous_revenue = previous_month_data[0]["revenue"] if previous_month_data else 0
+            previous_count = previous_month_data[0]["count"] if previous_month_data else 0
+            
+            monthly_comparison.append({
+                "month": month,
+                "monthName": month_names[month - 1],
+                "current": {
+                    "revenue": current_revenue,
+                    "deals": current_count
+                },
+                "previous": {
+                    "revenue": previous_revenue,
+                    "deals": previous_count
+                },
+                "change": calculate_change(current_revenue, previous_revenue)
+            })
+        
+        result = {
+            "success": True,
+            "data": {
+                "comparisonType": comparison_type,
+                "currentPeriod": f"{current_year}",
+                "previousPeriod": f"{previous_year}",
+                "summary": comparison,
+                "monthlyComparison": monthly_comparison
+            }
+        }
+        
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        print(f"❌ Period comparison error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Dönemsel karşılaştırma alınırken hata: {str(e)}")
+
+
+@router.get("/user-performance")
+async def get_user_performance(
+    period: str = Query("this_year", description="Period: this_month, this_quarter, this_year"),
+    db = Depends(get_db)
+):
+    """Get sales performance by user/salesperson"""
+    try:
+        start_date, end_date = get_date_range(period)
+        
+        proposals = db["proposals"]
+        opportunities = db["opportunities"]
+        
+        # Get user performance from proposals
+        user_pipeline = [
+            {
+                "$match": {
+                    "createdAt": {"$gte": start_date, "$lte": end_date}
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$createdBy",
+                    "totalProposals": {"$sum": 1},
+                    "acceptedProposals": {
+                        "$sum": {
+                            "$cond": [
+                                {"$in": ["$status", ["accepted", "kazanildi", "kazanıldı"]]},
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    "totalRevenue": {
+                        "$sum": {
+                            "$cond": [
+                                {"$in": ["$status", ["accepted", "kazanildi", "kazanıldı"]]},
+                                "$totalAmount",
+                                0
+                            ]
+                        }
+                    },
+                    "avgDealSize": {
+                        "$avg": {
+                            "$cond": [
+                                {"$in": ["$status", ["accepted", "kazanildi", "kazanıldı"]]},
+                                "$totalAmount",
+                                None
+                            ]
+                        }
+                    }
+                }
+            },
+            {"$sort": {"totalRevenue": -1}}
+        ]
+        
+        user_cursor = proposals.aggregate(user_pipeline)
+        user_list = await user_cursor.to_list(length=None)
+        
+        # Enrich with user details
+        users_collection = db["users"]
+        user_performance = []
+        
+        for user_data in user_list:
+            user_id = user_data["_id"]
+            
+            # Get user details
+            user_doc = await users_collection.find_one({"id": user_id}, {"_id": 0})
+            
+            if not user_doc:
+                user_doc = {"name": "Bilinmeyen Kullanıcı", "email": ""}
+            
+            total_proposals = user_data["totalProposals"]
+            accepted = user_data["acceptedProposals"]
+            win_rate = round((accepted / total_proposals * 100) if total_proposals > 0 else 0, 1)
+            
+            # Get opportunities for this user
+            opp_count = await opportunities.count_documents({
+                "assignedTo": user_id,
+                "createdAt": {"$gte": start_date, "$lte": end_date}
+            })
+            
+            user_performance.append({
+                "userId": user_id,
+                "userName": user_doc.get("name", "Bilinmeyen"),
+                "email": user_doc.get("email", ""),
+                "department": user_doc.get("department", "Satış"),
+                "totalProposals": total_proposals,
+                "acceptedProposals": accepted,
+                "rejectedProposals": total_proposals - accepted,
+                "totalRevenue": user_data["totalRevenue"],
+                "avgDealSize": user_data["avgDealSize"] or 0,
+                "winRate": win_rate,
+                "opportunities": opp_count,
+                "performance": "Mükemmel" if win_rate >= 80 else "İyi" if win_rate >= 60 else "Orta" if win_rate >= 40 else "Geliştirilmeli"
+            })
+        
+        # Calculate team summary
+        total_team_revenue = sum(u["totalRevenue"] for u in user_performance)
+        total_team_deals = sum(u["acceptedProposals"] for u in user_performance)
+        avg_team_win_rate = sum(u["winRate"] for u in user_performance) / len(user_performance) if user_performance else 0
+        
+        # Top performers
+        top_by_revenue = sorted(user_performance, key=lambda x: x["totalRevenue"], reverse=True)[:5]
+        top_by_deals = sorted(user_performance, key=lambda x: x["acceptedProposals"], reverse=True)[:5]
+        top_by_win_rate = sorted(user_performance, key=lambda x: x["winRate"], reverse=True)[:5]
+        
+        result = {
+            "success": True,
+            "data": {
+                "period": period,
+                "teamSummary": {
+                    "totalRevenue": total_team_revenue,
+                    "totalDeals": total_team_deals,
+                    "avgWinRate": round(avg_team_win_rate, 1),
+                    "activeUsers": len(user_performance)
+                },
+                "userPerformance": user_performance,
+                "topPerformers": {
+                    "byRevenue": top_by_revenue,
+                    "byDeals": top_by_deals,
+                    "byWinRate": top_by_win_rate
+                }
+            }
+        }
+        
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        print(f"❌ User performance error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Kullanıcı performansı alınırken hata: {str(e)}")
+
             upcoming_closes.append({
                 "id": str(opp.get("_id")),
                 "name": opp.get("name") or opp.get("projectName", "-"),
