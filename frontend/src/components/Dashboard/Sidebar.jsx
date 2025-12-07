@@ -377,6 +377,8 @@ export default function Sidebar({
   // Reports handlers
   onSalesSummary,
   onPerformanceAnalysis,
+  onSalesPipeline,
+  onFairAnalysis,
   onSalesReports,
   onCustomerReports,
   onHandoverReceipts,
