@@ -387,6 +387,7 @@ export default function Sidebar({
   onImportData,
   onExportData,
   onAdvanceManagement,
+  onDemo,
   // Contract handlers
   onContracts,
   onNewContract,
