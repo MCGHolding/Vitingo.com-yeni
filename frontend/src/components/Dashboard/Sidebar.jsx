@@ -854,6 +854,20 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Dönemsel Karşılaştırma') {
+      if (onPeriodComparison) {
+        onPeriodComparison();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Satıcı Performansı') {
+      if (onUserPerformance) {
+        onUserPerformance();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Teslim Belgeleri') {
       if (onHandoverReceipts) {
         onHandoverReceipts();
