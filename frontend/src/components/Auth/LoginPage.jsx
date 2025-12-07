@@ -18,9 +18,8 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    rememberMe: false
+    email: '',
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,8 +40,13 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.username) {
-      setError('Lütfen kullanıcı adı giriniz');
+    if (!formData.email) {
+      setError('Lütfen email giriniz');
+      return;
+    }
+    
+    if (!formData.password) {
+      setError('Lütfen şifre giriniz');
       return;
     }
 
@@ -50,15 +54,27 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // Development mode: Allow login without password
-      await login({ username: formData.username, password: formData.password || '', rememberMe: formData.rememberMe });
-      // Redirect to tenant dashboard on successful login
-      navigate('/quattro-stand');
+      const result = await login(formData.email, formData.password);
+      
+      if (result.success) {
+        // Redirect to tenant dashboard
+        const tenantSlug = result.tenant.slug.replace(/_/g, '-'); // Convert to frontend format
+        navigate(`/${tenantSlug}`);
+      } else {
+        setError(result.error || 'Giriş başarısız');
+      }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Bir hata oluştu');
     } finally {
       setLoading(false);
     }
+  };
+
+  const fillDemoCredentials = (email) => {
+    setFormData({
+      email: email,
+      password: 'Test123!'
+    });
   };
 
   // fillDemoCredentials function removed - no longer needed without password requirement
