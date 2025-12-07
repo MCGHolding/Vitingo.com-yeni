@@ -99,22 +99,22 @@ const Header = ({
                 <div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     {/* User info */}
-                    <div className="px-4 py-3 border-b border-gray-200">
+                    <div className="px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
                       <div className="flex items-center space-x-3">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center ring-2 ring-white shadow-md">
                           <span className="text-sm font-medium text-white">
-                            {user ? user.fullName?.split(' ').map(n => n.charAt(0)).slice(0, 2).join('') : 'AD'}
+                            {user ? (user.name || user.fullName)?.split(' ').map(n => n.charAt(0)).slice(0, 2).join('') : 'AD'}
                           </span>
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
-                            {user ? user.fullName : 'Admin User'}
+                            {user ? (user.name || user.fullName) : 'Admin User'}
                           </p>
                           <p className="text-sm text-gray-500">
                             {user ? user.email : 'admin@company.com'}
                           </p>
                           <p className="text-xs text-gray-400">
-                            {user ? user.department : 'Yönetici'}
+                            {user ? user.department : 'Yönetici'} • {user?.role === 'admin' ? 'Admin' : 'Kullanıcı'}
                           </p>
                         </div>
                       </div>
