@@ -119,13 +119,13 @@ class LanguageCreate(BaseModel):
 # ============================================================
 
 async def get_platform_db():
-    """Platform database bağlantısı"""
+    """Platform database bağlantısı - CRM DB kullanıyor"""
     from motor.motor_asyncio import AsyncIOMotorClient
     import os
     
     mongo_url = os.getenv("MONGO_URL", "mongodb://localhost:27017")
     client = AsyncIOMotorClient(mongo_url)
-    return client.vitingo_platform
+    return client.crm_db
 
 
 # ============================================================
