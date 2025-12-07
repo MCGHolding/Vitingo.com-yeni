@@ -798,6 +798,20 @@ export default function Sidebar({
     }
 
     // Handle Reports menu actions
+    if (subItem && subItem.name === 'Satış Özeti') {
+      if (onSalesSummary) {
+        onSalesSummary();
+      }
+      return;
+    }
+
+    if (subItem && subItem.name === 'Performans Analizi') {
+      if (onPerformanceAnalysis) {
+        onPerformanceAnalysis();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Teslim Belgeleri') {
       if (onHandoverReceipts) {
         onHandoverReceipts();
