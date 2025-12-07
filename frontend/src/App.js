@@ -227,6 +227,10 @@ import ReportsPage from './pages/reports/ReportsPage';
 import HandoverReceipts from './pages/HandoverReceipts';
 import PublicHandoverSign from './pages/PublicHandoverSign';
 
+// Sales Reports Pages
+import SalesSummary from './pages/reports/SalesSummary';
+import PerformanceAnalysis from './pages/reports/PerformanceAnalysis';
+
 
 // Avanslar pages
 import {
