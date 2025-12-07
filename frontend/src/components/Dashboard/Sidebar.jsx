@@ -390,6 +390,7 @@ export default function Sidebar({
   onRevenueForecast,
   onPeriodComparison,
   onUserPerformance,
+  onReportExport,
   onSalesReports,
   onCustomerReports,
   onHandoverReceipts,
