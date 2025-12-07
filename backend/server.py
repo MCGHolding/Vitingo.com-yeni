@@ -16613,9 +16613,14 @@ async def get_tenant(tenant_slug: str):
         raise HTTPException(status_code=500, detail=f"Error fetching tenant: {str(e)}")
 
 # Payment Term Profiles endpoints
-@app.get("/api/payment-term-profiles")
+# DEPRECATED: These endpoints should be moved to tenant-aware router
+# TODO: Create /app/backend/routes/tenant_payment_profiles_router.py
+@app.get("/api/payment-term-profiles", deprecated=True)
 async def get_payment_term_profiles():
-    """Get all active payment term profiles"""
+    """
+    DEPRECATED: Use tenant-aware endpoint instead
+    Get all active payment term profiles
+    """
     try:
         profiles = await db.payment_term_profiles.find({"isActive": True}, {"_id": 0}).to_list(100)
         return profiles
