@@ -18691,6 +18691,9 @@ app.include_router(credit_cards_router.router)
 # Include purchase invoices router
 app.include_router(purchase_invoices_router.router)
 
+# Include sales reports router
+app.include_router(sales_reports_router.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
