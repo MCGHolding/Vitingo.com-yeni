@@ -77,6 +77,82 @@ async def get_tenant_slug(tenant_context: Dict = Depends(get_tenant_context)) ->
     return tenant_context["tenant_slug"]
 
 
+async def get_current_user_optional(authorization: Optional[str] = Header(None)) -> Optional[Dict]:
+    """
+    Dependency to get current user from JWT token (optional - doesn't require auth)
+    
+    Returns:
+        dict | None: User payload from JWT or None if no token
+    """
+    if not authorization or not authorization.startswith("Bearer "):
+        return None
+    
+    try:
+        token = authorization.split(" ")[1]
+        payload = decode_access_token(token)
+        return payload
+    except:
+        return None
+
+
+async def get_current_user_required(authorization: Optional[str] = Header(None)) -> Dict:
+    """
+    Dependency to get current user from JWT token (required - raises exception if not authenticated)
+    
+    Returns:
+        dict: User payload from JWT
+        
+    Raises:
+        HTTPException: 401 if not authenticated
+    """
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    token = authorization.split(" ")[1]
+    payload = decode_access_token(token)
+    return payload
+
+
+async def verify_tenant_access(
+    tenant_context: Dict = Depends(get_tenant_context),
+    current_user: Dict = Depends(get_current_user_required)
+) -> Dict:
+    """
+    Dependency to verify that user has access to the requested tenant
+    
+    This is the KEY security check for multi-tenant isolation!
+    
+    Returns:
+        dict: Tenant context if authorized
+        
+    Raises:
+        HTTPException: 403 if user doesn't have access to this tenant
+    """
+    url_tenant_slug = tenant_context["tenant_slug"]
+    token_tenant_slug = current_user.get("tenant_slug")
+    
+    if not token_tenant_slug:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Token does not contain tenant information"
+        )
+    
+    # Both slugs should match (both use underscore format in backend)
+    if url_tenant_slug != token_tenant_slug:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Access denied: You don't have permission to access this tenant. Your tenant: {token_tenant_slug}, Requested: {url_tenant_slug}"
+        )
+    
+    # Add user info to tenant context
+    tenant_context["current_user"] = current_user
+    return tenant_context
+
+
 async def get_full_tenant_context(tenant_context: Dict = Depends(get_tenant_context)) -> Dict:
     """
     Dependency to get full tenant context (all information)
