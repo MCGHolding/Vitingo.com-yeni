@@ -26,18 +26,23 @@ const UserManagementPage = ({ onBack }) => {
       setLoading(true);
 
       // Fetch all users with different statuses
-      const [activeUsers, invitedUsers, inactiveUsers, archivedUsers] = await Promise.all([
-        apiClient.getUsers({ status: 'active' }).catch(() => []),
-        apiClient.getUsers({ status: 'invited' }).catch(() => []),
-        apiClient.getUsers({ status: 'inactive' }).catch(() => []),
-        apiClient.getUsers({ status: 'archived' }).catch(() => [])
+      const [activeResp, invitedResp, inactiveResp, archivedResp] = await Promise.all([
+        apiClient.getUsers({ status: 'active' }).catch(() => ({ data: [] })),
+        apiClient.getUsers({ status: 'invited' }).catch(() => ({ data: [] })),
+        apiClient.getUsers({ status: 'inactive' }).catch(() => ({ data: [] })),
+        apiClient.getUsers({ status: 'archived' }).catch(() => ({ data: [] }))
       ]);
 
+      const extractData = (resp) => {
+        if (Array.isArray(resp)) return resp;
+        return resp.data || resp || [];
+      };
+
       setUsers({
-        active: Array.isArray(activeUsers) ? activeUsers : [],
-        invited: Array.isArray(invitedUsers) ? invitedUsers : [],
-        inactive: Array.isArray(inactiveUsers) ? inactiveUsers : [],
-        archived: Array.isArray(archivedUsers) ? archivedUsers : []
+        active: extractData(activeResp),
+        invited: extractData(invitedResp),
+        inactive: extractData(inactiveResp),
+        archived: extractData(archivedResp)
       });
     } catch (error) {
       console.error('Error fetching users:', error);
