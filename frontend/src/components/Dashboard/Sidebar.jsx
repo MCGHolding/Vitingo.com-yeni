@@ -383,6 +383,8 @@ export default function Sidebar({
   onPerformanceAnalysis,
   onSalesPipeline,
   onFairAnalysis,
+  onCustomerAnalysis,
+  onRevenueForecast,
   onSalesReports,
   onCustomerReports,
   onHandoverReceipts,
