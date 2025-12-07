@@ -2433,6 +2433,8 @@ function App() {
               <Route path="raporlar" element={<ReportsPage />} />
               <Route path="raporlar/satis-ozeti" element={<SalesSummary />} />
               <Route path="raporlar/performans" element={<PerformanceAnalysis />} />
+              <Route path="raporlar/pipeline" element={<SalesPipeline />} />
+              <Route path="raporlar/fuar-analizi" element={<FairAnalysis />} />
               <Route path="raporlar/teslim" element={<HandoverReceipts />} />
 
               {/* Alış Faturaları */}
