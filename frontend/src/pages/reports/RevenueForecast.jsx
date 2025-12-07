@@ -205,6 +205,7 @@ const RevenueForecast = () => {
             );
           })}
         </div>
+        )}
       </div>
 
       {/* Stage Analysis */}
