@@ -871,6 +871,13 @@ export default function Sidebar({
       return;
     }
 
+    if (subItem && subItem.name === 'Rapor Dışa Aktar') {
+      if (onReportExport) {
+        onReportExport();
+      }
+      return;
+    }
+
     if (subItem && subItem.name === 'Teslim Belgeleri') {
       if (onHandoverReceipts) {
         onHandoverReceipts();
