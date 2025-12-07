@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { Calendar, Plus, Edit2, Trash2, X } from 'lucide-react';
 import moment from 'moment';
+import apiClient from '../../utils/apiClient';
 import ChatModal from './ChatModal';
 import MeetingRequestModal from './MeetingRequestModal';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
 const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'Demo User' } }) => {
+  const { tenantSlug } = useParams();
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showEventModal, setShowEventModal] = useState(false);
@@ -43,25 +44,22 @@ const CalendarPage = ({ currentUser = { id: 'demo_user', role: 'user', name: 'De
     { id: 'user3', name: 'Mehmet Kaya', email: 'mehmet@example.com', role: 'user' }
   ]);
 
+  useEffect(() => {
+    if (tenantSlug) {
+      apiClient.setTenantSlug(tenantSlug);
+    }
+    loadEvents();
+  }, [tenantSlug]);
+
   // Load events
   const loadEvents = async () => {
     try {
-      // First, trigger automatic archiving of past events
-      try {
-        await fetch(`${BACKEND_URL}/api/calendar/events/archive-past`, {
-          method: 'POST'
-        });
-        console.log('✅ Past events archived automatically');
-      } catch (archiveError) {
-        console.warn('Archive endpoint failed:', archiveError);
-      }
-
-      // Get only non-archived events (include_archived=false is default)
-      const response = await fetch(
-        `${BACKEND_URL}/api/calendar/events?user_id=${currentUser.id}&user_role=${currentUser.role}&include_archived=false`
-      );
-      if (response.ok) {
-        const eventsData = await response.json();
+      const response = await apiClient.getCalendarEvents();
+      
+      if (response && response.status === 'success') {
+        const eventsData = response.data || [];
+        console.log(`✅ Loaded ${eventsData.length} calendar events from tenant-aware API`);
+        console.log(`📊 Tenant: ${response.tenant?.name}`);
         
         // Events are already filtered by backend (is_archived != true)
         // Transform events for FullCalendar
