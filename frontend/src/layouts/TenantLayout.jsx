@@ -161,6 +161,9 @@ const TenantLayoutInner = () => {
     onPassiveBriefs: () => handleNavigate('/briefler/pasif'),
     onRequestBrief: () => handleNavigate('/briefler/talep'),
     
+    // Demo
+    onDemo: () => handleNavigate('/demo'),
+    
     // Anketler & Teslimler
     onSurveys: () => handleNavigate('/anketler'),
     onHandovers: () => handleNavigate('/teslimler'),
