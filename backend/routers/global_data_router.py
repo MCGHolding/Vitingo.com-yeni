@@ -354,7 +354,7 @@ async def list_cities(
     Şehirleri listele
     """
     db = await get_platform_db()
-    collection = db.global_cities
+    collection = db.cities
     
     query = {"is_active": True}
     
@@ -382,7 +382,7 @@ async def list_cities(
 async def get_city(country_code: str, city_name: str):
     """Tek şehir getir"""
     db = await get_platform_db()
-    collection = db.global_cities
+    collection = db.cities
     
     city = await collection.find_one({
         "country_code": country_code.upper(),
@@ -400,7 +400,7 @@ async def get_city(country_code: str, city_name: str):
 async def create_city(city: CityCreate):
     """Yeni şehir ekle (Ultra Admin)"""
     db = await get_platform_db()
-    collection = db.global_cities
+    collection = db.cities
     
     doc = {
         **city.dict(),
@@ -556,7 +556,7 @@ async def _seed_countries(db):
 
 async def _seed_cities(db):
     """Şehirleri seed et (fuar merkezli şehirler öncelikli)"""
-    collection = db.global_cities
+    collection = db.cities
     
     cities = [
         # Türkiye
