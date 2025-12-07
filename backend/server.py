@@ -18726,7 +18726,9 @@ from routes import tenant_expense_receipts_router
 from routes import tenant_briefs_router
 from routes import tenant_users_router
 from routes import tenant_reports_router
+from routes import auth_router
 
+app.include_router(auth_router.router)
 app.include_router(tenant_routes.router)
 app.include_router(tenant_projects_router.router)
 app.include_router(tenant_leads_router.router)
