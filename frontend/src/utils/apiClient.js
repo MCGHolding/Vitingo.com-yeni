@@ -102,7 +102,15 @@ class ApiClient {
   }
 
   /**
-   * Generic fetch wrapper
+   * Get auth token from localStorage
+   * @returns {string|null} Auth token
+   */
+  getAuthToken() {
+    return localStorage.getItem('auth_token');
+  }
+
+  /**
+   * Generic fetch wrapper with JWT authentication
    * @param {string} endpoint - API endpoint
    * @param {object} options - Fetch options
    * @param {boolean} useTenant - Whether to use tenant-aware URL
@@ -110,6 +118,9 @@ class ApiClient {
    */
   async fetch(endpoint, options = {}, useTenant = true) {
     const url = this.buildUrl(endpoint, useTenant);
+    
+    // Get auth token
+    const token = this.getAuthToken();
     
     const defaultOptions = {
       credentials: 'include',
@@ -120,10 +131,26 @@ class ApiClient {
       }
     };
 
+    // Add Authorization header if token exists
+    if (token) {
+      defaultOptions.headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const finalOptions = { ...defaultOptions, ...options };
 
     try {
       const response = await fetch(url, finalOptions);
+      
+      // Handle 401 Unauthorized - token expired or invalid
+      if (response.status === 401) {
+        console.warn('⚠️ 401 Unauthorized - Token expired or invalid');
+        // Clear auth data
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        // Redirect to login
+        window.location.href = '/login';
+        throw new Error('Authentication required. Please login again.');
+      }
       
       if (!response.ok) {
         const errorData = await parseJsonSafe(response).catch(() => null);
