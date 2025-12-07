@@ -173,27 +173,16 @@ export default function LoginPage() {
 
             {/* Quick Login */}
             <div className="mt-8 pt-6 border-t border-gray-200">
-              <p className="text-sm text-gray-600 mb-4 text-center font-medium">Hızlı Giriş:</p>
+              <p className="text-sm text-gray-600 mb-4 text-center font-medium">Hızlı Giriş (Test):</p>
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={async () => {
-                    setLoading(true);
-                    setError('');
-                    try {
-                      await login({ username: 'murb', password: '', rememberMe: false });
-                      navigate('/quattro-stand');
-                    } catch (err) {
-                      setError(err.message);
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
+                  onClick={() => fillDemoCredentials('murb@quattrostand.com')}
                   className="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                   disabled={loading}
                 >
-                  <div className="font-medium text-gray-900">👑 Süper Admin</div>
-                  <div className="text-sm text-gray-600">murb - Murat Bucak</div>
+                  <div className="font-medium text-gray-900">👑 Admin</div>
+                  <div className="text-sm text-gray-600">murb@quattrostand.com - Murat Bucak</div>
                 </button>
                 
                 <button
