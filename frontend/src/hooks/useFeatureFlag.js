@@ -48,7 +48,9 @@ export const useFeatureFlag = (flagKey) => {
       }
 
       try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+        const backendUrl = (window.ENV?.REACT_APP_BACKEND_URL) || 
+                          process.env.REACT_APP_BACKEND_URL || 
+                          'https://sales-reports-hub.preview.emergentagent.com';
         
         const response = await fetch(`${backendUrl}/api/feature-flags/${flagKey}/check`, {
           method: 'POST',
