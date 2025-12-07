@@ -327,7 +327,6 @@ async def get_sales_summary(
             {"$sort": {"_id.year": 1, "_id.month": 1}}
         ]
         
-        now = datetime.now(timezone.utc)
         monthly_cursor = opportunities.aggregate(monthly_trend_pipeline)
         monthly_trend_list = await monthly_cursor.to_list(length=None)
         
