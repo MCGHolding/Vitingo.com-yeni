@@ -15,7 +15,7 @@ const PeopleListPage = () => {
   // Backend URL
   const backendUrl = (window.ENV && window.ENV.REACT_APP_BACKEND_URL) || 
                     process.env.REACT_APP_BACKEND_URL || 
-                    'https://bank-verify-2.preview.emergentagent.com';
+                    'https://sales-reports-hub.preview.emergentagent.com';
 
   // Kişileri yükle - useCallback ile memoize et
   const loadPeople = useCallback(async () => {

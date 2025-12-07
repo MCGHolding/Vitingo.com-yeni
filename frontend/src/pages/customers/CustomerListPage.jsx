@@ -25,7 +25,7 @@ const CustomerListPage = () => {
 
   // Backend URL - Always use env variable, ignore window.ENV override
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://bank-verify-2.preview.emergentagent.com';
+                    'https://sales-reports-hub.preview.emergentagent.com';
 
   // Müşterileri yükle
   const loadCustomers = async () => {
