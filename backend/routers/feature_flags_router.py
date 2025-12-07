@@ -272,19 +272,19 @@ async def check_feature_flag(flag_key: str, check: FeatureFlagCheck, db = Depend
     
     # 1. Blacklist kontrolü (her zaman kapalı)
     if tenant_slug in flag.get("blacklist_tenants", []):
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=False,
-            reason="blacklist"
-        )
+        return {
+            "key": flag_key,
+            "enabled": False,
+            "reason": "blacklist"
+        }
     
     # 2. Whitelist kontrolü (her zaman açık)
     if tenant_slug in flag.get("whitelist_tenants", []):
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=True,
-            reason="whitelist"
-        )
+        return {
+            "key": flag_key,
+            "enabled": True,
+            "reason": "whitelist"
+        }
     
     # 3. Status kontrolü
     status = flag.get("status", "disabled")
