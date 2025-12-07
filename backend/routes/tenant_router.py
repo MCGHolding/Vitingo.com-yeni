@@ -67,8 +67,7 @@ async def test_tenant_routing(
 @router.get("/api/{tenant_slug}/customers")
 async def get_customers(
     tenant_slug: str,
-    tenant_db: AsyncIOMotorDatabase = Depends(get_tenant_db),
-    tenant: dict = Depends(get_tenant_info),
+    tenant_context: Dict = Depends(verify_tenant_access),
     limit: int = 100
 ):
     """
