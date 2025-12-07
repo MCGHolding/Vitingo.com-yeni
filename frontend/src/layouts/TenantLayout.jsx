@@ -182,6 +182,8 @@ const TenantLayoutInner = () => {
     onFairAnalysis: () => handleNavigate('/raporlar/fuar-analizi'),
     onCustomerAnalysis: () => handleNavigate('/raporlar/musteri-analizi'),
     onRevenueForecast: () => handleNavigate('/raporlar/gelir-tahminleri'),
+    onPeriodComparison: () => handleNavigate('/raporlar/donemsel-karsilastirma'),
+    onUserPerformance: () => handleNavigate('/raporlar/satici-performansi'),
     onSalesReports: () => handleNavigate('/raporlar/satis'),
     onCustomerReports: () => handleNavigate('/raporlar/musteri'),
     onHandoverReceipts: () => handleNavigate('/raporlar/teslim'),
