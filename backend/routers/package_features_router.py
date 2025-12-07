@@ -16,10 +16,19 @@ Feature Flags'tan FARKLI:
 from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
 
 router = APIRouter(prefix="/api/packages", tags=["Package Features"])
+
+# Dependency to get database
+async def get_db():
+    client = AsyncIOMotorClient(os.environ.get('MONGO_URL'))
+    db_name = os.environ.get('DB_NAME', 'crm_db')
+    db = client[db_name]
+    return db
 
 
 # ============================================================
