@@ -1233,3 +1233,531 @@ async def get_fair_detail(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Fuar detayı alınırken hata: {str(e)}")
 
+
+
+
+# ========================
+# 5. MÜŞTERİ ANALİZİ
+# ========================
+
+@router.get("/customers")
+async def get_customer_analysis(
+    period: str = Query('this_year', description="Period for analysis"),
+    start_date: Optional[str] = Query(None, alias="startDate"),
+    end_date: Optional[str] = Query(None, alias="endDate"),
+    db = Depends(get_db)
+):
+    """Get customer analysis with RFM segmentation"""
+    try:
+        date_range = get_date_range(period, start_date, end_date)
+        start, end = date_range['start'], date_range['end']
+        
+        opportunities = db["opportunities"]
+        customers_collection = db["customers"]
+        
+        # Get customer statistics from won opportunities
+        customer_stats_pipeline = [
+            {
+                "$match": {
+                    "status": {"$in": ["won", "kazanildi", "kazanıldı"]},
+                    "customerId": {"$exists": True, "$ne": None}
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$customerId",
+                    "totalRevenue": {"$sum": "$value"},
+                    "projectCount": {"$sum": 1},
+                    "lastPurchase": {"$max": "$updatedAt"},
+                    "firstPurchase": {"$min": "$createdAt"},
+                    "avgValue": {"$avg": "$value"}
+                }
+            }
+        ]
+        
+        stats_cursor = opportunities.aggregate(customer_stats_pipeline)
+        customer_stats = await stats_cursor.to_list(length=None)
+        
+        # Fetch customer details and create RFM segments
+        now = datetime.now(timezone.utc)
+        segments = {
+            "vip": {"customers": [], "totalRevenue": 0, "label": "💎 VIP", "criteria": "Yıllık 3+ proje, €50K+"},
+            "loyal": {"customers": [], "totalRevenue": 0, "label": "⭐ Sadık", "criteria": "Yıllık 2 proje, düzenli"},
+            "growing": {"customers": [], "totalRevenue": 0, "label": "🌱 Büyüyen", "criteria": "Yıllık 1 proje, potansiyel"},
+            "sleeping": {"customers": [], "totalRevenue": 0, "label": "😴 Uyuyan", "criteria": "6+ ay işlem yok"}
+        }
+        
+        for c in customer_stats:
+            # Get customer details
+            customer = await customers_collection.find_one(
+                {"_id": c["_id"]},
+                {"_id": 0, "companyName": 1, "country": 1}
+            )
+            
+            customer_name = customer.get("companyName", "Bilinmeyen") if customer else "Bilinmeyen"
+            customer_country = customer.get("country", "-") if customer else "-"
+            
+            # Calculate metrics
+            days_since_last = (now - c["lastPurchase"]).days if c.get("lastPurchase") else 999
+            days_since_first = (now - c["firstPurchase"]).days if c.get("firstPurchase") else 1
+            avg_projects_per_year = (c["projectCount"] / max(1, days_since_first / 365.25))
+            
+            # Segment assignment
+            segment_key = None
+            if avg_projects_per_year >= 3 and c["totalRevenue"] >= 50000:
+                segment_key = "vip"
+            elif avg_projects_per_year >= 2 or c["totalRevenue"] >= 30000:
+                segment_key = "loyal"
+            elif days_since_last > 180:
+                segment_key = "sleeping"
+            else:
+                segment_key = "growing"
+            
+            customer_data = {
+                "id": str(c["_id"]),
+                "name": customer_name,
+                "country": customer_country,
+                "totalRevenue": c["totalRevenue"],
+                "projectCount": c["projectCount"],
+                "lastPurchase": c["lastPurchase"].isoformat() if c.get("lastPurchase") else None,
+                "avgValue": round(c.get("avgValue", 0) or 0),
+                "daysSinceLastPurchase": days_since_last
+            }
+            
+            segments[segment_key]["customers"].append(customer_data)
+            segments[segment_key]["totalRevenue"] += c["totalRevenue"]
+        
+        # Format segments
+        segment_summary = []
+        for key, value in segments.items():
+            segment_summary.append({
+                "key": key,
+                "label": value["label"],
+                "criteria": value["criteria"],
+                "customerCount": len(value["customers"]),
+                "totalRevenue": value["totalRevenue"],
+                "avgRevenue": round(value["totalRevenue"] / len(value["customers"])) if len(value["customers"]) > 0 else 0
+            })
+        
+        # Sector distribution
+        sector_pipeline = [
+            {
+                "$match": {
+                    "sector": {"$exists": True, "$ne": None, "$ne": ""}
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "opportunities",
+                    "localField": "_id",
+                    "foreignField": "customerId",
+                    "as": "opportunities"
+                }
+            },
+            {
+                "$project": {
+                    "sector": 1,
+                    "revenue": {
+                        "$sum": {
+                            "$map": {
+                                "input": {
+                                    "$filter": {
+                                        "input": "$opportunities",
+                                        "as": "opp",
+                                        "cond": {"$in": ["$$opp.status", ["won", "kazanildi", "kazanıldı"]]}
+                                    }
+                                },
+                                "as": "wonOpp",
+                                "in": "$$wonOpp.value"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$sector",
+                    "count": {"$sum": 1},
+                    "totalRevenue": {"$sum": "$revenue"}
+                }
+            },
+            {"$sort": {"totalRevenue": -1}}
+        ]
+        
+        sector_cursor = customers_collection.aggregate(sector_pipeline)
+        sector_list = await sector_cursor.to_list(length=None)
+        
+        total_sector_revenue = sum(s["totalRevenue"] for s in sector_list)
+        sector_distribution = [
+            {
+                "sector": s["_id"],
+                "count": s["count"],
+                "totalRevenue": s["totalRevenue"],
+                "percentage": round((s["totalRevenue"] / total_sector_revenue) * 100) if total_sector_revenue > 0 else 0
+            }
+            for s in sector_list
+        ]
+        
+        # Top customers
+        top_customers = sorted(customer_stats, key=lambda x: x["totalRevenue"], reverse=True)[:10]
+        
+        top_customers_list = []
+        for index, c in enumerate(top_customers):
+            customer = await customers_collection.find_one(
+                {"_id": c["_id"]},
+                {"_id": 0, "companyName": 1, "country": 1}
+            )
+            
+            days_since_last = (now - c["lastPurchase"]).days if c.get("lastPurchase") else 0
+            
+            top_customers_list.append({
+                "rank": index + 1,
+                "id": str(c["_id"]),
+                "name": customer.get("companyName", "Bilinmeyen") if customer else "Bilinmeyen",
+                "country": customer.get("country", "-") if customer else "-",
+                "projectCount": c["projectCount"],
+                "totalRevenue": c["totalRevenue"],
+                "lastPurchase": c["lastPurchase"].isoformat() if c.get("lastPurchase") else None,
+                "daysSinceLastPurchase": days_since_last
+            })
+        
+        # New vs returning customers (current year)
+        current_year_start = datetime(now.year, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        
+        new_vs_returning_pipeline = [
+            {
+                "$match": {
+                    "status": {"$in": ["won", "kazanildi", "kazanıldı"]},
+                    "createdAt": {"$gte": current_year_start}
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "opportunities",
+                    "let": {"custId": "$customerId", "currDate": "$createdAt"},
+                    "pipeline": [
+                        {
+                            "$match": {
+                                "$expr": {
+                                    "$and": [
+                                        {"$eq": ["$customerId", "$$custId"]},
+                                        {"$lt": ["$createdAt", "$$currDate"]},
+                                        {"$in": ["$status", ["won", "kazanildi", "kazanıldı"]]}
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    "as": "previousOrders"
+                }
+            },
+            {
+                "$project": {
+                    "value": 1,
+                    "isNewCustomer": {"$eq": [{"$size": "$previousOrders"}, 0]}
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$isNewCustomer",
+                    "count": {"$sum": 1},
+                    "revenue": {"$sum": "$value"}
+                }
+            }
+        ]
+        
+        nvr_cursor = opportunities.aggregate(new_vs_returning_pipeline)
+        nvr_list = await nvr_cursor.to_list(length=None)
+        
+        new_customer_data = next((n for n in nvr_list if n["_id"] == True), {"count": 0, "revenue": 0})
+        returning_customer_data = next((n for n in nvr_list if n["_id"] == False), {"count": 0, "revenue": 0})
+        
+        total_customers = new_customer_data["count"] + returning_customer_data["count"]
+        
+        # CLV distribution
+        clv_ranges = [
+            {"min": 50000, "max": float('inf'), "label": "Yüksek (€50K+)"},
+            {"min": 20000, "max": 50000, "label": "Orta (€20-50K)"},
+            {"min": 5000, "max": 20000, "label": "Düşük (€5-20K)"},
+            {"min": 0, "max": 5000, "label": "Yeni (<€5K)"}
+        ]
+        
+        clv_distribution = []
+        for range_item in clv_ranges:
+            customers_in_range = [
+                c for c in customer_stats 
+                if c["totalRevenue"] >= range_item["min"] and c["totalRevenue"] < range_item["max"]
+            ]
+            clv_distribution.append({
+                "label": range_item["label"],
+                "count": len(customers_in_range),
+                "totalRevenue": sum(c["totalRevenue"] for c in customers_in_range),
+                "percentage": round((len(customers_in_range) / len(customer_stats)) * 100) if len(customer_stats) > 0 else 0
+            })
+        
+        avg_clv = round(sum(c["totalRevenue"] for c in customer_stats) / len(customer_stats)) if len(customer_stats) > 0 else 0
+        
+        result = {
+            "success": True,
+            "data": {
+                "segments": segment_summary,
+                "sectorDistribution": sector_distribution,
+                "topCustomers": top_customers_list,
+                "newVsReturning": {
+                    "new": {
+                        "count": new_customer_data["count"],
+                        "revenue": new_customer_data["revenue"],
+                        "percentage": round((new_customer_data["count"] / total_customers) * 100) if total_customers > 0 else 0
+                    },
+                    "returning": {
+                        "count": returning_customer_data["count"],
+                        "revenue": returning_customer_data["revenue"],
+                        "percentage": round((returning_customer_data["count"] / total_customers) * 100) if total_customers > 0 else 0
+                    }
+                },
+                "clvDistribution": clv_distribution,
+                "avgCLV": avg_clv,
+                "totalCustomers": len(customer_stats)
+            }
+        }
+        
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        print(f"❌ Customer analysis error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Müşteri analizi alınırken hata: {str(e)}")
+
+
+# ========================
+# 6. GELİR TAHMİNLERİ
+# ========================
+
+@router.get("/forecast")
+async def get_revenue_forecast(
+    year: int = Query(datetime.now().year, description="Year for forecast"),
+    db = Depends(get_db)
+):
+    """Get revenue forecast with monthly projections"""
+    try:
+        now = datetime.now(timezone.utc)
+        current_month = now.month
+        
+        opportunities = db["opportunities"]
+        
+        # Get monthly actuals
+        monthly_actual_pipeline = [
+            {
+                "$match": {
+                    "createdAt": {
+                        "$gte": datetime(year, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+                        "$lte": datetime(year, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+                    },
+                    "status": {"$in": ["won", "kazanildi", "kazanıldı"]}
+                }
+            },
+            {
+                "$group": {
+                    "_id": {"$month": "$createdAt"},
+                    "revenue": {"$sum": "$value"},
+                    "count": {"$sum": 1}
+                }
+            },
+            {"$sort": {"_id": 1}}
+        ]
+        
+        ma_cursor = opportunities.aggregate(monthly_actual_pipeline)
+        monthly_actual_list = await ma_cursor.to_list(length=None)
+        
+        # Monthly projections
+        monthly_projection = []
+        cumulative_actual = 0
+        
+        # Mock targets (in production, fetch from SalesTarget collection)
+        yearly_target = 4500000  # €4.5M
+        monthly_target = round(yearly_target / 12)
+        
+        for month in range(1, 13):
+            actual_data = next((m for m in monthly_actual_list if m["_id"] == month), None)
+            is_actual = month <= current_month and year == now.year
+            
+            if is_actual and actual_data:
+                revenue = actual_data["revenue"]
+                cumulative_actual += revenue
+                projected = None
+            else:
+                # Simple projection: average of previous months
+                avg_monthly = cumulative_actual / current_month if current_month > 0 else monthly_target
+                projected = round(avg_monthly)
+                revenue = None
+            
+            month_names = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
+            
+            monthly_projection.append({
+                "month": month,
+                "monthName": month_names[month - 1],
+                "actual": revenue,
+                "projected": projected,
+                "target": monthly_target,
+                "isActual": is_actual
+            })
+        
+        # Year end projection
+        projected_year_end = cumulative_actual + sum(
+            m["projected"] for m in monthly_projection if m["projected"] is not None
+        )
+        target_achievement = round((projected_year_end / yearly_target) * 100) if yearly_target > 0 else 0
+        
+        # Pipeline forecast by probability
+        pipeline_forecast_pipeline = [
+            {
+                "$match": {
+                    "status": {"$nin": ["won", "kazanildi", "kazanıldı", "lost", "kaybedildi"]}
+                }
+            },
+            {
+                "$project": {
+                    "value": 1,
+                    "probability": {"$ifNull": ["$probability", 50]},
+                    "probabilityCategory": {
+                        "$cond": [
+                            {"$gte": ["$probability", 70]},
+                            "high",
+                            {
+                                "$cond": [
+                                    {"$gte": ["$probability", 40]},
+                                    "medium",
+                                    "low"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$probabilityCategory",
+                    "count": {"$sum": 1},
+                    "totalValue": {"$sum": "$value"},
+                    "weightedValue": {
+                        "$sum": {"$multiply": ["$value", {"$divide": ["$probability", 100]}]}
+                    }
+                }
+            }
+        ]
+        
+        pf_cursor = opportunities.aggregate(pipeline_forecast_pipeline)
+        pf_list = await pf_cursor.to_list(length=None)
+        
+        forecast_by_probability = {
+            "high": next((p for p in pf_list if p["_id"] == "high"), {"count": 0, "totalValue": 0, "weightedValue": 0}),
+            "medium": next((p for p in pf_list if p["_id"] == "medium"), {"count": 0, "totalValue": 0, "weightedValue": 0}),
+            "low": next((p for p in pf_list if p["_id"] == "low"), {"count": 0, "totalValue": 0, "weightedValue": 0})
+        }
+        
+        total_weighted_forecast = sum(p["weightedValue"] for p in pf_list)
+        
+        # Upcoming closes (30 days)
+        thirty_days_later = now + timedelta(days=30)
+        
+        upcoming_cursor = opportunities.find({
+            "status": {"$nin": ["won", "kazanildi", "kazanıldı", "lost", "kaybedildi"]},
+            "expectedCloseDate": {
+                "$gte": now,
+                "$lte": thirty_days_later
+            }
+        }).sort("expectedCloseDate", 1).limit(10)
+        
+        upcoming_list = await upcoming_cursor.to_list(length=10)
+        
+        upcoming_closes = []
+        for opp in upcoming_list:
+            customer_name = opp.get("customerName", "Bilinmeyen")
+            if opp.get("customerId"):
+                try:
+                    customer = await db["customers"].find_one(
+                        {"_id": ObjectId(opp["customerId"])},
+                        {"_id": 0, "companyName": 1}
+                    )
+                    if customer:
+                        customer_name = customer.get("companyName", customer_name)
+                except:
+                    pass
+            
+            fair_name = opp.get("fairName", "-")
+            if opp.get("fairId"):
+                try:
+                    fair = await db["fairs"].find_one(
+                        {"_id": ObjectId(opp["fairId"])},
+                        {"_id": 0, "name": 1}
+                    )
+                    if fair:
+                        fair_name = fair.get("name", fair_name)
+                except:
+                    pass
+            
+            days_until = (opp.get("expectedCloseDate") - now).days if opp.get("expectedCloseDate") else 0
+            
+            upcoming_closes.append({
+                "id": str(opp.get("_id")),
+                "name": opp.get("name") or opp.get("projectName", "-"),
+                "customerName": customer_name,
+                "fairName": fair_name,
+                "value": opp.get("value", 0),
+                "probability": opp.get("probability", 50),
+                "expectedCloseDate": opp.get("expectedCloseDate").isoformat() if opp.get("expectedCloseDate") else None,
+                "daysUntilClose": max(0, days_until)
+            })
+        
+        thirty_day_forecast = sum(
+            opp["value"] * (opp["probability"] / 100)
+            for opp in upcoming_closes
+        )
+        
+        result = {
+            "success": True,
+            "data": {
+                "year": year,
+                "monthlyProjection": monthly_projection,
+                "yearSummary": {
+                    "yearlyTarget": yearly_target,
+                    "projectedYearEnd": round(projected_year_end),
+                    "targetAchievement": target_achievement,
+                    "currentActual": cumulative_actual,
+                    "remaining": max(0, yearly_target - cumulative_actual)
+                },
+                "pipelineForecast": {
+                    "high": {
+                        "label": "Yüksek (>70%)",
+                        "count": forecast_by_probability["high"]["count"],
+                        "totalValue": forecast_by_probability["high"]["totalValue"],
+                        "weightedValue": round(forecast_by_probability["high"]["weightedValue"])
+                    },
+                    "medium": {
+                        "label": "Orta (40-70%)",
+                        "count": forecast_by_probability["medium"]["count"],
+                        "totalValue": forecast_by_probability["medium"]["totalValue"],
+                        "weightedValue": round(forecast_by_probability["medium"]["weightedValue"])
+                    },
+                    "low": {
+                        "label": "Düşük (<40%)",
+                        "count": forecast_by_probability["low"]["count"],
+                        "totalValue": forecast_by_probability["low"]["totalValue"],
+                        "weightedValue": round(forecast_by_probability["low"]["weightedValue"])
+                    },
+                    "totalWeighted": round(total_weighted_forecast)
+                },
+                "upcomingCloses": upcoming_closes,
+                "thirtyDayForecast": round(thirty_day_forecast)
+            }
+        }
+        
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        print(f"❌ Forecast error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Gelir tahmini alınırken hata: {str(e)}")
+
