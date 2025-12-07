@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTenant } from '../../contexts/TenantContext';
 import ViewCustomerPage from '../../components/Customers/ViewCustomerPage';
+import apiClient from '../../utils/apiClient';
 
 const CustomerDetailPage = () => {
   const navigate = useNavigate();
@@ -11,10 +12,6 @@ const CustomerDetailPage = () => {
   const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Backend URL - Always use env variable, ignore window.ENV override
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                    'https://saas-migration.preview.emergentagent.com';
 
   // Müşteri detayını yükle
   useEffect(() => {
@@ -32,20 +29,16 @@ const CustomerDetailPage = () => {
         
         console.log('🔍 Loading customer:', customerId);
         
-        const response = await fetch(`${backendUrl}/api/customers/${customerId}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('✅ Customer loaded:', data);
-          setCustomer(data);
-        } else if (response.status === 404) {
-          setError('Müşteri bulunamadı');
-        } else {
-          setError('Müşteri yüklenirken hata oluştu');
-        }
+        const data = await apiClient.getCustomer(customerId);
+        console.log('✅ Customer loaded:', data);
+        setCustomer(data);
       } catch (error) {
         console.error('❌ Fetch error:', error);
-        setError('Bağlantı hatası: ' + error.message);
+        if (error.message.includes('404')) {
+          setError('Müşteri bulunamadı');
+        } else {
+          setError('Müşteri yüklenirken hata oluştu: ' + error.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -54,7 +47,7 @@ const CustomerDetailPage = () => {
     if (customerId) {
       loadCustomer();
     }
-  }, [customerId, backendUrl]);
+  }, [customerId]);
 
   // Navigation handlers
   const handleBack = () => {
