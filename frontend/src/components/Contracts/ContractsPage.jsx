@@ -136,19 +136,10 @@ const ContractsPage = ({ setCurrentView }) => {
     if (!confirm('Bu sözleşmeyi silmek istediğinizden emin misiniz?')) return;
 
     try {
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-
-      const response = await fetch(`${backendUrl}/api/contracts/${contractId}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        setContracts(contracts.filter(c => c.id !== contractId));
-        alert('✅ Sözleşme silindi!');
-        fetchContracts(); // Refresh stats
-      }
+      await apiClient.deleteContract(contractId);
+      setContracts(contracts.filter(c => c.id !== contractId));
+      alert('✅ Sözleşme silindi!');
+      fetchContracts(); // Refresh stats
     } catch (error) {
       console.error('Error deleting contract:', error);
       alert('Hata oluştu');
