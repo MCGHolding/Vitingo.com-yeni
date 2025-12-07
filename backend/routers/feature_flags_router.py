@@ -26,11 +26,13 @@ import os
 
 router = APIRouter(prefix="/api/feature-flags", tags=["Feature Flags"])
 
+# MongoDB connection - direkt bağlantı
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+client = AsyncIOMotorClient(MONGO_URL)
+db = client['crm_db']
+
 # Dependency to get database
 async def get_db():
-    client = AsyncIOMotorClient(os.environ.get('MONGO_URL'))
-    db_name = os.environ.get('DB_NAME', 'crm_db')
-    db = client[db_name]
     return db
 
 
