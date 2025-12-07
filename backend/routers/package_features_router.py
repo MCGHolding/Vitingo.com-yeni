@@ -426,6 +426,111 @@ async def seed_packages():
     print("🗑️  Eski paketler temizlendi")
     
     now = datetime.now(timezone.utc)
+    
+    packages_data = [
+        {
+            "key": "starter",
+            "name": "Starter",
+            "name_tr": "Başlangıç",
+            "description": "Küçük ekipler için temel CRM özellikleri",
+            "description_tr": "Küçük ekipler için temel CRM özellikleri",
+            "price_monthly": 49,
+            "price_yearly": 490,
+            "currency": "USD",
+            "limits": {
+                "max_users": 5,
+                "max_customers": 1000,
+                "max_projects": 50,
+                "storage_gb": 10,
+                "email_per_month": 1000
+            },
+            "features": [
+                "customers", "projects", "opportunities", "calendar", 
+                "proposals", "basic_reports"
+            ],
+            "is_active": True,
+            "is_popular": False,
+            "sort_order": 1,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "key": "professional",
+            "name": "Professional",
+            "name_tr": "Profesyonel",
+            "description": "Orta ölçekli işletmeler için tüm CRM + Muhasebe",
+            "description_tr": "Orta ölçekli işletmeler için tüm CRM + Muhasebe",
+            "price_monthly": 99,
+            "price_yearly": 990,
+            "currency": "USD",
+            "limits": {
+                "max_users": 15,
+                "max_customers": 5000,
+                "max_projects": 200,
+                "storage_gb": 50,
+                "email_per_month": 5000
+            },
+            "features": [
+                "customers", "customers_advanced", "projects", "opportunities", 
+                "fairs", "calendar", "briefs", "proposals", "contracts",
+                "invoices", "current_accounts", "collections", "payments",
+                "expense_receipts", "advances", "multi_currency",
+                "basic_reports", "advanced_reports"
+            ],
+            "is_active": True,
+            "is_popular": True,
+            "sort_order": 2,
+            "created_at": now,
+            "updated_at": now
+        },
+        {
+            "key": "enterprise",
+            "name": "Enterprise",
+            "name_tr": "Kurumsal",
+            "description": "Büyük organizasyonlar için tüm özellikler + API",
+            "description_tr": "Büyük organizasyonlar için tüm özellikler + API",
+            "price_monthly": 199,
+            "price_yearly": 1990,
+            "currency": "USD",
+            "limits": {
+                "max_users": 50,
+                "max_customers": -1,
+                "max_projects": -1,
+                "storage_gb": 200,
+                "email_per_month": 20000
+            },
+            "features": [
+                "customers", "customers_advanced", "projects", "opportunities", 
+                "fairs", "calendar", "briefs", "proposals", "contracts",
+                "invoices", "current_accounts", "collections", "payments",
+                "expense_receipts", "advances", "bank_parsing", "multi_currency",
+                "group_companies", "departments", "position_hierarchy",
+                "basic_reports", "advanced_reports", "custom_reports", "export_reports",
+                "api_access", "webhooks", "priority_support"
+            ],
+            "is_active": True,
+            "is_popular": False,
+            "sort_order": 3,
+            "created_at": now,
+            "updated_at": now
+        }
+    ]
+    
+    # Paketleri insert et
+    if packages_data:
+        result = await collection.insert_many(packages_data)
+        created = len(result.inserted_ids)
+    else:
+        created = 0
+    
+    print(f"✅ {created} paket oluşturuldu")
+    
+    return {
+        "success": True,
+        "message": "Packages seed tamamlandı",
+        "created": created,
+        "packages": [p["key"] for p in packages_data]
+    }
 
 
 async def _seed_features(db):
