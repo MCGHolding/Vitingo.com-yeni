@@ -58,10 +58,11 @@ const PeopleListPage = () => {
     setLoaded(false);
     try {
       setLoading(true);
-      const data = await apiClient.getPeople();
-      setPeople(data);
+      const response = await apiClient.getPeople();
+      const peopleList = response.data || response || [];
+      setPeople(peopleList);
       setLoaded(true);
-      console.log(`🔄 Refreshed ${data.length} people`);
+      console.log(`🔄 Refreshed ${peopleList.length} people`);
     } catch (error) {
       console.error('Error refreshing people:', error);
     } finally {
