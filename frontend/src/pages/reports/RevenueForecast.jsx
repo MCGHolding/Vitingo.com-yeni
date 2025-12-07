@@ -285,6 +285,7 @@ const RevenueForecast = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
 
