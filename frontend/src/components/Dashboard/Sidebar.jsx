@@ -267,20 +267,6 @@ const getNavigation = (userDepartment) => {
         { name: 'Ödenmiş Makbuzlar', href: '/accounting/expense-receipts/paid', icon: CreditCard }
       ]
     },
-    { 
-      name: 'Brief', 
-      href: '/brief', 
-      icon: PenTool, 
-      current: false,
-      hasSubmenu: true,
-      submenu: [
-        { name: 'Yeni Brief', href: '/brief/new', icon: Plus },
-        { name: 'Tüm Briefler', href: '/brief/all', icon: FolderOpen },
-        { name: 'Kapanmış', href: '/brief/closed', icon: CheckCircle },
-        { name: 'Pasif', href: '/brief/passive', icon: Pause },
-        { name: 'Brief Talep Et', href: '/brief/request', icon: MessageSquare }
-      ]
-    },
     // İkinci Teklif menüsü de kaldırıldı
     { 
       name: 'Raporlar', 
