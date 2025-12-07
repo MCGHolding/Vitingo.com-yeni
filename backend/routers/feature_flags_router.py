@@ -479,11 +479,16 @@ async def batch_check_feature_flags(tenant_slug: str, flag_keys: List[str]):
 @router.post("/seed")
 async def seed_feature_flags():
     """
-    Demo için varsayılan feature flag'leri oluştur
+    Feature flag'leri seed et
     
-    Sadece development ortamında kullanılmalı.
+    Tüm flag'leri temizleyip yeniden oluşturur.
     """
+    from datetime import datetime, timezone
     collection = db["feature_flags"]
+    
+    # Önce mevcut flag'leri temizle
+    await collection.delete_many({})
+    print("🗑️  Eski flag'ler temizlendi")
     
     default_flags = [
         {
