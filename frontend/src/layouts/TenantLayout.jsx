@@ -180,6 +180,8 @@ const TenantLayoutInner = () => {
     onPerformanceAnalysis: () => handleNavigate('/raporlar/performans'),
     onSalesPipeline: () => handleNavigate('/raporlar/pipeline'),
     onFairAnalysis: () => handleNavigate('/raporlar/fuar-analizi'),
+    onCustomerAnalysis: () => handleNavigate('/raporlar/musteri-analizi'),
+    onRevenueForecast: () => handleNavigate('/raporlar/gelir-tahminleri'),
     onSalesReports: () => handleNavigate('/raporlar/satis'),
     onCustomerReports: () => handleNavigate('/raporlar/musteri'),
     onHandoverReceipts: () => handleNavigate('/raporlar/teslim'),
