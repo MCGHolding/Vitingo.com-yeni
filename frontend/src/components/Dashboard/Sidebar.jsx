@@ -387,6 +387,8 @@ export default function Sidebar({
   onFairAnalysis,
   onCustomerAnalysis,
   onRevenueForecast,
+  onPeriodComparison,
+  onUserPerformance,
   onSalesReports,
   onCustomerReports,
   onHandoverReceipts,
