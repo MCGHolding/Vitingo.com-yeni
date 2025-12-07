@@ -1699,6 +1699,68 @@ async def get_revenue_forecast(
             
             days_until = (opp.get("expectedCloseDate") - now).days if opp.get("expectedCloseDate") else 0
             
+            upcoming_closes.append({
+                "customerName": customer_name,
+                "title": opp.get("title", ""),
+                "fairName": fair_name,
+                "value": opp.get("value", 0),
+                "currency": opp.get("currency", "EUR"),
+                "probability": opp.get("probability", 50),
+                "expectedCloseDate": opp.get("expectedCloseDate").isoformat() if opp.get("expectedCloseDate") else None,
+                "daysUntil": days_until
+            })
+        
+        # Calculate 30-day forecast
+        thirty_day_forecast = sum(
+            opp["value"] * (opp["probability"] / 100)
+            for opp in upcoming_closes
+        )
+        
+        result = {
+            "success": True,
+            "data": {
+                "year": year,
+                "monthlyProjection": monthly_projection,
+                "yearSummary": {
+                    "yearlyTarget": yearly_target,
+                    "projectedYearEnd": round(projected_year_end),
+                    "targetAchievement": target_achievement,
+                    "currentActual": cumulative_actual,
+                    "remaining": max(0, yearly_target - cumulative_actual)
+                },
+                "pipelineForecast": {
+                    "high": {
+                        "label": "Yüksek (>70%)",
+                        "count": forecast_by_probability["high"]["count"],
+                        "totalValue": forecast_by_probability["high"]["totalValue"],
+                        "weightedValue": round(forecast_by_probability["high"]["weightedValue"])
+                    },
+                    "medium": {
+                        "label": "Orta (40-70%)",
+                        "count": forecast_by_probability["medium"]["count"],
+                        "totalValue": forecast_by_probability["medium"]["totalValue"],
+                        "weightedValue": round(forecast_by_probability["medium"]["weightedValue"])
+                    },
+                    "low": {
+                        "label": "Düşük (<40%)",
+                        "count": forecast_by_probability["low"]["count"],
+                        "totalValue": forecast_by_probability["low"]["totalValue"],
+                        "weightedValue": round(forecast_by_probability["low"]["weightedValue"])
+                    },
+                    "totalWeighted": round(total_weighted_forecast)
+                },
+                "upcomingCloses": upcoming_closes,
+                "thirtyDayForecast": round(thirty_day_forecast)
+            }
+        }
+        
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        print(f"❌ Forecast error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Gelir tahmini alınırken hata: {str(e)}")
 
 
 @router.get("/period-comparison")
