@@ -175,6 +175,8 @@ const TenantLayoutInner = () => {
     onAdvanceManagement: () => handleNavigate('/ayarlar/avans-yonetimi'),
     
     // Raporlar
+    onSalesSummary: () => handleNavigate('/raporlar/satis-ozeti'),
+    onPerformanceAnalysis: () => handleNavigate('/raporlar/performans'),
     onSalesReports: () => handleNavigate('/raporlar/satis'),
     onCustomerReports: () => handleNavigate('/raporlar/musteri'),
     onHandoverReceipts: () => handleNavigate('/raporlar/teslim'),
