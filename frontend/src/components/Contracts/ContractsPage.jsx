@@ -148,21 +148,18 @@ const ContractsPage = ({ setCurrentView }) => {
 
   const handleDownload = async (contractId, title) => {
     try {
-      const backendUrl = window.ENV?.REACT_APP_BACKEND_URL || 
-                        process.env.REACT_APP_BACKEND_URL || 
-                        import.meta.env.REACT_APP_BACKEND_URL;
-
-      const response = await fetch(`${backendUrl}/api/contracts/${contractId}/pdf`);
+      const url = apiClient.buildUrl(`/contracts/${contractId}/pdf`, true);
+      const response = await fetch(url, { credentials: 'include' });
       
       if (response.ok) {
         const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
+        const blobUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url;
+        a.href = blobUrl;
         a.download = `${title}.pdf`;
         document.body.appendChild(a);
         a.click();
-        window.URL.revokeObjectURL(url);
+        window.URL.revokeObjectURL(blobUrl);
         document.body.removeChild(a);
       }
     } catch (error) {
