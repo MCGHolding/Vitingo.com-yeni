@@ -249,16 +249,24 @@ async def check_feature_flag(flag_key: str, check: FeatureFlagCheck, db = Depend
     - enabled: True/False
     - reason: Neden açık/kapalı olduğu
     """
-    collection = db["feature_flags"]
-    
-    flag = await collection.find_one({"flag": flag_key})
-    
-    if not flag:
-        return FeatureFlagResponse(
-            key=flag_key,
-            enabled=False,
-            reason="not_found"
-        )
+    try:
+        collection = db["feature_flags"]
+        
+        flag = await collection.find_one({"flag": flag_key})
+        
+        if not flag:
+            return {
+                "key": flag_key,
+                "enabled": False,
+                "reason": "not_found"
+            }
+    except Exception as e:
+        print(f"Error finding flag: {str(e)}")
+        return {
+            "key": flag_key,
+            "enabled": False,
+            "reason": f"error: {str(e)}"
+        }
     
     tenant_slug = check.tenant_slug
     
