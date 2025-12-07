@@ -24,22 +24,16 @@ export const TenantProvider = ({ children }) => {
         // Set tenant slug in API client
         apiClient.setTenantSlug(tenantSlug);
         
-        // Fetch tenant from new tenant-aware test endpoint
-        const response = await apiClient.getTenantBySlug(tenantSlug);
+        // Convert frontend slug (demo-company) to backend slug (demo_company)
+        const backendSlug = tenantSlug.replace(/-/g, '_');
         
-        if (response && response.status === 'success') {
-          // Extract tenant info from test endpoint response
-          const tenantData = {
-            slug: response.tenant_info.slug,
-            name: response.tenant_info.name,
-            id: response.tenant_info.id,
-            status: response.tenant_info.status,
-            package: response.tenant_info.package,
-            database_name: response.tenant_info.database_name
-          };
-          setTenant(tenantData);
+        // Fetch tenant from platform endpoint (no auth required)
+        const response = await apiClient.get(`/platform/tenants/by-slug/${backendSlug}`, {}, false);
+        
+        if (response && response.id) {
+          setTenant(response);
           setError(null);
-          console.log('✅ Tenant loaded:', tenantData);
+          console.log('✅ Tenant loaded:', response);
         } else {
           throw new Error('Invalid tenant response');
         }
