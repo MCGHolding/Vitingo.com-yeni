@@ -293,6 +293,8 @@ const getNavigation = (userDepartment) => {
         { name: 'Performans Analizi', href: '/raporlar/performans', icon: BarChart3 },
         { name: 'Satış Hunisi', href: '/raporlar/pipeline', icon: BarChart3 },
         { name: 'Fuar Bazlı Analiz', href: '/raporlar/fuar-analizi', icon: BarChart3 },
+        { name: 'Müşteri Analizi', href: '/raporlar/musteri-analizi', icon: Users },
+        { name: 'Gelir Tahminleri', href: '/raporlar/gelir-tahminleri', icon: TrendingUp },
         { name: 'Teslim Belgeleri', href: '/raporlar/teslim', icon: FileText },
         { name: 'Satış Raporları', href: '/reports/sales', icon: BarChart3 },
         { name: 'Müşteri Raporları', href: '/reports/customers', icon: Users },
